@@ -1,0 +1,63 @@
+.novo-modal {
+  border-radius: 24px;
+  padding: 40px;
+}
+
+.novo-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.novo-modal__title {
+  font-size: 20px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.novo-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.novo-modal__card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 200px;
+  padding: 16px;
+  background: var(--color-overlay);
+  border: none;
+  border-radius: 16px;
+  text-align: left;
+}
+
+.novo-modal__card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.novo-modal__card-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--color-bg);
+}
+
+.novo-modal__card-arrow {
+  width: 24px;
+  height: 24px;
+}
+
+.novo-modal__card-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}

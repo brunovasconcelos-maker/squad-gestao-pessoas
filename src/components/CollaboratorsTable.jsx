@@ -1,4 +1,5 @@
-import { ArrowsDownUp, CaretDown } from '@phosphor-icons/react'
+import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
+import caretDownIcon from '../assets/icons/CaretDown.svg'
 import './CollaboratorsTable.css'
 
 const COLUMNS = [
@@ -11,9 +12,9 @@ const COLUMNS = [
 
 function ColumnIcon({ type }) {
   if (type === 'sort') {
-    return <ArrowsDownUp size={16} color="var(--color-text-secondary)" />
+    return <img src={arrowsDownUpIcon} width={16} height={16} alt="" />
   }
-  return <CaretDown size={16} color="var(--color-text-secondary)" />
+  return <img src={caretDownIcon} width={16} height={16} alt="" />
 }
 
 function CollaboratorsTable() {
