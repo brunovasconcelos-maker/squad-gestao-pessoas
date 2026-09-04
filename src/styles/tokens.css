@@ -1,0 +1,12 @@
+:root {
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-text-secondary: #798282;
+  --color-border: #e3e6e6;
+  --color-overlay: #f4f5f5;
+  --color-accent-blue: #0f71b0;
+
+  --font-weight-semibold: 600;
+  --font-weight-medium: 510;
+  --font-weight-regular: 400;
+}

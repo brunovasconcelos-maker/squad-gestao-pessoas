@@ -1,0 +1,24 @@
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--color-overlay);
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+
+.search-bar__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.search-bar__input::placeholder {
+  color: var(--color-text-secondary);
+}
