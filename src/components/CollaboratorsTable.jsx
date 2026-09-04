@@ -11,9 +11,9 @@ const COLUMNS = [
 
 function ColumnIcon({ type }) {
   if (type === 'sort') {
-    return <ArrowsDownUp size={14} color="var(--color-text-secondary)" />
+    return <ArrowsDownUp size={16} color="var(--color-text-secondary)" />
   }
-  return <CaretDown size={14} color="var(--color-text-secondary)" />
+  return <CaretDown size={16} color="var(--color-text-secondary)" />
 }
 
 function CollaboratorsTable() {
