@@ -42,7 +42,7 @@ function MultiSelectFieldModal({
     ? items.filter((item) =>
         item.name.toLowerCase().includes(trimmedQuery.toLowerCase()),
       )
-    : items
+    : []
 
   const exactMatch = items.some(
     (item) => item.name.toLowerCase() === trimmedQuery.toLowerCase(),

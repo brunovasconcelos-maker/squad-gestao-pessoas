@@ -26,6 +26,8 @@ function AddCollaboratorFlow({ onExit }) {
 
       {step === 2 && (
         <Step2AdditionalInfo
+          name={name}
+          contractType={contractType}
           onBack={() => setStep(1)}
           onExit={() => setDiscardConfirmOpen(true)}
           onContinue={onExit}

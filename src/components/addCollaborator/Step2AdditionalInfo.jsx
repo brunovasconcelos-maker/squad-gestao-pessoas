@@ -6,7 +6,7 @@ import MultiSelectFieldModal from './MultiSelectFieldModal.jsx'
 import ReportaParaModal from './ReportaParaModal.jsx'
 import DataAdmissaoModal from './DataAdmissaoModal.jsx'
 import SalarioModal from './SalarioModal.jsx'
-import { COLLECTIONS } from '../../utils/storage.js'
+import { COLLECTIONS, addItem } from '../../utils/storage.js'
 import { formatDatePt, formatCurrencyBRL } from '../../utils/formatters.js'
 import './buttons.css'
 import './Step2AdditionalInfo.css'
@@ -44,7 +44,7 @@ const FIELDS = [
   },
 ]
 
-function Step2AdditionalInfo({ onBack, onExit, onContinue }) {
+function Step2AdditionalInfo({ name, contractType, onBack, onExit, onContinue }) {
   const [values, setValues] = useState({
     email: '',
     cargos: [],
@@ -57,6 +57,20 @@ function Step2AdditionalInfo({ onBack, onExit, onContinue }) {
 
   const closeModal = () => setOpenModal(null)
 
+  const handleContinue = () => {
+    addItem(COLLECTIONS.COLABORADORES, {
+      name,
+      contractType,
+      email: values.email,
+      cargos: values.cargos,
+      times: values.times,
+      reportaPara: values.reportaPara,
+      dataAdmissao: values.dataAdmissao,
+      salario: values.salario,
+    })
+    onContinue()
+  }
+
   return (
     <WizardShell
       onClose={onExit}
@@ -67,7 +81,7 @@ function Step2AdditionalInfo({ onBack, onExit, onContinue }) {
         </button>
       }
       footerRight={
-        <button type="button" className="pill-button" onClick={onContinue}>
+        <button type="button" className="pill-button" onClick={handleContinue}>
           Continuar
         </button>
       }
