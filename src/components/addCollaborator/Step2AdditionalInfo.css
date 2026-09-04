@@ -25,6 +25,9 @@
   display: flex;
   align-items: center;
   width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
   padding: 16px 0;
   border-bottom: 1px solid var(--color-border);
 }
@@ -34,6 +37,10 @@
   font-size: 16px;
   font-weight: 500;
   color: var(--color-text-secondary);
+}
+
+.step2__row-label--filled {
+  color: var(--color-text);
 }
 
 .step2__row-action {
