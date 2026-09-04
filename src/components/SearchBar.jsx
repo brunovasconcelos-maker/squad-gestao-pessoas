@@ -4,7 +4,7 @@ import './SearchBar.css'
 function SearchBar() {
   return (
     <div className="search-bar">
-      <MagnifyingGlass size={18} color="var(--color-text-secondary)" />
+      <MagnifyingGlass size={24} color="var(--color-text-secondary)" />
       <input
         type="text"
         className="search-bar__input"

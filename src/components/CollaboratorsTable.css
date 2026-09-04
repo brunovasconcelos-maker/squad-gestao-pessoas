@@ -6,17 +6,16 @@
 
 .collaborators-table__header {
   display: grid;
-  grid-template-columns: 2.2fr 1fr 1fr 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: minmax(0, 1fr) 160px 240px 160px 184px;
   border-bottom: 1px solid var(--color-border);
-  padding: 12px 4px;
+  padding: 16px 12px;
 }
 
 .collaborators-table__header-cell {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 12px;
+  font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
 }
