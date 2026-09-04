@@ -3,12 +3,12 @@ import FieldModalShell from './FieldModalShell.jsx'
 import { amountToDigits, centsToAmount, formatAmountFromDigits } from '../../utils/formatters.js'
 import './LargeFieldInput.css'
 
-function SalarioModal({ value, onSave, onClose }) {
+function SalarioModal({ title = 'Salário', value, onSave, onClose }) {
   const [digits, setDigits] = useState(() => amountToDigits(value))
 
   return (
     <FieldModalShell
-      title="Salário"
+      title={title}
       onClose={onClose}
       onSave={() => onSave(centsToAmount(digits))}
       saveDisabled={!digits}

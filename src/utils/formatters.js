@@ -73,3 +73,10 @@ export function formatCurrencyBRL(value) {
 export function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
+
+export function formatPaymentValue(value, tipoPagamento) {
+  const base = formatCurrencyBRL(value)
+  if (tipoPagamento === 'Mensal') return `${base} / mês`
+  if (tipoPagamento === 'Anual') return `${base} / ano`
+  return base
+}
