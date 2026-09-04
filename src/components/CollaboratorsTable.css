@@ -49,11 +49,11 @@
 }
 
 .collaborators-table__tag--freelancer {
-  color: var(--color-accent-blue);
-  background: rgba(15, 113, 176, 0.1);
+  color: #0f71b0;
+  background: #e7f1f7;
 }
 
 .collaborators-table__tag--consultor {
   color: #1a7d36;
-  background: rgba(26, 125, 54, 0.1);
+  background: #e6f4ea;
 }
