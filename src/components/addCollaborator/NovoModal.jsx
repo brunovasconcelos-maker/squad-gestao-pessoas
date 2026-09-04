@@ -1,4 +1,5 @@
 import closeIcon from '../../assets/icons/Close.svg'
+import arrowUpRightIcon from '../../assets/icons/ArrowUpRight.svg'
 import userPlusIcon from '../../assets/icons/UserPlus.svg'
 import usersFourIcon from '../../assets/icons/UsersFour.svg'
 import briefcaseIcon from '../../assets/icons/Briefcase.svg'
@@ -7,7 +8,6 @@ import IconButton from '../IconButton.jsx'
 import ModalOverlay from './ModalOverlay.jsx'
 import './NovoModal.css'
 
-// TODO: swap in ArrowUpRight.svg once it's uploaded to src/assets/icons
 const OPTIONS = [
   { id: 'colaborador', label: 'Colaborador', icon: userPlusIcon, functional: true },
   { id: 'time', label: 'Time', icon: usersFourIcon, functional: false },
@@ -34,7 +34,13 @@ function NovoModal({ onClose, onSelectColaborador }) {
               <span className="novo-modal__card-badge">
                 <img src={option.icon} alt="" width={24} height={24} />
               </span>
-              <span className="novo-modal__card-arrow" />
+              <img
+                className="novo-modal__card-arrow"
+                src={arrowUpRightIcon}
+                alt=""
+                width={24}
+                height={24}
+              />
             </div>
             <span className="novo-modal__card-label">{option.label}</span>
           </button>
