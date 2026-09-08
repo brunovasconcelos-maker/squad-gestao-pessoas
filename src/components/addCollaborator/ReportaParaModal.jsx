@@ -6,15 +6,23 @@ import FieldModalShell from './FieldModalShell.jsx'
 import { getCollection, COLLECTIONS } from '../../utils/storage.js'
 import './SelectListModal.css'
 
-function ReportaParaModal({ value, onSave, onClose }) {
+function ReportaParaModal({ value, teamFilter = [], onSave, onClose }) {
   const [items] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(value ?? null)
 
   const trimmedQuery = query.trim().toLowerCase()
-  const filtered = trimmedQuery
-    ? items.filter((item) => item.name.toLowerCase().includes(trimmedQuery))
-    : items
+
+  let filtered
+  if (trimmedQuery) {
+    filtered = items.filter((item) => item.name.toLowerCase().includes(trimmedQuery))
+  } else if (teamFilter.length > 0) {
+    filtered = items.filter((item) =>
+      (item.times ?? []).some((time) => teamFilter.includes(time)),
+    )
+  } else {
+    filtered = []
+  }
 
   return (
     <FieldModalShell
@@ -36,6 +44,7 @@ function ReportaParaModal({ value, onSave, onClose }) {
       <div className="select-list__list">
         {filtered.map((item) => {
           const isSelected = selected === item.name
+          const cargos = item.cargos ?? []
           return (
             <button
               type="button"
@@ -50,7 +59,8 @@ function ReportaParaModal({ value, onSave, onClose }) {
                 height={24}
               />
               <span className="select-list__item-label">
-                {item.name} ({item.cargo})
+                {item.name}
+                {cargos.length ? ` (${cargos.join(', ')})` : ''}
               </span>
             </button>
           )
