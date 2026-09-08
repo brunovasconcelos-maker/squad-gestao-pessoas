@@ -232,6 +232,7 @@ function Step2AdditionalInfo({ name, contractType, onBack, onExit, onContinue })
       {openModal === 'reporta-para' && (
         <ReportaParaModal
           value={values.reportaPara}
+          teamFilter={values.times}
           onClose={closeModal}
           onSave={(reportaPara) => {
             setValues((prev) => ({ ...prev, reportaPara }))
