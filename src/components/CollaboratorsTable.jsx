@@ -1,23 +1,21 @@
 import { useState } from 'react'
 import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
 import caretDownIcon from '../assets/icons/CaretDown.svg'
+import closeIcon from '../assets/icons/Close.svg'
+import iconButtonIcon from '../assets/icons/Icon-Button.svg'
+import IconButton from './IconButton.jsx'
 import { getCollection, COLLECTIONS } from '../utils/storage.js'
 import { formatShortDatePt } from '../utils/formatters.js'
 import './CollaboratorsTable.css'
 
-const COLUMNS = [
-  { id: 'nome', label: 'Nome', icon: 'sort' },
-  { id: 'time', label: 'Time', icon: 'caret' },
-  { id: 'cargo', label: 'Cargo', icon: 'caret' },
-  { id: 'ativo-desde', label: 'Ativo desde', icon: 'sort' },
-  { id: 'atividade', label: 'Atividade', icon: 'caret' },
+const FILTER_COLUMNS = [
+  { id: 'time', label: 'Time' },
+  { id: 'cargo', label: 'Cargo' },
+  { id: 'atividade', label: 'Atividade' },
 ]
 
-function ColumnIcon({ type }) {
-  if (type === 'sort') {
-    return <img src={arrowsDownUpIcon} width={16} height={16} alt="" />
-  }
-  return <img src={caretDownIcon} width={16} height={16} alt="" />
+function getActiveSince(collaborator) {
+  return collaborator.dataAdmissao ?? collaborator.dataInicioContrato ?? null
 }
 
 function ActivityTag({ contractType }) {
@@ -38,39 +36,103 @@ function ActivityTag({ contractType }) {
   return null
 }
 
+function SortableHeaderCell({ label, active, onClick }) {
+  return (
+    <button
+      type="button"
+      className="collaborators-table__header-cell collaborators-table__header-cell--button"
+      onClick={onClick}
+    >
+      <span>{label}</span>
+      <img
+        src={active ? closeIcon : arrowsDownUpIcon}
+        width={16}
+        height={16}
+        alt=""
+      />
+    </button>
+  )
+}
+
 function CollaboratorsTable() {
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
+  const [sortColumn, setSortColumn] = useState(null)
+
+  const toggleSort = (column) => {
+    setSortColumn((prev) => (prev === column ? null : column))
+  }
+
+  let sortedCollaborators = collaborators
+  if (sortColumn === 'nome') {
+    sortedCollaborators = [...collaborators].sort((a, b) =>
+      a.name.localeCompare(b.name, 'pt-BR'),
+    )
+  } else if (sortColumn === 'ativo-desde') {
+    sortedCollaborators = [...collaborators].sort((a, b) => {
+      const dateA = getActiveSince(a)
+      const dateB = getActiveSince(b)
+      if (dateA === null && dateB === null) return 0
+      if (dateA === null) return 1
+      if (dateB === null) return -1
+      return dateA.localeCompare(dateB)
+    })
+  }
 
   return (
     <div className="collaborators-table">
       <div className="collaborators-table__header">
-        {COLUMNS.map((column) => (
+        <SortableHeaderCell
+          label="Nome"
+          active={sortColumn === 'nome'}
+          onClick={() => toggleSort('nome')}
+        />
+        {FILTER_COLUMNS.slice(0, 2).map((column) => (
           <div className="collaborators-table__header-cell" key={column.id}>
             <span>{column.label}</span>
-            <ColumnIcon type={column.icon} />
+            <img src={caretDownIcon} width={16} height={16} alt="" />
           </div>
         ))}
+        <SortableHeaderCell
+          label="Ativo desde"
+          active={sortColumn === 'ativo-desde'}
+          onClick={() => toggleSort('ativo-desde')}
+        />
+        <div className="collaborators-table__header-cell">
+          <span>{FILTER_COLUMNS[2].label}</span>
+          <img src={caretDownIcon} width={16} height={16} alt="" />
+        </div>
+        <div className="collaborators-table__header-spacer" />
       </div>
+
       <div className="collaborators-table__body">
-        {collaborators.map((collaborator) => (
-          <div className="collaborators-table__row" key={collaborator.id}>
-            <div className="collaborators-table__cell">{collaborator.name}</div>
-            <div className="collaborators-table__cell">
-              {collaborator.times.join(', ')}
+        {sortedCollaborators.map((collaborator) => {
+          const activeSince = getActiveSince(collaborator)
+          return (
+            <div className="collaborators-table__row" key={collaborator.id}>
+              <div className="collaborators-table__cell collaborators-table__cell--nome">
+                {collaborator.name}
+              </div>
+              <div className="collaborators-table__cell collaborators-table__cell--secondary">
+                {collaborator.times.join(', ')}
+              </div>
+              <div className="collaborators-table__cell collaborators-table__cell--secondary">
+                {collaborator.cargos.join(', ')}
+              </div>
+              <div className="collaborators-table__cell collaborators-table__cell--secondary">
+                {activeSince ? formatShortDatePt(activeSince) : ''}
+              </div>
+              <div className="collaborators-table__cell">
+                <ActivityTag contractType={collaborator.contractType} />
+              </div>
+              <IconButton
+                icon={iconButtonIcon}
+                alt="Mais opções"
+                size={40}
+                iconSize={40}
+              />
             </div>
-            <div className="collaborators-table__cell">
-              {collaborator.cargos.join(', ')}
-            </div>
-            <div className="collaborators-table__cell">
-              {collaborator.dataAdmissao
-                ? formatShortDatePt(collaborator.dataAdmissao)
-                : ''}
-            </div>
-            <div className="collaborators-table__cell">
-              <ActivityTag contractType={collaborator.contractType} />
-            </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
