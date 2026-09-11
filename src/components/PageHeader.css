@@ -4,9 +4,21 @@
   justify-content: space-between;
 }
 
+.page-header__left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-header__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .page-header__title {
-  font-size: 28px;
-  font-weight: var(--font-weight-semibold);
+  font-size: 24px;
+  font-weight: var(--font-weight-medium);
   letter-spacing: -0.26px;
   color: var(--color-text);
 }

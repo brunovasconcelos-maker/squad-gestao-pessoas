@@ -1,10 +1,17 @@
 import './IconButton.css'
 
-function IconButton({ icon, alt = '', onClick, size = 40, iconSize = 24 }) {
+function IconButton({
+  icon,
+  alt = '',
+  onClick,
+  size = 40,
+  iconSize = 24,
+  className = '',
+}) {
   return (
     <button
       type="button"
-      className="icon-button"
+      className={`icon-button ${className}`.trim()}
       style={{ width: size, height: size }}
       onClick={onClick}
     >

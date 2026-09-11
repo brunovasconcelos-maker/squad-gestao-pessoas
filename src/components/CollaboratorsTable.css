@@ -6,7 +6,7 @@
 
 .collaborators-table__header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px 240px 160px 120px 40px;
+  grid-template-columns: 24px minmax(0, 1fr) 160px 240px 160px 120px 40px;
   gap: 12px;
   align-items: center;
   border-bottom: 1px solid var(--color-border);
@@ -33,23 +33,25 @@
   width: 40px;
 }
 
+.collaborators-table__checkbox-cell {
+  display: flex;
+  align-items: center;
+}
+
 .collaborators-table__body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding-top: 12px;
 }
 
 .collaborators-table__row {
   box-sizing: border-box;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 160px 240px 160px 120px 40px;
+  grid-template-columns: 24px minmax(0, 1fr) 160px 240px 160px 120px 40px;
   gap: 12px;
   align-items: center;
   height: 64px;
   padding: 12px 16px;
-  background: var(--color-overlay);
-  border-radius: 8px;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .collaborators-table__cell {
@@ -63,29 +65,6 @@
 }
 
 .collaborators-table__cell--secondary {
+  font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
-}
-
-.collaborators-table__tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: var(--font-weight-medium);
-}
-
-.collaborators-table__tag--freelancer {
-  color: #0091ff;
-  background: rgba(0, 145, 255, 0.1);
-}
-
-.collaborators-table__tag--consultor {
-  color: #60c60c;
-  background: rgba(1, 180, 108, 0.1);
-}
-
-.collaborators-table__tag--desligado {
-  color: #ff2633;
-  background: rgba(255, 38, 51, 0.1);
 }

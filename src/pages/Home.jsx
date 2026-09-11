@@ -2,10 +2,12 @@ import { useState } from 'react'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import Tabs from '../components/Tabs.jsx'
-import SearchBar from '../components/SearchBar.jsx'
+import CollaboradoresToolbar from '../components/CollaboradoresToolbar.jsx'
 import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
+import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
+import { getCollection, COLLECTIONS } from '../utils/storage.js'
 import './Home.css'
 
 const TABS = [
@@ -19,6 +21,8 @@ function Home() {
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
+  const [view, setView] = useState('table')
+  const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
 
   if (addCollaboratorFlowOpen) {
     return (
@@ -37,8 +41,16 @@ function Home() {
         <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
         {activeTab === 'colaboradores' ? (
           <div className="home__panel">
-            <SearchBar />
-            <CollaboratorsTable />
+            <CollaboradoresToolbar
+              total={collaborators.length}
+              view={view}
+              onViewChange={setView}
+            />
+            {view === 'table' ? (
+              <CollaboratorsTable collaborators={collaborators} />
+            ) : (
+              <CollaboratorsGrid collaborators={collaborators} />
+            )}
           </div>
         ) : (
           <div className="home__panel" />

@@ -2,9 +2,10 @@ import { useState } from 'react'
 import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
 import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/Close.svg'
-import iconButtonIcon from '../assets/icons/Icon-Button.svg'
+import squareIcon from '../assets/icons/Square.svg'
+import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
-import { getCollection, COLLECTIONS } from '../utils/storage.js'
+import ActivityTag from './ActivityTag.jsx'
 import { formatShortDatePt } from '../utils/formatters.js'
 import './CollaboratorsTable.css'
 
@@ -16,24 +17,6 @@ const FILTER_COLUMNS = [
 
 function getActiveSince(collaborator) {
   return collaborator.dataAdmissao ?? collaborator.dataInicioContrato ?? null
-}
-
-function ActivityTag({ contractType }) {
-  if (contractType === 'Freelancer') {
-    return (
-      <span className="collaborators-table__tag collaborators-table__tag--freelancer">
-        Freelancer
-      </span>
-    )
-  }
-  if (contractType === 'Consultor') {
-    return (
-      <span className="collaborators-table__tag collaborators-table__tag--consultor">
-        Consultor
-      </span>
-    )
-  }
-  return null
 }
 
 function SortableHeaderCell({ label, active, onClick }) {
@@ -54,8 +37,7 @@ function SortableHeaderCell({ label, active, onClick }) {
   )
 }
 
-function CollaboratorsTable() {
-  const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
+function CollaboratorsTable({ collaborators }) {
   const [sortColumn, setSortColumn] = useState(null)
 
   const toggleSort = (column) => {
@@ -81,6 +63,9 @@ function CollaboratorsTable() {
   return (
     <div className="collaborators-table">
       <div className="collaborators-table__header">
+        <div className="collaborators-table__checkbox-cell">
+          <img src={squareIcon} width={24} height={24} alt="" />
+        </div>
         <SortableHeaderCell
           label="Nome"
           active={sortColumn === 'nome'}
@@ -109,6 +94,9 @@ function CollaboratorsTable() {
           const activeSince = getActiveSince(collaborator)
           return (
             <div className="collaborators-table__row" key={collaborator.id}>
+              <div className="collaborators-table__checkbox-cell">
+                <img src={squareIcon} width={24} height={24} alt="" />
+              </div>
               <div className="collaborators-table__cell collaborators-table__cell--nome">
                 {collaborator.name}
               </div>
@@ -124,12 +112,7 @@ function CollaboratorsTable() {
               <div className="collaborators-table__cell">
                 <ActivityTag contractType={collaborator.contractType} />
               </div>
-              <IconButton
-                icon={iconButtonIcon}
-                alt="Mais opções"
-                size={40}
-                iconSize={40}
-              />
+              <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
             </div>
           )
         })}
