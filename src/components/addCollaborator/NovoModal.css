@@ -1,63 +1,124 @@
-.novo-modal {
-  border-radius: 24px;
-  padding: 40px;
-}
-
-.novo-modal__header {
+.novo-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(227, 230, 230, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
+  justify-content: center;
+  z-index: 100;
+}
+
+.novo-modal-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.novo-modal__close-button {
+  background: var(--color-bg);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.novo-modal__close-button:hover {
+  background: var(--color-bg);
+}
+
+.novo-modal {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 120px;
+  background: var(--color-bg);
+  border-radius: 16px;
+  padding: 24px;
 }
 
 .novo-modal__title {
-  font-size: 20px;
+  margin: 0;
+  font-size: 32px;
   font-weight: var(--font-weight-semibold);
+  line-height: 1.1;
   color: var(--color-text);
 }
 
+.novo-modal__title-gradient {
+  background: linear-gradient(90deg, #ffd668, #d39a00);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
 .novo-modal__grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
+  display: flex;
+  gap: 20px;
 }
 
 .novo-modal__card {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  height: 200px;
-  padding: 16px;
-  background: var(--color-overlay);
-  border: none;
-  border-radius: 16px;
-  text-align: left;
-}
-
-.novo-modal__card-top {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
+  width: 160px;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
 }
 
-.novo-modal__card-badge {
+.novo-modal__illustration {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  background: var(--color-overlay);
+  border-radius: 12px;
+  transition: box-shadow 0.2s ease;
+}
+
+.novo-modal__card:hover .novo-modal__illustration {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
+
+.novo-modal__sticker {
+  position: absolute;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: var(--color-bg);
+  border: 1px solid #ffffff;
+  border-radius: 16px;
+  box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.07);
+  transform: rotate(var(--sticker-rotate, 0deg));
+  transition: transform 0.25s ease;
 }
 
-.novo-modal__card-arrow {
-  width: 24px;
-  height: 24px;
+.novo-modal__sticker img {
+  width: 56%;
+  height: 56%;
+  object-fit: contain;
+}
+
+.novo-modal__card:hover .novo-modal__sticker:nth-child(1) {
+  transform: rotate(calc(var(--sticker-rotate) - 3deg));
+  transition-delay: 0s;
+}
+
+.novo-modal__card:hover .novo-modal__sticker:nth-child(2) {
+  transform: rotate(calc(var(--sticker-rotate) + 3deg));
+  transition-delay: 0.06s;
+}
+
+.novo-modal__card:hover .novo-modal__sticker:nth-child(3) {
+  transform: rotate(calc(var(--sticker-rotate) - 2deg));
+  transition-delay: 0.12s;
 }
 
 .novo-modal__card-label {
   font-size: 16px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text);
+  text-align: center;
 }
