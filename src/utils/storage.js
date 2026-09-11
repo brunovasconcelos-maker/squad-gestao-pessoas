@@ -38,6 +38,28 @@ export function addItem(name, item) {
   return newItem
 }
 
+export function removeItems(name, ids) {
+  const idSet = new Set(ids)
+  const items = getCollection(name).filter((item) => !idSet.has(item.id))
+  writeCollection(name, items)
+  return items
+}
+
+export function duplicateItems(name, ids) {
+  const idSet = new Set(ids)
+  const items = getCollection(name)
+  const duplicates = items
+    .filter((item) => idSet.has(item.id))
+    .map((item) => ({
+      ...item,
+      id: generateId(),
+      name: `${item.name} (cópia)`,
+    }))
+  const updated = [...items, ...duplicates]
+  writeCollection(name, updated)
+  return updated
+}
+
 function ensureSeeded(name, seedFactory) {
   if (readCollection(name) !== null) return
   writeCollection(name, seedFactory())

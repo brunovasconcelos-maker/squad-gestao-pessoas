@@ -3,6 +3,7 @@ import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
 import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/Close.svg'
 import squareIcon from '../assets/icons/Square.svg'
+import checkSquareIcon from '../assets/icons/CheckSquare.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
@@ -37,7 +38,7 @@ function SortableHeaderCell({ label, active, onClick }) {
   )
 }
 
-function CollaboratorsTable({ collaborators }) {
+function CollaboratorsTable({ collaborators, selectedIds, onToggleSelect }) {
   const [sortColumn, setSortColumn] = useState(null)
 
   const toggleSort = (column) => {
@@ -92,11 +93,28 @@ function CollaboratorsTable({ collaborators }) {
       <div className="collaborators-table__body">
         {sortedCollaborators.map((collaborator) => {
           const activeSince = getActiveSince(collaborator)
+          const isSelected = selectedIds.has(collaborator.id)
           return (
-            <div className="collaborators-table__row" key={collaborator.id}>
-              <div className="collaborators-table__checkbox-cell">
-                <img src={squareIcon} width={24} height={24} alt="" />
-              </div>
+            <div
+              className={
+                isSelected
+                  ? 'collaborators-table__row collaborators-table__row--selected'
+                  : 'collaborators-table__row'
+              }
+              key={collaborator.id}
+            >
+              <button
+                type="button"
+                className="collaborators-table__checkbox-cell"
+                onClick={() => onToggleSelect(collaborator.id)}
+              >
+                <img
+                  src={isSelected ? checkSquareIcon : squareIcon}
+                  width={24}
+                  height={24}
+                  alt=""
+                />
+              </button>
               <div className="collaborators-table__cell collaborators-table__cell--nome">
                 {collaborator.name}
               </div>

@@ -5,9 +5,15 @@ import Tabs from '../components/Tabs.jsx'
 import CollaboradoresToolbar from '../components/CollaboradoresToolbar.jsx'
 import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
 import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
+import BulkActionBar from '../components/BulkActionBar.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
-import { getCollection, COLLECTIONS } from '../utils/storage.js'
+import {
+  getCollection,
+  removeItems,
+  duplicateItems,
+  COLLECTIONS,
+} from '../utils/storage.js'
 import './Home.css'
 
 const TABS = [
@@ -22,7 +28,36 @@ function Home() {
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
   const [view, setView] = useState('table')
-  const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
+  const [collaborators, setCollaborators] = useState(() =>
+    getCollection(COLLECTIONS.COLABORADORES),
+  )
+  const [selectedIds, setSelectedIds] = useState(() => new Set())
+
+  const toggleSelect = (id) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const clearSelection = () => setSelectedIds(new Set())
+
+  const handleDelete = () => {
+    const updated = removeItems(COLLECTIONS.COLABORADORES, [...selectedIds])
+    setCollaborators(updated)
+    clearSelection()
+  }
+
+  const handleDuplicate = () => {
+    const updated = duplicateItems(COLLECTIONS.COLABORADORES, [...selectedIds])
+    setCollaborators(updated)
+    clearSelection()
+  }
 
   if (addCollaboratorFlowOpen) {
     return (
@@ -48,9 +83,17 @@ function Home() {
                 onViewChange={setView}
               />
               {view === 'table' ? (
-                <CollaboratorsTable collaborators={collaborators} />
+                <CollaboratorsTable
+                  collaborators={collaborators}
+                  selectedIds={selectedIds}
+                  onToggleSelect={toggleSelect}
+                />
               ) : (
-                <CollaboratorsGrid collaborators={collaborators} />
+                <CollaboratorsGrid
+                  collaborators={collaborators}
+                  selectedIds={selectedIds}
+                  onToggleSelect={toggleSelect}
+                />
               )}
             </div>
           ) : (
@@ -68,6 +111,13 @@ function Home() {
           }}
         />
       )}
+
+      <BulkActionBar
+        count={selectedIds.size}
+        onDuplicate={handleDuplicate}
+        onDelete={handleDelete}
+        onClose={clearSelection}
+      />
     </div>
   )
 }
