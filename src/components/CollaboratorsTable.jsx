@@ -38,11 +38,29 @@ function SortableHeaderCell({ label, active, onClick }) {
   )
 }
 
-function CollaboratorsTable({ collaborators, selectedIds, onToggleSelect }) {
+function CollaboratorsTable({
+  collaborators,
+  selectedIds,
+  onToggleSelect,
+  onSelectAll,
+  onDeselectAll,
+}) {
   const [sortColumn, setSortColumn] = useState(null)
 
   const toggleSort = (column) => {
     setSortColumn((prev) => (prev === column ? null : column))
+  }
+
+  const allIds = collaborators.map((collaborator) => collaborator.id)
+  const selectedCount = allIds.filter((id) => selectedIds.has(id)).length
+  const allSelected = allIds.length > 0 && selectedCount === allIds.length
+
+  const handleHeaderCheckboxClick = () => {
+    if (allSelected) {
+      onDeselectAll()
+    } else {
+      onSelectAll(allIds)
+    }
   }
 
   let sortedCollaborators = collaborators
@@ -64,9 +82,18 @@ function CollaboratorsTable({ collaborators, selectedIds, onToggleSelect }) {
   return (
     <div className="collaborators-table">
       <div className="collaborators-table__header">
-        <div className="collaborators-table__checkbox-cell">
-          <img src={squareIcon} width={24} height={24} alt="" />
-        </div>
+        <button
+          type="button"
+          className="collaborators-table__checkbox-cell"
+          onClick={handleHeaderCheckboxClick}
+        >
+          <img
+            src={allSelected ? checkSquareIcon : squareIcon}
+            width={24}
+            height={24}
+            alt=""
+          />
+        </button>
         <SortableHeaderCell
           label="Nome"
           active={sortColumn === 'nome'}

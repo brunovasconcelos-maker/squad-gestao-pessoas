@@ -47,6 +47,8 @@ function Home() {
 
   const clearSelection = () => setSelectedIds(new Set())
 
+  const selectAll = (ids) => setSelectedIds(new Set(ids))
+
   const handleDelete = () => {
     const updated = removeItems(COLLECTIONS.COLABORADORES, [...selectedIds])
     setCollaborators(updated)
@@ -87,6 +89,8 @@ function Home() {
                   collaborators={collaborators}
                   selectedIds={selectedIds}
                   onToggleSelect={toggleSelect}
+                  onSelectAll={selectAll}
+                  onDeselectAll={clearSelection}
                 />
               ) : (
                 <CollaboratorsGrid
