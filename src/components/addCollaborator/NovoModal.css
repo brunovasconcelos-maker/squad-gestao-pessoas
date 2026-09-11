@@ -82,43 +82,45 @@
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
 }
 
-.novo-modal__sticker {
+.novo-modal__sticker,
+.novo-modal__sticker-group {
   position: absolute;
+  transform: rotate(var(--sticker-rotate, 0deg));
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.novo-modal__sticker,
+.novo-modal__circle {
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   border: 1px solid #ffffff;
-  border-radius: 16px;
-  box-shadow: 0px 2px 0px rgba(0, 0, 0, 0.07);
-  transform: rotate(var(--sticker-rotate, 0deg));
-  transition: transform 0.25s ease;
+  box-shadow: 0px 2.011px 0px rgba(0, 0, 0, 0.07);
 }
 
-.novo-modal__sticker img {
+.novo-modal__circle {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.novo-modal__sticker img,
+.novo-modal__circle img {
   width: 56%;
   height: 56%;
   object-fit: contain;
 }
 
-.novo-modal__card:hover .novo-modal__sticker:nth-child(1) {
-  transform: rotate(calc(var(--sticker-rotate) - 3deg));
-  transition-delay: 0s;
-}
-
-.novo-modal__card:hover .novo-modal__sticker:nth-child(2) {
-  transform: rotate(calc(var(--sticker-rotate) + 3deg));
-  transition-delay: 0.06s;
-}
-
-.novo-modal__card:hover .novo-modal__sticker:nth-child(3) {
-  transform: rotate(calc(var(--sticker-rotate) - 2deg));
-  transition-delay: 0.12s;
+.novo-modal__card:hover .novo-modal__sticker,
+.novo-modal__card:hover .novo-modal__sticker-group {
+  transform: rotate(calc(var(--sticker-rotate, 0deg) + var(--wiggle-offset, 10deg)));
+  transition-delay: var(--wiggle-delay, 0s);
 }
 
 .novo-modal__card-label {
+  width: 129px;
   font-size: 16px;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
   color: var(--color-text);
   text-align: center;
 }
