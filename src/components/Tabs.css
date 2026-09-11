@@ -21,5 +21,5 @@
 }
 
 .tabs__item--active {
-  border-bottom-color: var(--color-accent-blue);
+  border-bottom-color: var(--color-text);
 }
