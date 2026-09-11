@@ -18,6 +18,14 @@
   border-radius: 8px;
 }
 
+.collaborator-card:hover {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
+
+.collaborator-card--selected {
+  background: var(--color-overlay);
+}
+
 .collaborator-card__top-row {
   display: flex;
   align-items: center;
@@ -31,6 +39,9 @@
   justify-content: flex-start;
   width: 40px;
   height: 40px;
+  border: none;
+  background: none;
+  padding: 0;
 }
 
 .collaborator-card__avatar {

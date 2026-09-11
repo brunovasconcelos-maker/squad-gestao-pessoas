@@ -1,0 +1,50 @@
+.bulk-action-bar {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 21px;
+  background: var(--color-bg);
+  border-radius: 12px;
+  padding: 12px 24px;
+  box-shadow: 0px 0px 25.7px rgba(0, 0, 0, 0.12);
+  z-index: 100;
+}
+
+.bulk-action-bar__count {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.bulk-action-bar__button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg);
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.bulk-action-bar__button--danger {
+  color: #ff2633;
+}
+
+.bulk-action-bar__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+}
