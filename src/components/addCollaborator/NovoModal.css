@@ -79,6 +79,7 @@
 }
 
 .novo-modal__card:hover .novo-modal__illustration {
+  background: #e3e6e6;
   box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
 }
 
@@ -115,6 +116,15 @@
 .novo-modal__card:hover .novo-modal__sticker-group {
   transform: rotate(calc(var(--sticker-rotate, 0deg) + var(--wiggle-offset, 10deg)));
   transition-delay: var(--wiggle-delay, 0s);
+}
+
+.novo-modal__sticker--nested {
+  transform: none;
+}
+
+.novo-modal__card:hover .novo-modal__sticker--nested {
+  transform: none;
+  transition-delay: 0s;
 }
 
 .novo-modal__card-label {
