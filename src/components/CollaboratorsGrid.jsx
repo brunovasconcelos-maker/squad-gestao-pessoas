@@ -1,5 +1,6 @@
 import userIcon from '../assets/icons/User.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
+import squareIcon from '../assets/icons/Square.svg'
 import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
 import './CollaboratorsGrid.css'
@@ -10,7 +11,9 @@ function CollaboratorsGrid({ collaborators }) {
       {collaborators.map((collaborator) => (
         <div className="collaborator-card" key={collaborator.id}>
           <div className="collaborator-card__top-row">
-            <div className="collaborator-card__spacer" />
+            <div className="collaborator-card__checkbox">
+              <img src={squareIcon} width={24} height={24} alt="" />
+            </div>
             <div className="collaborator-card__avatar">
               <img src={userIcon} width={20} height={20} alt="" />
             </div>
