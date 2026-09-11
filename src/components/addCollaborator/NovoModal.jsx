@@ -1,7 +1,6 @@
 import closeIcon from '../../assets/icons/Close.svg'
 import badgeStickerIcon from '../../assets/illustrations/Vector.svg'
-import plusStickerIcon from '../../assets/illustrations/+.svg'
-import plusAccentStickerIcon from '../../assets/illustrations/+-1.svg'
+import plusStickerIcon from '../../assets/illustrations/+-1.svg'
 import teamStickerIcon1 from '../../assets/illustrations/User.svg'
 import teamStickerIcon2 from '../../assets/illustrations/User-1.svg'
 import teamStickerIcon3 from '../../assets/illustrations/User-2.svg'
@@ -18,6 +17,7 @@ const WHITE = 'var(--color-bg)'
 
 const WIGGLE_OFFSETS = [-10, 10, -9, 11]
 const WIGGLE_DELAYS = [0, 0.06, 0.12, 0.18]
+const BENEFICIO_STICKER_SIZE = 45
 
 function stickerStyle(sticker, index) {
   return {
@@ -94,25 +94,25 @@ const OPTIONS = [
     stickers: [
       {
         src: giftStickerIcon,
-        size: 47.364,
-        left: 64.67,
-        top: 37.5,
+        size: BENEFICIO_STICKER_SIZE,
+        left: 55,
+        top: 40,
         rotate: -17.07,
         bg: YELLOW,
       },
       {
         src: cardStickerIcon,
-        size: 38.637,
-        left: 80.89,
-        top: 85.32,
+        size: BENEFICIO_STICKER_SIZE,
+        left: 68,
+        top: 60,
         rotate: -1.11,
         bg: YELLOW,
       },
       {
         src: dollarStickerIcon,
-        size: 43.115,
-        left: 40,
-        top: 63.01,
+        size: BENEFICIO_STICKER_SIZE,
+        left: 48,
+        top: 62,
         rotate: 8.53,
         bg: WHITE,
       },
@@ -127,63 +127,66 @@ const TIME_TEAM_ICONS = [
   teamStickerIcon4,
 ]
 const TIME_CIRCLE_SIZE = 34.722
+const TIME_CIRCLE_GAP = 3.7
+const TIME_CLUSTER_SIZE = TIME_CIRCLE_SIZE * 2 + TIME_CIRCLE_GAP
 const TIME_CIRCLE_POSITIONS = [
   { left: 0, top: 0 },
-  { left: 81.62, top: 3.7 },
-  { left: 3.7, top: 51.428 },
-  { left: 77.92, top: 47.728 },
+  { left: TIME_CIRCLE_SIZE + TIME_CIRCLE_GAP, top: 0 },
+  { left: 0, top: TIME_CIRCLE_SIZE + TIME_CIRCLE_GAP },
+  { left: TIME_CIRCLE_SIZE + TIME_CIRCLE_GAP, top: TIME_CIRCLE_SIZE + TIME_CIRCLE_GAP },
 ]
-const TIME_GROUP = { left: 22, top: 37.5, width: 116.342, height: 86.15, rotate: 7.23 }
-const TIME_ACCENT = { size: 30.181, left: 65.71, top: 64.48, rotate: 7.23, bg: WHITE }
+const TIME_GROUP = {
+  left: (160 - TIME_CLUSTER_SIZE) / 2,
+  top: (160 - TIME_CLUSTER_SIZE) / 2,
+  size: TIME_CLUSTER_SIZE,
+  rotate: 7.23,
+}
+const TIME_ACCENT_SIZE = 30.181
+const TIME_ACCENT_OFFSET = (TIME_CLUSTER_SIZE - TIME_ACCENT_SIZE) / 2
 
 function TimeIllustration() {
   return (
-    <>
-      <div
-        className="novo-modal__sticker-group"
-        style={{
-          left: TIME_GROUP.left,
-          top: TIME_GROUP.top,
-          width: TIME_GROUP.width,
-          height: TIME_GROUP.height,
-          '--sticker-rotate': `${TIME_GROUP.rotate}deg`,
-          '--wiggle-offset': `${WIGGLE_OFFSETS[0]}deg`,
-          '--wiggle-delay': `${WIGGLE_DELAYS[0]}s`,
-        }}
-      >
-        {TIME_TEAM_ICONS.map((icon, index) => (
-          <span
-            className="novo-modal__circle"
-            key={index}
-            style={{
-              width: TIME_CIRCLE_SIZE,
-              height: TIME_CIRCLE_SIZE,
-              left: TIME_CIRCLE_POSITIONS[index].left,
-              top: TIME_CIRCLE_POSITIONS[index].top,
-              background: YELLOW,
-            }}
-          >
-            <img src={icon} alt="" />
-          </span>
-        ))}
-      </div>
+    <div
+      className="novo-modal__sticker-group"
+      style={{
+        left: TIME_GROUP.left,
+        top: TIME_GROUP.top,
+        width: TIME_GROUP.size,
+        height: TIME_GROUP.size,
+        '--sticker-rotate': `${TIME_GROUP.rotate}deg`,
+        '--wiggle-offset': `${WIGGLE_OFFSETS[0]}deg`,
+        '--wiggle-delay': `${WIGGLE_DELAYS[0]}s`,
+      }}
+    >
+      {TIME_TEAM_ICONS.map((icon, index) => (
+        <span
+          className="novo-modal__circle"
+          key={index}
+          style={{
+            width: TIME_CIRCLE_SIZE,
+            height: TIME_CIRCLE_SIZE,
+            left: TIME_CIRCLE_POSITIONS[index].left,
+            top: TIME_CIRCLE_POSITIONS[index].top,
+            background: YELLOW,
+          }}
+        >
+          <img src={icon} alt="" />
+        </span>
+      ))}
       <span
-        className="novo-modal__sticker"
+        className="novo-modal__sticker novo-modal__sticker--nested"
         style={{
-          width: TIME_ACCENT.size,
-          height: TIME_ACCENT.size,
-          left: TIME_ACCENT.left,
-          top: TIME_ACCENT.top,
-          background: TIME_ACCENT.bg,
-          borderRadius: TIME_ACCENT.size / 3,
-          '--sticker-rotate': `${TIME_ACCENT.rotate}deg`,
-          '--wiggle-offset': `${WIGGLE_OFFSETS[1]}deg`,
-          '--wiggle-delay': `${WIGGLE_DELAYS[1]}s`,
+          width: TIME_ACCENT_SIZE,
+          height: TIME_ACCENT_SIZE,
+          left: TIME_ACCENT_OFFSET,
+          top: TIME_ACCENT_OFFSET,
+          background: WHITE,
+          borderRadius: TIME_ACCENT_SIZE / 3,
         }}
       >
-        <img src={plusAccentStickerIcon} alt="" />
+        <img src={plusStickerIcon} alt="" />
       </span>
-    </>
+    </div>
   )
 }
 
