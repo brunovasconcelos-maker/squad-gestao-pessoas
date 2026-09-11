@@ -19,6 +19,15 @@ function CollaboradoresToolbar({ total, view, onViewChange }) {
           <img src={slidersHorizontalIcon} width={24} height={24} alt="" />
         </button>
 
+        <div className="colaboradores-toolbar__search">
+          <img src={searchIcon} width={20} height={20} alt="" />
+          <input
+            type="text"
+            className="colaboradores-toolbar__search-input"
+            placeholder="Pesquisar por um colaborador..."
+          />
+        </div>
+
         <div className="colaboradores-toolbar__view-toggle">
           <button
             type="button"
@@ -52,15 +61,6 @@ function CollaboradoresToolbar({ total, view, onViewChange }) {
               alt="Visualização em tabela"
             />
           </button>
-        </div>
-
-        <div className="colaboradores-toolbar__search">
-          <img src={searchIcon} width={20} height={20} alt="" />
-          <input
-            type="text"
-            className="colaboradores-toolbar__search-input"
-            placeholder="Pesquisar por um colaborador..."
-          />
         </div>
       </div>
     </div>

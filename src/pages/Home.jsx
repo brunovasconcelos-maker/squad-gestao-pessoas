@@ -34,27 +34,29 @@ function Home() {
     <div className="home">
       <Sidebar />
       <main className="home__content">
-        <PageHeader
-          title="Gestão de Pessoas"
-          onNovoClick={() => setNovoModalOpen(true)}
-        />
-        <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
-        {activeTab === 'colaboradores' ? (
-          <div className="home__panel">
-            <CollaboradoresToolbar
-              total={collaborators.length}
-              view={view}
-              onViewChange={setView}
-            />
-            {view === 'table' ? (
-              <CollaboratorsTable collaborators={collaborators} />
-            ) : (
-              <CollaboratorsGrid collaborators={collaborators} />
-            )}
-          </div>
-        ) : (
-          <div className="home__panel" />
-        )}
+        <div className="home__inner">
+          <PageHeader
+            title="Gestão de Pessoas"
+            onNovoClick={() => setNovoModalOpen(true)}
+          />
+          <Tabs tabs={TABS} activeTab={activeTab} onChange={setActiveTab} />
+          {activeTab === 'colaboradores' ? (
+            <div className="home__panel">
+              <CollaboradoresToolbar
+                total={collaborators.length}
+                view={view}
+                onViewChange={setView}
+              />
+              {view === 'table' ? (
+                <CollaboratorsTable collaborators={collaborators} />
+              ) : (
+                <CollaboratorsGrid collaborators={collaborators} />
+              )}
+            </div>
+          ) : (
+            <div className="home__panel" />
+          )}
+        </div>
       </main>
 
       {novoModalOpen && (
