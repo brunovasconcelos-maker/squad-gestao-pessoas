@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import Tabs from '../components/Tabs.jsx'
@@ -23,6 +23,14 @@ const TABS = [
   { id: 'beneficios', label: 'Benefícios' },
 ]
 
+function createEmptyColumnFilters() {
+  return {
+    time: new Set(),
+    cargo: new Set(),
+    atividade: new Set(),
+  }
+}
+
 function Home() {
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
@@ -32,6 +40,52 @@ function Home() {
     getCollection(COLLECTIONS.COLABORADORES),
   )
   const [selectedIds, setSelectedIds] = useState(() => new Set())
+  const [searchQuery, setSearchQuery] = useState('')
+  const [columnFilters, setColumnFilters] = useState(createEmptyColumnFilters)
+
+  const toggleFilterOption = (column, value) => {
+    setColumnFilters((prev) => {
+      const next = new Set(prev[column])
+      if (next.has(value)) {
+        next.delete(value)
+      } else {
+        next.add(value)
+      }
+      return { ...prev, [column]: next }
+    })
+  }
+
+  const clearFilter = (column) => {
+    setColumnFilters((prev) => ({ ...prev, [column]: new Set() }))
+  }
+
+  const filteredCollaborators = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    return collaborators.filter((collaborator) => {
+      if (query && !collaborator.name.toLowerCase().includes(query)) {
+        return false
+      }
+      if (
+        columnFilters.time.size > 0 &&
+        !collaborator.times.some((time) => columnFilters.time.has(time))
+      ) {
+        return false
+      }
+      if (
+        columnFilters.cargo.size > 0 &&
+        !collaborator.cargos.some((cargo) => columnFilters.cargo.has(cargo))
+      ) {
+        return false
+      }
+      if (
+        columnFilters.atividade.size > 0 &&
+        !columnFilters.atividade.has(collaborator.contractType)
+      ) {
+        return false
+      }
+      return true
+    })
+  }, [collaborators, searchQuery, columnFilters])
 
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
@@ -83,18 +137,23 @@ function Home() {
                 total={collaborators.length}
                 view={view}
                 onViewChange={setView}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
               />
               {view === 'table' ? (
                 <CollaboratorsTable
-                  collaborators={collaborators}
+                  collaborators={filteredCollaborators}
                   selectedIds={selectedIds}
                   onToggleSelect={toggleSelect}
                   onSelectAll={selectAll}
                   onDeselectAll={clearSelection}
+                  columnFilters={columnFilters}
+                  onToggleFilterOption={toggleFilterOption}
+                  onClearFilter={clearFilter}
                 />
               ) : (
                 <CollaboratorsGrid
-                  collaborators={collaborators}
+                  collaborators={filteredCollaborators}
                   selectedIds={selectedIds}
                   onToggleSelect={toggleSelect}
                 />

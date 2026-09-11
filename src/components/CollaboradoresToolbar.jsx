@@ -6,7 +6,13 @@ import rowsEmptIcon from '../assets/icons/RowsEmpt.svg'
 import searchIcon from '../assets/icons/Search.svg'
 import './CollaboradoresToolbar.css'
 
-function CollaboradoresToolbar({ total, view, onViewChange }) {
+function CollaboradoresToolbar({
+  total,
+  view,
+  onViewChange,
+  searchQuery,
+  onSearchChange,
+}) {
   return (
     <div className="colaboradores-toolbar">
       <span className="colaboradores-toolbar__total">
@@ -25,6 +31,8 @@ function CollaboradoresToolbar({ total, view, onViewChange }) {
             type="text"
             className="colaboradores-toolbar__search-input"
             placeholder="Pesquisar por um colaborador..."
+            value={searchQuery}
+            onChange={(event) => onSearchChange(event.target.value)}
           />
         </div>
 

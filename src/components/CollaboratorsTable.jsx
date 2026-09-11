@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
 import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/Close.svg'
@@ -8,13 +8,10 @@ import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
 import { formatShortDatePt } from '../utils/formatters.js'
+import { getCollection, COLLECTIONS } from '../utils/storage.js'
 import './CollaboratorsTable.css'
 
-const FILTER_COLUMNS = [
-  { id: 'time', label: 'Time' },
-  { id: 'cargo', label: 'Cargo' },
-  { id: 'atividade', label: 'Atividade' },
-]
+const ATIVIDADE_OPTIONS = ['Freelancer', 'Consultor', 'Desligado']
 
 function getActiveSince(collaborator) {
   return collaborator.dataAdmissao ?? collaborator.dataInicioContrato ?? null
@@ -38,14 +35,97 @@ function SortableHeaderCell({ label, active, onClick }) {
   )
 }
 
+function FilterHeaderCell({
+  label,
+  options,
+  selected,
+  isOpen,
+  onHeaderClick,
+  onToggleOption,
+  containerRef,
+}) {
+  const icon = isOpen || selected.size > 0 ? closeIcon : caretDownIcon
+  return (
+    <div className="collaborators-table__header-filter" ref={containerRef}>
+      <button
+        type="button"
+        className="collaborators-table__header-cell collaborators-table__header-cell--button"
+        onClick={onHeaderClick}
+      >
+        <span>{label}</span>
+        <img src={icon} width={16} height={16} alt="" />
+      </button>
+      {isOpen && (
+        <div className="collaborators-table__filter-dropdown">
+          {options.map((option) => {
+            const checked = selected.has(option)
+            return (
+              <button
+                type="button"
+                className="collaborators-table__filter-option"
+                onClick={() => onToggleOption(option)}
+                key={option}
+              >
+                <img
+                  src={checked ? checkSquareIcon : squareIcon}
+                  width={20}
+                  height={20}
+                  alt=""
+                />
+                <span>{option}</span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function CollaboratorsTable({
   collaborators,
   selectedIds,
   onToggleSelect,
   onSelectAll,
   onDeselectAll,
+  columnFilters,
+  onToggleFilterOption,
+  onClearFilter,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
+  const [openColumn, setOpenColumn] = useState(null)
+  const containerRefs = useRef({})
+
+  const timeOptions = useMemo(
+    () => getCollection(COLLECTIONS.TIMES).map((item) => item.name),
+    [],
+  )
+  const cargoOptions = useMemo(
+    () => getCollection(COLLECTIONS.CARGOS).map((item) => item.name),
+    [],
+  )
+
+  useEffect(() => {
+    if (openColumn === null) return
+    function handleClickOutside(event) {
+      const ref = containerRefs.current[openColumn]
+      if (ref && !ref.contains(event.target)) {
+        setOpenColumn(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [openColumn])
+
+  const handleHeaderClick = (columnId) => {
+    if (openColumn === columnId) {
+      setOpenColumn(null)
+    } else if (columnFilters[columnId].size > 0) {
+      onClearFilter(columnId)
+    } else {
+      setOpenColumn(columnId)
+    }
+  }
 
   const toggleSort = (column) => {
     setSortColumn((prev) => (prev === column ? null : column))
@@ -99,21 +179,44 @@ function CollaboratorsTable({
           active={sortColumn === 'nome'}
           onClick={() => toggleSort('nome')}
         />
-        {FILTER_COLUMNS.slice(0, 2).map((column) => (
-          <div className="collaborators-table__header-cell" key={column.id}>
-            <span>{column.label}</span>
-            <img src={caretDownIcon} width={16} height={16} alt="" />
-          </div>
-        ))}
+        <FilterHeaderCell
+          label="Time"
+          options={timeOptions}
+          selected={columnFilters.time}
+          isOpen={openColumn === 'time'}
+          onHeaderClick={() => handleHeaderClick('time')}
+          onToggleOption={(option) => onToggleFilterOption('time', option)}
+          containerRef={(el) => {
+            containerRefs.current.time = el
+          }}
+        />
+        <FilterHeaderCell
+          label="Cargo"
+          options={cargoOptions}
+          selected={columnFilters.cargo}
+          isOpen={openColumn === 'cargo'}
+          onHeaderClick={() => handleHeaderClick('cargo')}
+          onToggleOption={(option) => onToggleFilterOption('cargo', option)}
+          containerRef={(el) => {
+            containerRefs.current.cargo = el
+          }}
+        />
         <SortableHeaderCell
           label="Ativo desde"
           active={sortColumn === 'ativo-desde'}
           onClick={() => toggleSort('ativo-desde')}
         />
-        <div className="collaborators-table__header-cell">
-          <span>{FILTER_COLUMNS[2].label}</span>
-          <img src={caretDownIcon} width={16} height={16} alt="" />
-        </div>
+        <FilterHeaderCell
+          label="Atividade"
+          options={ATIVIDADE_OPTIONS}
+          selected={columnFilters.atividade}
+          isOpen={openColumn === 'atividade'}
+          onHeaderClick={() => handleHeaderClick('atividade')}
+          onToggleOption={(option) => onToggleFilterOption('atividade', option)}
+          containerRef={(el) => {
+            containerRefs.current.atividade = el
+          }}
+        />
         <div className="collaborators-table__header-spacer" />
       </div>
 
