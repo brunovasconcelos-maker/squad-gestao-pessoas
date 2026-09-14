@@ -90,41 +90,14 @@
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.novo-modal__sticker,
-.novo-modal__circle {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #ffffff;
-  box-shadow: 0px 2.011px 0px rgba(0, 0, 0, 0.07);
-}
-
-.novo-modal__circle {
+.novo-modal__nested-sticker {
   position: absolute;
-  border-radius: 50%;
-}
-
-.novo-modal__sticker img,
-.novo-modal__circle img {
-  width: 56%;
-  height: 56%;
-  object-fit: contain;
 }
 
 .novo-modal__card:hover .novo-modal__sticker,
 .novo-modal__card:hover .novo-modal__sticker-group {
   transform: rotate(calc(var(--sticker-rotate, 0deg) + var(--wiggle-offset, 10deg)));
   transition-delay: var(--wiggle-delay, 0s);
-}
-
-.novo-modal__sticker--nested {
-  transform: none;
-}
-
-.novo-modal__card:hover .novo-modal__sticker--nested {
-  transform: none;
-  transition-delay: 0s;
 }
 
 .novo-modal__card-label {
