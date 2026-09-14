@@ -44,7 +44,11 @@ function Home() {
   const [selectedIds, setSelectedIds] = useState(() => new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [columnFilters, setColumnFilters] = useState(createEmptyColumnFilters)
-  const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
+  // Read fresh on every render (not cached in state) so the Times tab always
+  // reflects the current localStorage contents, including teams created via
+  // the quick-create flow in a collaborator's Time modal after this page
+  // already mounted.
+  const times = getCollection(COLLECTIONS.TIMES)
   const [timesSearchQuery, setTimesSearchQuery] = useState('')
 
   const toggleFilterOption = (column, value) => {
