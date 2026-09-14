@@ -64,13 +64,21 @@ const OPTIONS = [
 ]
 
 const TIME_AVATAR_SIZE = 34.722
-const TIME_AVATAR_POSITIONS = [
-  { left: 0, top: 0 },
-  { left: 81.62, top: 3.7 },
-  { left: 3.7, top: 51.428 },
-  { left: 77.92, top: 47.728 },
-]
+const TIME_AVATAR_OVERLAP = 3.5
+const TIME_AVATAR_STEP = TIME_AVATAR_SIZE - TIME_AVATAR_OVERLAP
 const TIME_GROUP = { left: 22, top: 37.5, width: 116.342, height: 86.15, rotate: 7.23 }
+
+// The 4 circles form a tight, overlapping 2x2 cluster centered within the
+// group's own bounding box, rather than spanning its corners.
+const TIME_CLUSTER_SIZE = TIME_AVATAR_SIZE + TIME_AVATAR_STEP
+const TIME_CLUSTER_OFFSET_X = (TIME_GROUP.width - TIME_CLUSTER_SIZE) / 2
+const TIME_CLUSTER_OFFSET_Y = (TIME_GROUP.height - TIME_CLUSTER_SIZE) / 2
+const TIME_AVATAR_POSITIONS = [
+  { left: TIME_CLUSTER_OFFSET_X, top: TIME_CLUSTER_OFFSET_Y },
+  { left: TIME_CLUSTER_OFFSET_X + TIME_AVATAR_STEP, top: TIME_CLUSTER_OFFSET_Y },
+  { left: TIME_CLUSTER_OFFSET_X, top: TIME_CLUSTER_OFFSET_Y + TIME_AVATAR_STEP },
+  { left: TIME_CLUSTER_OFFSET_X + TIME_AVATAR_STEP, top: TIME_CLUSTER_OFFSET_Y + TIME_AVATAR_STEP },
+]
 const TIME_ACCENT = { size: 30.181, left: 65.71, top: 64.48, rotate: 7.23 }
 
 function TimeIllustration() {
