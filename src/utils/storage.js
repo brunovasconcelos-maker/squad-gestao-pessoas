@@ -76,12 +76,50 @@ export function seedInitialData() {
       'Head de Marketing',
     ].map((name) => ({ id: generateId(), name, pending: false })),
   )
+}
 
-  ensureSeeded(COLLECTIONS.TIMES, () =>
-    ['Design', 'Vendas', 'Marketing'].map((name) => ({
-      id: generateId(),
-      name,
-      pending: false,
-    })),
-  )
+// One-time cleanup for browsers whose "times" collection was seeded by an
+// earlier version of seedInitialData with example data ("Design", "Vendas",
+// "Marketing", all pending: false). That seed has been removed; this undoes
+// its effects wherever it already ran, without touching times created for
+// real. Naturally a no-op once a given browser's storage no longer matches
+// the old seed signature, so it's safe to run on every load.
+const LEGACY_SEEDED_TIME_NAMES = ['Vendas', 'Marketing']
+
+export function cleanupLegacySeedTimes() {
+  const times = readCollection(COLLECTIONS.TIMES)
+  if (times === null) return
+
+  const colaboradores = readCollection(COLLECTIONS.COLABORADORES) ?? []
+  const hasMembers = (teamName) =>
+    colaboradores.some(
+      (colaborador) =>
+        Array.isArray(colaborador.times) && colaborador.times.includes(teamName),
+    )
+
+  let changed = false
+
+  const withoutLegacySeeds = times.filter((time) => {
+    const isLegacySeedSignature =
+      LEGACY_SEEDED_TIME_NAMES.includes(time.name) &&
+      !time.pending &&
+      !hasMembers(time.name)
+    if (isLegacySeedSignature) {
+      changed = true
+      return false
+    }
+    return true
+  })
+
+  const withDesignPendingFixed = withoutLegacySeeds.map((time) => {
+    if (time.name === 'Design' && !time.pending) {
+      changed = true
+      return { ...time, pending: true }
+    }
+    return time
+  })
+
+  if (changed) {
+    writeCollection(COLLECTIONS.TIMES, withDesignPendingFixed)
+  }
 }
