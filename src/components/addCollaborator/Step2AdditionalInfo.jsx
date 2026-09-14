@@ -187,6 +187,13 @@ function Step2AdditionalInfo({ name, contractType, onBack, onExit, onContinue })
               </button>
             )
           })}
+          <div className="step2__row">
+            <span className="step2__row-label">Foto</span>
+            <span className="step2__row-action">Adicionar</span>
+            <span className="step2__row-icon">
+              <img src={caretRightIcon} alt="" width={24} height={24} />
+            </span>
+          </div>
         </div>
       </div>
 
