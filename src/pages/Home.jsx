@@ -5,6 +5,8 @@ import Tabs from '../components/Tabs.jsx'
 import CollaboradoresToolbar from '../components/CollaboradoresToolbar.jsx'
 import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
 import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
+import TimesToolbar from '../components/TimesToolbar.jsx'
+import TimesGrid from '../components/TimesGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
@@ -42,6 +44,8 @@ function Home() {
   const [selectedIds, setSelectedIds] = useState(() => new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [columnFilters, setColumnFilters] = useState(createEmptyColumnFilters)
+  const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
+  const [timesSearchQuery, setTimesSearchQuery] = useState('')
 
   const toggleFilterOption = (column, value) => {
     setColumnFilters((prev) => {
@@ -86,6 +90,23 @@ function Home() {
       return true
     })
   }, [collaborators, searchQuery, columnFilters])
+
+  const teamsWithCounts = useMemo(() => {
+    return times.map((team) => ({
+      ...team,
+      memberCount: collaborators.filter((collaborator) =>
+        collaborator.times.includes(team.name),
+      ).length,
+    }))
+  }, [times, collaborators])
+
+  const filteredTeams = useMemo(() => {
+    const query = timesSearchQuery.trim().toLowerCase()
+    if (!query) return teamsWithCounts
+    return teamsWithCounts.filter((team) =>
+      team.name.toLowerCase().includes(query),
+    )
+  }, [teamsWithCounts, timesSearchQuery])
 
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
@@ -158,6 +179,15 @@ function Home() {
                   onToggleSelect={toggleSelect}
                 />
               )}
+            </div>
+          ) : activeTab === 'times' ? (
+            <div className="home__panel">
+              <TimesToolbar
+                total={times.length}
+                searchQuery={timesSearchQuery}
+                onSearchChange={setTimesSearchQuery}
+              />
+              <TimesGrid teams={filteredTeams} />
             </div>
           ) : (
             <div className="home__panel" />
