@@ -34,10 +34,10 @@
   background: #fbedd0;
 }
 
-.time-card__pending-actions {
+.time-card__left-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .time-card__pending-pill {

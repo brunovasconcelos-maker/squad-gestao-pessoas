@@ -14,18 +14,25 @@ function TimesGrid({ teams }) {
           key={team.id}
         >
           <div className="time-card__top-row">
-            <div className="time-card__icon-badge">
-              <img src={usersFourIcon} width={24} height={24} alt="" />
-            </div>
             {team.pending ? (
-              <div className="time-card__pending-actions">
-                <span className="time-card__pending-pill">Pendente</span>
+              <>
+                <div className="time-card__left-group">
+                  <div className="time-card__icon-badge">
+                    <img src={usersFourIcon} width={24} height={24} alt="" />
+                  </div>
+                  <span className="time-card__pending-pill">Pendente</span>
+                </div>
                 <button type="button" className="time-card__criar-time-button">
                   Criar time
                 </button>
-              </div>
+              </>
             ) : (
-              <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+              <>
+                <div className="time-card__icon-badge">
+                  <img src={usersFourIcon} width={24} height={24} alt="" />
+                </div>
+                <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+              </>
             )}
           </div>
           <div className="time-card__info">
