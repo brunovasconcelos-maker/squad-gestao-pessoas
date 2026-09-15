@@ -1,4 +1,5 @@
 import usersFourIcon from '../assets/icons/UsersFour.svg'
+import pencilRulerIcon from '../assets/icons/PencilRuler.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
 import './TimesGrid.css'
@@ -6,41 +7,42 @@ import './TimesGrid.css'
 function TimesGrid({ teams }) {
   return (
     <div className="times-grid">
-      {teams.map((team) => (
-        <div
-          className={
-            team.pending ? 'time-card time-card--pending' : 'time-card'
-          }
-          key={team.id}
-        >
-          <div className="time-card__top-row">
-            {team.pending ? (
-              <>
-                <div className="time-card__left-group">
-                  <div className="time-card__icon-badge">
-                    <img src={usersFourIcon} width={24} height={24} alt="" />
-                  </div>
-                  <span className="time-card__pending-pill">Pendente</span>
-                </div>
-                <button type="button" className="time-card__criar-time-button">
-                  Criar time
-                </button>
-              </>
-            ) : (
-              <>
-                <div className="time-card__icon-badge">
+      {teams.map((team) =>
+        team.pending ? (
+          <div className="time-card time-card--pending" key={team.id}>
+            <div className="time-card__top-row">
+              <div className="time-card__icon-cluster">
+                <div className="time-card__sticker time-card__sticker--back">
                   <img src={usersFourIcon} width={24} height={24} alt="" />
                 </div>
-                <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
-              </>
-            )}
+                <div className="time-card__sticker time-card__sticker--front">
+                  <img src={pencilRulerIcon} width={24} height={24} alt="" />
+                </div>
+              </div>
+              <button type="button" className="time-card__criar-time-button">
+                Criar time
+              </button>
+            </div>
+            <div className="time-card__bottom-row">
+              <span className="time-card__pending-name">{team.name}</span>
+              <span className="time-card__count">{team.memberCount} pessoas</span>
+            </div>
           </div>
-          <div className="time-card__info">
-            <span className="time-card__name">{team.name}</span>
-            <span className="time-card__count">{team.memberCount} pessoas</span>
+        ) : (
+          <div className="time-card" key={team.id}>
+            <div className="time-card__top-row">
+              <div className="time-card__icon-badge">
+                <img src={usersFourIcon} width={24} height={24} alt="" />
+              </div>
+              <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+            </div>
+            <div className="time-card__info">
+              <span className="time-card__name">{team.name}</span>
+              <span className="time-card__count">{team.memberCount} pessoas</span>
+            </div>
           </div>
-        </div>
-      ))}
+        )
+      )}
     </div>
   )
 }
