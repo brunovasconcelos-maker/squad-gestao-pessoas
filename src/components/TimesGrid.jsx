@@ -1,4 +1,5 @@
 import usersFourIcon from '../assets/icons/UsersFour.svg'
+import usersFourGrayIcon from '../assets/icons/UsersFourGray.svg'
 import pencilRulerIcon from '../assets/icons/PencilRuler.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
@@ -13,7 +14,7 @@ function TimesGrid({ teams }) {
             <div className="time-card__top-row">
               <div className="time-card__icon-cluster">
                 <div className="time-card__sticker time-card__sticker--back">
-                  <img src={usersFourIcon} width={24} height={24} alt="" />
+                  <img src={usersFourGrayIcon} width={24} height={24} alt="" />
                 </div>
                 <div className="time-card__sticker time-card__sticker--front">
                   <img src={pencilRulerIcon} width={24} height={24} alt="" />

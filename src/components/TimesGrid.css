@@ -48,8 +48,8 @@
 
 .time-card__icon-cluster {
   position: relative;
-  width: 93px;
-  height: 85px;
+  width: 103px;
+  height: 95px;
 }
 
 .time-card__sticker {
@@ -73,8 +73,8 @@
 }
 
 .time-card__sticker--front {
-  top: 22px;
-  left: 30px;
+  top: 32px;
+  left: 40px;
   transform: rotate(-8.04deg);
   z-index: 2;
 }
