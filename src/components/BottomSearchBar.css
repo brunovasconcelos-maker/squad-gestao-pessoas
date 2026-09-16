@@ -94,6 +94,6 @@
   padding: 0;
 }
 
-.bottom-search-bar__pipo-action--send {
-  background: #5d4309;
+.bottom-search-bar__pipo-action--transparent {
+  background: transparent;
 }
