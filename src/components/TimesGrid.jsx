@@ -28,6 +28,9 @@ function TimesGrid({ teams }) {
               <span className="time-card__pending-name">{team.name}</span>
               <span className="time-card__count">{team.memberCount} pessoas</span>
             </div>
+            <svg className="time-card__dashed-border" aria-hidden="true">
+              <rect className="time-card__dashed-border-rect" />
+            </svg>
           </div>
         ) : (
           <div className="time-card" key={team.id}>
