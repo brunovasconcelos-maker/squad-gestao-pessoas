@@ -14,7 +14,7 @@ function MultiSelectFieldModal({
   onSave,
   onClose,
 }) {
-  const [items, setItems] = useState(() => getCollection(collectionName))
+  const [items] = useState(() => getCollection(collectionName))
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(() => new Set(value))
 
@@ -44,9 +44,8 @@ function MultiSelectFieldModal({
 
   const handleCreate = () => {
     const newItem = addItem(collectionName, { name: trimmedQuery, pending: true })
-    setItems((prev) => [...prev, newItem])
-    setSelected((prev) => new Set(prev).add(newItem.name))
-    setQuery('')
+    const nextSelected = new Set(selected).add(newItem.name)
+    onSave(Array.from(nextSelected))
   }
 
   return (
