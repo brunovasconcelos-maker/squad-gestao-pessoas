@@ -1,11 +1,13 @@
 .bulk-action-bar {
   position: fixed;
   left: calc(50vw + 38px);
-  bottom: 28px;
+  bottom: 24px;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 21px;
+  height: 64px;
+  box-sizing: border-box;
   background: var(--color-bg);
   border-radius: 360px;
   padding: 12px 24px;

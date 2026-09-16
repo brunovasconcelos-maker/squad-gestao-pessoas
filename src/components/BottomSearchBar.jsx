@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import magnifyingGlassIcon from '../assets/icons/MagnifyingGlassGray.svg'
 import closeIcon from '../assets/icons/Close.svg'
 import microphoneIcon from '../assets/icons/Microphone.svg'
+import paperPlaneRightIcon from '../assets/icons/PaperPlaneRight.svg'
 import pipoAvatarImage from '../assets/illustrations/Pipo.png'
 import './BottomSearchBar.css'
 
@@ -104,7 +105,12 @@ function BottomSearchBar({ activeTab, onSearchChange }) {
       {mode === 'pipo' && (
         <>
           <button type="button" className="bottom-search-bar__pipo-action">
-            <img src={microphoneIcon} width={20} height={20} alt="" />
+            <img
+              src={value ? paperPlaneRightIcon : microphoneIcon}
+              width={20}
+              height={20}
+              alt=""
+            />
           </button>
           <button
             type="button"

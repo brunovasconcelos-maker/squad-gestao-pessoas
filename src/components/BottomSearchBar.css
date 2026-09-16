@@ -1,12 +1,13 @@
 .bottom-search-bar {
   position: fixed;
   left: calc(50vw + 38px);
-  bottom: 28px;
+  bottom: 24px;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 8px;
   width: 468px;
+  height: 64px;
   box-sizing: border-box;
   padding: 12px 16px;
   border-radius: 360px;
@@ -91,7 +92,6 @@
   box-sizing: border-box;
   border-radius: 360px;
   background: #f6dca2;
-  border: 1px solid rgba(255, 255, 255, 0.4);
 }
 
 .bottom-search-bar__pipo-avatar img {
