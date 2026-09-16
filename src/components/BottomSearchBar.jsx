@@ -13,6 +13,8 @@ const PLACEHOLDERS = {
   beneficios: 'Buscar um benefício...',
 }
 
+const PIPO_PLACEHOLDER = 'Pergunte ao Pipo...'
+
 function BottomSearchBar({ activeTab, onSearchChange }) {
   const [mode, setMode] = useState('default')
   const [value, setValue] = useState('')
@@ -56,27 +58,23 @@ function BottomSearchBar({ activeTab, onSearchChange }) {
           : 'bottom-search-bar'
       }
     >
-      {mode === 'pipo' ? (
-        <div className="bottom-search-bar__pipo-avatar-wrapper">
-          <div className="bottom-search-bar__pipo-avatar">
-            <img src={pipoAvatarImage} alt="" />
-          </div>
-        </div>
-      ) : (
-        <img
-          className="bottom-search-bar__icon"
-          src={magnifyingGlassIcon}
-          width={20}
-          height={20}
-          alt=""
-        />
-      )}
+      <div className="bottom-search-bar__icon-frame">
+        {mode === 'pipo' ? (
+          <img
+            className="bottom-search-bar__pipo-avatar"
+            src={pipoAvatarImage}
+            alt=""
+          />
+        ) : (
+          <img src={magnifyingGlassIcon} width={20} height={20} alt="" />
+        )}
+      </div>
 
       <input
         ref={inputRef}
         type="text"
         className="bottom-search-bar__input"
-        placeholder={PLACEHOLDERS[activeTab]}
+        placeholder={mode === 'pipo' ? PIPO_PLACEHOLDER : PLACEHOLDERS[activeTab]}
         value={value}
         onChange={handleChange}
         onFocus={handleFocus}
@@ -104,7 +102,14 @@ function BottomSearchBar({ activeTab, onSearchChange }) {
 
       {mode === 'pipo' && (
         <>
-          <button type="button" className="bottom-search-bar__pipo-action">
+          <button
+            type="button"
+            className={
+              value
+                ? 'bottom-search-bar__pipo-action bottom-search-bar__pipo-action--send'
+                : 'bottom-search-bar__pipo-action'
+            }
+          >
             <img
               src={value ? paperPlaneRightIcon : microphoneIcon}
               width={20}
