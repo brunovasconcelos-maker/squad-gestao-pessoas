@@ -176,7 +176,12 @@ function Home() {
 
   if (addCollaboratorFlowOpen) {
     return (
-      <AddCollaboratorFlow onExit={() => setAddCollaboratorFlowOpen(false)} />
+      <AddCollaboratorFlow
+        onExit={() => {
+          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
+          setAddCollaboratorFlowOpen(false)
+        }}
+      />
     )
   }
 
