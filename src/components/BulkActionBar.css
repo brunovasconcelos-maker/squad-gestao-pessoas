@@ -20,6 +20,12 @@
   white-space: nowrap;
 }
 
+.bulk-action-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
 .bulk-action-bar__button {
   display: flex;
   align-items: center;
