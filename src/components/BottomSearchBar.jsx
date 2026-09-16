@@ -104,11 +104,7 @@ function BottomSearchBar({ activeTab, onSearchChange }) {
         <>
           <button
             type="button"
-            className={
-              value
-                ? 'bottom-search-bar__pipo-action bottom-search-bar__pipo-action--send'
-                : 'bottom-search-bar__pipo-action'
-            }
+            className="bottom-search-bar__pipo-action bottom-search-bar__pipo-action--transparent"
           >
             <img
               src={value ? paperPlaneRightIcon : microphoneIcon}
