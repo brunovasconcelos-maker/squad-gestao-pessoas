@@ -8,6 +8,7 @@ import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
+import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import {
@@ -49,7 +50,6 @@ function Home() {
   // the quick-create flow in a collaborator's Time modal after this page
   // already mounted.
   const times = getCollection(COLLECTIONS.TIMES)
-  const [timesSearchQuery, setTimesSearchQuery] = useState('')
 
   const toggleFilterOption = (column, value) => {
     setColumnFilters((prev) => {
@@ -105,12 +105,12 @@ function Home() {
   }, [times, collaborators])
 
   const filteredTeams = useMemo(() => {
-    const query = timesSearchQuery.trim().toLowerCase()
+    const query = searchQuery.trim().toLowerCase()
     if (!query) return teamsWithCounts
     return teamsWithCounts.filter((team) =>
       team.name.toLowerCase().includes(query),
     )
-  }, [teamsWithCounts, timesSearchQuery])
+  }, [teamsWithCounts, searchQuery])
 
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
@@ -162,8 +162,6 @@ function Home() {
                 total={collaborators.length}
                 view={view}
                 onViewChange={setView}
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
               />
               {view === 'table' ? (
                 <CollaboratorsTable
@@ -186,11 +184,7 @@ function Home() {
             </div>
           ) : activeTab === 'times' ? (
             <div className="home__panel">
-              <TimesToolbar
-                total={times.length}
-                searchQuery={timesSearchQuery}
-                onSearchChange={setTimesSearchQuery}
-              />
+              <TimesToolbar total={times.length} />
               <TimesGrid teams={filteredTeams} />
             </div>
           ) : (
@@ -209,12 +203,20 @@ function Home() {
         />
       )}
 
-      <BulkActionBar
-        count={selectedIds.size}
-        onDuplicate={handleDuplicate}
-        onDelete={handleDelete}
-        onClose={clearSelection}
-      />
+      {selectedIds.size > 0 ? (
+        <BulkActionBar
+          count={selectedIds.size}
+          onDuplicate={handleDuplicate}
+          onDelete={handleDelete}
+          onClose={clearSelection}
+        />
+      ) : (
+        <BottomSearchBar
+          key={activeTab}
+          activeTab={activeTab}
+          onSearchChange={setSearchQuery}
+        />
+      )}
     </div>
   )
 }

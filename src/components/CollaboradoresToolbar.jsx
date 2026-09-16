@@ -3,16 +3,9 @@ import squaresFourIcon from '../assets/icons/SquaresFour.svg'
 import squaresFourEmptIcon from '../assets/icons/SquaresFourEmpt.svg'
 import rowsIcon from '../assets/icons/Rows.svg'
 import rowsEmptIcon from '../assets/icons/RowsEmpt.svg'
-import searchIcon from '../assets/icons/Search.svg'
 import './CollaboradoresToolbar.css'
 
-function CollaboradoresToolbar({
-  total,
-  view,
-  onViewChange,
-  searchQuery,
-  onSearchChange,
-}) {
+function CollaboradoresToolbar({ total, view, onViewChange }) {
   return (
     <div className="colaboradores-toolbar">
       <span className="colaboradores-toolbar__total">
@@ -24,17 +17,6 @@ function CollaboradoresToolbar({
           Filtros
           <img src={slidersHorizontalIcon} width={24} height={24} alt="" />
         </button>
-
-        <div className="colaboradores-toolbar__search">
-          <img src={searchIcon} width={20} height={20} alt="" />
-          <input
-            type="text"
-            className="colaboradores-toolbar__search-input"
-            placeholder="Pesquisar por um colaborador..."
-            value={searchQuery}
-            onChange={(event) => onSearchChange(event.target.value)}
-          />
-        </div>
 
         <div className="colaboradores-toolbar__view-toggle">
           <button
