@@ -10,23 +10,25 @@ function BulkActionBar({ count, onDuplicate, onDelete, onClose }) {
     <div className="bulk-action-bar">
       <span className="bulk-action-bar__count">{count} selecionados</span>
 
-      <button
-        type="button"
-        className="bulk-action-bar__button"
-        onClick={onDuplicate}
-      >
-        Duplicar
-        <img src={copySimpleIcon} width={24} height={24} alt="" />
-      </button>
+      <div className="bulk-action-bar__actions">
+        <button
+          type="button"
+          className="bulk-action-bar__button"
+          onClick={onDuplicate}
+        >
+          Duplicar
+          <img src={copySimpleIcon} width={24} height={24} alt="" />
+        </button>
 
-      <button
-        type="button"
-        className="bulk-action-bar__button bulk-action-bar__button--danger"
-        onClick={onDelete}
-      >
-        Deletar
-        <img src={trashIcon} width={24} height={24} alt="" />
-      </button>
+        <button
+          type="button"
+          className="bulk-action-bar__button bulk-action-bar__button--danger"
+          onClick={onDelete}
+        >
+          Deletar
+          <img src={trashIcon} width={24} height={24} alt="" />
+        </button>
+      </div>
 
       <button
         type="button"

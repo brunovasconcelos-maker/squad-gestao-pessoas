@@ -82,12 +82,22 @@
 }
 
 .bottom-search-bar__pipo-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   width: 32px;
   height: 32px;
   box-sizing: border-box;
   border-radius: 360px;
   background: #f6dca2;
   border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.bottom-search-bar__pipo-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .bottom-search-bar__pipo-action {

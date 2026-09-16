@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
-import magnifyingGlassIcon from '../assets/icons/MagnifyingGlass.svg'
+import magnifyingGlassIcon from '../assets/icons/MagnifyingGlassGray.svg'
 import closeIcon from '../assets/icons/Close.svg'
 import microphoneIcon from '../assets/icons/Microphone.svg'
+import pipoAvatarImage from '../assets/illustrations/Pipo.png'
 import './BottomSearchBar.css'
 
 const PLACEHOLDERS = {
@@ -56,14 +57,16 @@ function BottomSearchBar({ activeTab, onSearchChange }) {
     >
       {mode === 'pipo' ? (
         <div className="bottom-search-bar__pipo-avatar-wrapper">
-          <div className="bottom-search-bar__pipo-avatar" />
+          <div className="bottom-search-bar__pipo-avatar">
+            <img src={pipoAvatarImage} alt="" />
+          </div>
         </div>
       ) : (
         <img
           className="bottom-search-bar__icon"
           src={magnifyingGlassIcon}
-          width={40}
-          height={40}
+          width={20}
+          height={20}
           alt=""
         />
       )}
