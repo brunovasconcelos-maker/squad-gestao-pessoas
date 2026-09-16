@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
 import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/Close.svg'
@@ -8,11 +8,7 @@ import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
 import { formatShortDatePt } from '../utils/formatters.js'
-import {
-  getCollection,
-  getCollaboratorActiveSince,
-  COLLECTIONS,
-} from '../utils/storage.js'
+import { getCollaboratorActiveSince } from '../utils/storage.js'
 import './CollaboratorsTable.css'
 
 function SortableHeaderCell({ label, active, onClick }) {
@@ -89,20 +85,13 @@ function CollaboratorsTable({
   columnFilters,
   onToggleFilterOption,
   onClearFilter,
+  timeOptions,
+  cargoOptions,
   atividadeOptions,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
   const containerRefs = useRef({})
-
-  const timeOptions = useMemo(
-    () => getCollection(COLLECTIONS.TIMES).map((item) => item.name),
-    [],
-  )
-  const cargoOptions = useMemo(
-    () => getCollection(COLLECTIONS.CARGOS).map((item) => item.name),
-    [],
-  )
 
   useEffect(() => {
     if (openColumn === null) return

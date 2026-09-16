@@ -57,9 +57,25 @@ function Home() {
   // the quick-create flow in a collaborator's Time modal after this page
   // already mounted.
   const times = getCollection(COLLECTIONS.TIMES)
-  const cargos = getCollection(COLLECTIONS.CARGOS)
-  const timeOptions = times.map((item) => item.name)
-  const cargoOptions = cargos.map((item) => item.name)
+
+  // Only teams/cargos actually assigned to at least one collaborator are
+  // valid filter options - a team or cargo that exists in storage but has
+  // nobody in it yet shouldn't appear as something to filter by.
+  const timeOptions = useMemo(() => {
+    const set = new Set()
+    collaborators.forEach((collaborator) =>
+      collaborator.times.forEach((name) => set.add(name)),
+    )
+    return Array.from(set)
+  }, [collaborators])
+
+  const cargoOptions = useMemo(() => {
+    const set = new Set()
+    collaborators.forEach((collaborator) =>
+      collaborator.cargos.forEach((name) => set.add(name)),
+    )
+    return Array.from(set)
+  }, [collaborators])
 
   const toggleFilterOption = (column, value) => {
     setColumnFilters((prev) => {
@@ -215,6 +231,8 @@ function Home() {
                   columnFilters={columnFilters}
                   onToggleFilterOption={toggleFilterOption}
                   onClearFilter={clearFilter}
+                  timeOptions={timeOptions}
+                  cargoOptions={cargoOptions}
                   atividadeOptions={ATIVIDADE_OPTIONS}
                 />
               ) : (

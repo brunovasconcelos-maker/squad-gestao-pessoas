@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import closeIcon from '../assets/icons/Close.svg'
+import closeIconWhite from '../assets/icons/CloseWhite.svg'
 import calendarBlankIcon from '../assets/icons/CalendarBlank.svg'
 import IconButton from './IconButton.jsx'
 import { formatDateDMonthYear } from '../utils/formatters.js'
@@ -40,7 +41,7 @@ function FilterPill({ selected, onClick, children }) {
       onClick={onClick}
     >
       {children}
-      {selected && <img src={closeIcon} width={20} height={20} alt="" />}
+      {selected && <img src={closeIconWhite} width={20} height={20} alt="" />}
     </button>
   )
 }
