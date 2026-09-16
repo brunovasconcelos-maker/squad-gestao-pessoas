@@ -19,6 +19,10 @@ function writeCollection(name, items) {
   localStorage.setItem(name, JSON.stringify(items))
 }
 
+export function getCollaboratorActiveSince(collaborator) {
+  return collaborator.dataAdmissao ?? collaborator.dataInicioContrato ?? null
+}
+
 export function generateId() {
   return `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`
 }

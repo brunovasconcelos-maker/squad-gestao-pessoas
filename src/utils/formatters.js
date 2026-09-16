@@ -46,6 +46,11 @@ export function formatShortDatePt(isoDate) {
   return `${MONTHS_PT_SHORT[month - 1]} ${String(year).slice(-2)}`
 }
 
+export function formatDateDMonthYear(isoDate) {
+  const [year, month, day] = isoDate.split('-').map(Number)
+  return `${day} ${MONTHS_PT_SHORT[month - 1]} ${year}`
+}
+
 export function centsToAmount(digits) {
   if (!digits) return 0
   return parseInt(digits, 10) / 100
