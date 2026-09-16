@@ -9,14 +9,17 @@ import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
+import FiltrosPanel from '../components/FiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import {
   getCollection,
+  getCollaboratorActiveSince,
   removeItems,
   duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
+import { formatDateDMonthYear } from '../utils/formatters.js'
 import './Home.css'
 
 const TABS = [
@@ -26,11 +29,14 @@ const TABS = [
   { id: 'beneficios', label: 'Benefícios' },
 ]
 
+const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
+
 function createEmptyColumnFilters() {
   return {
     time: new Set(),
     cargo: new Set(),
     atividade: new Set(),
+    periodo: { start: null, end: null },
   }
 }
 
@@ -45,11 +51,15 @@ function Home() {
   const [selectedIds, setSelectedIds] = useState(() => new Set())
   const [searchQuery, setSearchQuery] = useState('')
   const [columnFilters, setColumnFilters] = useState(createEmptyColumnFilters)
+  const [filtrosPanelOpen, setFiltrosPanelOpen] = useState(false)
   // Read fresh on every render (not cached in state) so the Times tab always
   // reflects the current localStorage contents, including teams created via
   // the quick-create flow in a collaborator's Time modal after this page
   // already mounted.
   const times = getCollection(COLLECTIONS.TIMES)
+  const cargos = getCollection(COLLECTIONS.CARGOS)
+  const timeOptions = times.map((item) => item.name)
+  const cargoOptions = cargos.map((item) => item.name)
 
   const toggleFilterOption = (column, value) => {
     setColumnFilters((prev) => {
@@ -91,9 +101,33 @@ function Home() {
       ) {
         return false
       }
+      const { start, end } = columnFilters.periodo
+      if (start || end) {
+        const activeSince = getCollaboratorActiveSince(collaborator)
+        if (!activeSince) return false
+        if (start && activeSince < start) return false
+        if (end && activeSince > end) return false
+      }
       return true
     })
   }, [collaborators, searchQuery, columnFilters])
+
+  const filtersSummary = useMemo(() => {
+    const parts = [
+      ...columnFilters.time,
+      ...columnFilters.cargo,
+      ...columnFilters.atividade,
+    ]
+    if (columnFilters.periodo.start) {
+      parts.push(formatDateDMonthYear(columnFilters.periodo.start))
+    }
+    if (columnFilters.periodo.end) {
+      parts.push(formatDateDMonthYear(columnFilters.periodo.end))
+    }
+    return parts.join(', ')
+  }, [columnFilters])
+
+  const clearAllFilters = () => setColumnFilters(createEmptyColumnFilters())
 
   const teamsWithCounts = useMemo(() => {
     return times.map((team) => ({
@@ -162,6 +196,9 @@ function Home() {
                 total={collaborators.length}
                 view={view}
                 onViewChange={setView}
+                onFiltrosClick={() => setFiltrosPanelOpen(true)}
+                filtersSummary={filtersSummary}
+                onClearAllFilters={clearAllFilters}
               />
               {view === 'table' ? (
                 <CollaboratorsTable
@@ -173,6 +210,7 @@ function Home() {
                   columnFilters={columnFilters}
                   onToggleFilterOption={toggleFilterOption}
                   onClearFilter={clearFilter}
+                  atividadeOptions={ATIVIDADE_OPTIONS}
                 />
               ) : (
                 <CollaboratorsGrid
@@ -202,6 +240,16 @@ function Home() {
           }}
         />
       )}
+
+      <FiltrosPanel
+        isOpen={filtrosPanelOpen}
+        onClose={() => setFiltrosPanelOpen(false)}
+        filters={columnFilters}
+        onSave={setColumnFilters}
+        timeOptions={timeOptions}
+        cargoOptions={cargoOptions}
+        atividadeOptions={ATIVIDADE_OPTIONS}
+      />
 
       {selectedIds.size > 0 ? (
         <BulkActionBar

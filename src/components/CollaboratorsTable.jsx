@@ -8,14 +8,12 @@ import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
 import { formatShortDatePt } from '../utils/formatters.js'
-import { getCollection, COLLECTIONS } from '../utils/storage.js'
+import {
+  getCollection,
+  getCollaboratorActiveSince,
+  COLLECTIONS,
+} from '../utils/storage.js'
 import './CollaboratorsTable.css'
-
-const ATIVIDADE_OPTIONS = ['Freelancer', 'Consultor', 'Desligado']
-
-function getActiveSince(collaborator) {
-  return collaborator.dataAdmissao ?? collaborator.dataInicioContrato ?? null
-}
 
 function SortableHeaderCell({ label, active, onClick }) {
   return (
@@ -91,6 +89,7 @@ function CollaboratorsTable({
   columnFilters,
   onToggleFilterOption,
   onClearFilter,
+  atividadeOptions,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -150,8 +149,8 @@ function CollaboratorsTable({
     )
   } else if (sortColumn === 'ativo-desde') {
     sortedCollaborators = [...collaborators].sort((a, b) => {
-      const dateA = getActiveSince(a)
-      const dateB = getActiveSince(b)
+      const dateA = getCollaboratorActiveSince(a)
+      const dateB = getCollaboratorActiveSince(b)
       if (dateA === null && dateB === null) return 0
       if (dateA === null) return 1
       if (dateB === null) return -1
@@ -208,7 +207,7 @@ function CollaboratorsTable({
         />
         <FilterHeaderCell
           label="Atividade"
-          options={ATIVIDADE_OPTIONS}
+          options={atividadeOptions}
           selected={columnFilters.atividade}
           isOpen={openColumn === 'atividade'}
           onHeaderClick={() => handleHeaderClick('atividade')}
@@ -222,7 +221,7 @@ function CollaboratorsTable({
 
       <div className="collaborators-table__body">
         {sortedCollaborators.map((collaborator) => {
-          const activeSince = getActiveSince(collaborator)
+          const activeSince = getCollaboratorActiveSince(collaborator)
           const isSelected = selectedIds.has(collaborator.id)
           return (
             <div

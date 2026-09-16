@@ -3,9 +3,17 @@ import squaresFourIcon from '../assets/icons/SquaresFour.svg'
 import squaresFourEmptIcon from '../assets/icons/SquaresFourEmpt.svg'
 import rowsIcon from '../assets/icons/Rows.svg'
 import rowsEmptIcon from '../assets/icons/RowsEmpt.svg'
+import closeIcon from '../assets/icons/Close.svg'
 import './CollaboradoresToolbar.css'
 
-function CollaboradoresToolbar({ total, view, onViewChange }) {
+function CollaboradoresToolbar({
+  total,
+  view,
+  onViewChange,
+  onFiltrosClick,
+  filtersSummary,
+  onClearAllFilters,
+}) {
   return (
     <div className="colaboradores-toolbar">
       <span className="colaboradores-toolbar__total">
@@ -13,7 +21,26 @@ function CollaboradoresToolbar({ total, view, onViewChange }) {
       </span>
 
       <div className="colaboradores-toolbar__actions">
-        <button type="button" className="colaboradores-toolbar__filtros">
+        {filtersSummary && (
+          <div className="colaboradores-toolbar__filters-summary">
+            <span className="colaboradores-toolbar__filters-summary-text">
+              {filtersSummary}
+            </span>
+            <button
+              type="button"
+              className="colaboradores-toolbar__filters-summary-clear"
+              onClick={onClearAllFilters}
+            >
+              <img src={closeIcon} width={20} height={20} alt="Limpar filtros" />
+            </button>
+          </div>
+        )}
+
+        <button
+          type="button"
+          className="colaboradores-toolbar__filtros"
+          onClick={onFiltrosClick}
+        >
           Filtros
           <img src={slidersHorizontalIcon} width={24} height={24} alt="" />
         </button>
