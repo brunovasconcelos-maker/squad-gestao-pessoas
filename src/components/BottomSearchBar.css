@@ -1,0 +1,104 @@
+.bottom-search-bar {
+  position: fixed;
+  left: calc(50vw + 38px);
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 468px;
+  box-sizing: border-box;
+  padding: 12px 16px;
+  border-radius: 360px;
+  background: var(--color-bg);
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
+  z-index: 100;
+}
+
+.bottom-search-bar--pipo {
+  background: #fdf6e8;
+}
+
+.bottom-search-bar__icon {
+  flex-shrink: 0;
+}
+
+.bottom-search-bar__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.bottom-search-bar__input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.bottom-search-bar__pipo-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  height: 32px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 360px;
+  background: #fbedd0;
+  padding: 2px 12px;
+  font-size: 12px;
+  color: #5d4309;
+  white-space: nowrap;
+}
+
+.bottom-search-bar__close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  padding: 0;
+}
+
+.bottom-search-bar__pipo-avatar-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  padding: 2px;
+}
+
+.bottom-search-bar__pipo-avatar {
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  border-radius: 360px;
+  background: #f6dca2;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.bottom-search-bar__pipo-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 360px;
+  background: #f6dca2;
+  padding: 0;
+}
