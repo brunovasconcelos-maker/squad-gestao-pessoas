@@ -7,6 +7,8 @@ import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
 import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
+import CargosToolbar from '../components/CargosToolbar.jsx'
+import CargosTable from '../components/CargosTable.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
@@ -57,6 +59,8 @@ function Home() {
   // the quick-create flow in a collaborator's Time modal after this page
   // already mounted.
   const times = getCollection(COLLECTIONS.TIMES)
+  const cargos = getCollection(COLLECTIONS.CARGOS)
+  const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
 
   // Only teams/cargos actually assigned to at least one collaborator are
   // valid filter options - a team or cargo that exists in storage but has
@@ -162,6 +166,108 @@ function Home() {
     )
   }, [teamsWithCounts, searchQuery])
 
+  // Every Cargos row is derived from real collaborators - group them by
+  // (cargo name, contract type). A cargo still marked pending (the only kind
+  // the quick-create flow produces today) collapses all its contract types
+  // into a single aggregated row; once a cargo has pending: false, each
+  // contract type in use for that cargo becomes its own row.
+  const cargoRows = useMemo(() => {
+    const cargoRecordByName = new Map(cargos.map((cargo) => [cargo.name, cargo]))
+    const membersByCargoName = new Map()
+    collaborators.forEach((collaborator) => {
+      collaborator.cargos.forEach((cargoName) => {
+        if (!membersByCargoName.has(cargoName)) {
+          membersByCargoName.set(cargoName, [])
+        }
+        membersByCargoName.get(cargoName).push(collaborator)
+      })
+    })
+
+    const rows = []
+    membersByCargoName.forEach((members, cargoName) => {
+      const cargoRecord = cargoRecordByName.get(cargoName)
+      const isPending = cargoRecord ? cargoRecord.pending !== false : true
+
+      if (isPending) {
+        rows.push({
+          id: `${cargoName}::pending`,
+          cargoName,
+          isPendingCargo: true,
+          contractType: null,
+          count: members.length,
+          teamNames: [],
+          salaryMin: null,
+        })
+        return
+      }
+
+      const membersByContractType = new Map()
+      members.forEach((member) => {
+        const contractType = member.contractType || 'Fixo'
+        if (!membersByContractType.has(contractType)) {
+          membersByContractType.set(contractType, [])
+        }
+        membersByContractType.get(contractType).push(member)
+      })
+
+      membersByContractType.forEach((groupMembers, contractType) => {
+        const teamNameSet = new Set()
+        groupMembers.forEach((member) =>
+          member.times.forEach((name) => teamNameSet.add(name)),
+        )
+        rows.push({
+          id: `${cargoName}::${contractType}`,
+          cargoName,
+          isPendingCargo: false,
+          contractType,
+          count: groupMembers.length,
+          teamNames: Array.from(teamNameSet),
+          salaryMin: null,
+        })
+      })
+    })
+
+    return rows
+  }, [collaborators, cargos])
+
+  const filteredCargoRows = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase()
+    return cargoRows.filter((row) => {
+      if (query && !row.cargoName.toLowerCase().includes(query)) {
+        return false
+      }
+      if (
+        columnFilters.atividade.size > 0 &&
+        !columnFilters.atividade.has(row.contractType)
+      ) {
+        return false
+      }
+      if (
+        columnFilters.time.size > 0 &&
+        !row.teamNames.some((name) => columnFilters.time.has(name))
+      ) {
+        return false
+      }
+      return true
+    })
+  }, [cargoRows, searchQuery, columnFilters])
+
+  const toggleCargoSelect = (id) => {
+    setCargoSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  const clearCargoSelection = () => setCargoSelectedIds(new Set())
+
+  const selectAllCargos = (ids) => setCargoSelectedIds(new Set(ids))
+
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -247,6 +353,27 @@ function Home() {
             <div className="home__panel">
               <TimesToolbar total={times.length} />
               <TimesGrid teams={filteredTeams} />
+            </div>
+          ) : activeTab === 'cargos' ? (
+            <div className="home__panel">
+              <CargosToolbar
+                total={cargoRows.length}
+                onFiltrosClick={() => setFiltrosPanelOpen(true)}
+                filtersSummary={filtersSummary}
+                onClearAllFilters={clearAllFilters}
+              />
+              <CargosTable
+                rows={filteredCargoRows}
+                selectedIds={cargoSelectedIds}
+                onToggleSelect={toggleCargoSelect}
+                onSelectAll={selectAllCargos}
+                onDeselectAll={clearCargoSelection}
+                columnFilters={columnFilters}
+                onToggleFilterOption={toggleFilterOption}
+                onClearFilter={clearFilter}
+                timeOptions={timeOptions}
+                atividadeOptions={ATIVIDADE_OPTIONS}
+              />
             </div>
           ) : (
             <div className="home__panel" />
