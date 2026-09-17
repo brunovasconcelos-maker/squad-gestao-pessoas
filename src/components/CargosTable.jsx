@@ -130,7 +130,12 @@ function CargosTable({
   }
 
   let sortedRows = rows
-  if (sortColumn === 'cargo') {
+  if (sortColumn === null) {
+    sortedRows = [...rows].sort((a, b) => {
+      if (a.isPendingCargo === b.isPendingCargo) return 0
+      return a.isPendingCargo ? -1 : 1
+    })
+  } else if (sortColumn === 'cargo') {
     sortedRows = [...rows].sort((a, b) =>
       a.cargoName.localeCompare(b.cargoName, 'pt-BR'),
     )
