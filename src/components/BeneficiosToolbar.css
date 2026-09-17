@@ -1,0 +1,26 @@
+.beneficios-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.beneficios-toolbar__total {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.beneficios-toolbar__filtros {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-bg);
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}

@@ -9,6 +9,8 @@ import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
 import CargosToolbar from '../components/CargosToolbar.jsx'
 import CargosTable from '../components/CargosTable.jsx'
+import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
+import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
@@ -60,6 +62,7 @@ function Home() {
   // already mounted.
   const times = getCollection(COLLECTIONS.TIMES)
   const cargos = getCollection(COLLECTIONS.CARGOS)
+  const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
   const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
 
   // Only teams/cargos actually assigned to at least one collaborator are
@@ -374,6 +377,11 @@ function Home() {
                 timeOptions={timeOptions}
                 atividadeOptions={ATIVIDADE_OPTIONS}
               />
+            </div>
+          ) : activeTab === 'beneficios' ? (
+            <div className="home__panel">
+              <BeneficiosToolbar total={beneficios.length} />
+              <BeneficiosGrid benefits={beneficios} />
             </div>
           ) : (
             <div className="home__panel" />

@@ -2,6 +2,7 @@ export const COLLECTIONS = {
   CARGOS: 'cargos',
   TIMES: 'times',
   COLABORADORES: 'colaboradores',
+  BENEFICIOS: 'beneficios',
 }
 
 function readCollection(name) {
@@ -80,6 +81,44 @@ export function seedInitialData() {
       'Head de Marketing',
     ].map((name) => ({ id: generateId(), name, pending: false })),
   )
+
+  ensureSeeded(COLLECTIONS.BENEFICIOS, () => [
+    {
+      id: generateId(),
+      name: 'Plano de Saude',
+      memberCount: 12,
+      iconType: 'image',
+      image: 'alice',
+    },
+    {
+      id: generateId(),
+      name: 'Vale Refeição',
+      memberCount: 12,
+      iconType: 'image',
+      image: 'caju',
+    },
+    {
+      id: generateId(),
+      name: 'Auxilio Home Office',
+      memberCount: 12,
+      iconType: 'badge',
+      icon: 'desktop',
+    },
+    {
+      id: generateId(),
+      name: 'Gympass',
+      memberCount: 12,
+      iconType: 'image',
+      image: 'gympass',
+    },
+    {
+      id: generateId(),
+      name: 'Vale Transporte',
+      memberCount: 12,
+      iconType: 'badge',
+      icon: 'van',
+    },
+  ])
 }
 
 // One-time cleanup for browsers whose "times" collection was seeded by an
