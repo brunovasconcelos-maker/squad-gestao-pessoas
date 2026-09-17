@@ -12,7 +12,10 @@
   border-radius: 360px;
   padding: 12px 24px;
   box-shadow: 0px 0px 25.7px rgba(0, 0, 0, 0.12);
-  z-index: 100;
+  /* Same layer as BottomSearchBar (see its comment) - below every
+     overlay/modal so it dims along with the rest of the page instead
+     of competing with them. */
+  z-index: 10;
 }
 
 .bulk-action-bar__count {

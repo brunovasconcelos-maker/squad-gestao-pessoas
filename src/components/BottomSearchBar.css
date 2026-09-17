@@ -12,7 +12,11 @@
   border-radius: 360px;
   background: var(--color-bg);
   box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
-  z-index: 100;
+  /* Stays on the same layer as ordinary page content - below every
+     overlay/modal (wizard 50, modal/novo overlays 100, Filtros panel
+     150/151) so it dims and stops being interactive whenever any of
+     them is open, instead of tying with them and winning on DOM order. */
+  z-index: 10;
 }
 
 .bottom-search-bar--pipo {
