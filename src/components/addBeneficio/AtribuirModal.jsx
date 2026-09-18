@@ -4,7 +4,7 @@ import FieldModalShell from '../addCollaborator/FieldModalShell.jsx'
 import Checkbox from '../addCollaborator/Checkbox.jsx'
 import '../addCollaborator/SelectListModal.css'
 
-function AtribuirModal({ people, value, onSave, onClose }) {
+function AtribuirModal({ people, value, assignedElsewhere, onSave, onClose }) {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(() => new Set(value))
 
@@ -44,6 +44,17 @@ function AtribuirModal({ people, value, onSave, onClose }) {
 
       <div className="select-list__list">
         {filtered.map((person) => {
+          const elsewhereValue = assignedElsewhere.get(person.id)
+          if (elsewhereValue) {
+            return (
+              <div className="select-list__item--disabled" key={person.id}>
+                <Checkbox checked={false} />
+                <span className="select-list__item-label">{person.name}</span>
+                <span className="select-list__item-hint">Já atribuído a {elsewhereValue}</span>
+              </div>
+            )
+          }
+
           const checked = selected.has(person.id)
           return (
             <button

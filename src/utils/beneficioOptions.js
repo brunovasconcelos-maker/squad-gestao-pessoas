@@ -1,4 +1,4 @@
-import { Cross, Bus, ForkKnife, Barbell, Tooth, Shield, Gift } from '@phosphor-icons/react'
+import { Stethoscope, Bus, ForkKnife, Barbell, Tooth, Shield, Gift } from '@phosphor-icons/react'
 
 export const BENEFICIO_TYPES = [
   'Plano de Saúde',
@@ -11,7 +11,7 @@ export const BENEFICIO_TYPES = [
 ]
 
 const TYPE_ICON_BY_NAME = {
-  'Plano de Saúde': Cross,
+  'Plano de Saúde': Stethoscope,
   'Vale Transporte': Bus,
   'Vale Alimentação': ForkKnife,
   'Bem-Estar': Barbell,

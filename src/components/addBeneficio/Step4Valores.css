@@ -1,3 +1,7 @@
+.step4__page {
+  padding-bottom: 48px;
+}
+
 .step4__section-label {
   font-size: 16px;
   font-weight: var(--font-weight-medium);

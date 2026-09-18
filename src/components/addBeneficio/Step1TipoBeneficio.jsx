@@ -1,14 +1,9 @@
-import radioButtonIcon from '../../assets/icons/RadioButton.svg'
-import circleIcon from '../../assets/icons/Circle.svg'
 import WizardShell from '../addCollaborator/WizardShell.jsx'
-import { BENEFICIO_TYPES } from '../../utils/beneficioOptions.js'
+import { BENEFICIO_TYPES, getBeneficioTypeIcon } from '../../utils/beneficioOptions.js'
 import '../addCollaborator/buttons.css'
-import '../addCollaborator/Step1BasicInfo.css'
-import '../addCollaborator/RadioListModal.css'
+import './Step1TipoBeneficio.css'
 
-function Step1TipoBeneficio({ tipo, onTipoChange, onExit, onContinue }) {
-  const canContinue = Boolean(tipo)
-
+function Step1TipoBeneficio({ onChoose, onExit }) {
   return (
     <WizardShell
       title="Novo Benefício"
@@ -19,36 +14,23 @@ function Step1TipoBeneficio({ tipo, onTipoChange, onExit, onContinue }) {
           Voltar
         </button>
       }
-      footerRight={
-        <button
-          type="button"
-          className="pill-button"
-          disabled={!canContinue}
-          onClick={onContinue}
-        >
-          Continuar
-        </button>
-      }
     >
-      <div className="step1">
-        <p className="step1__contract-label">Qual o tipo de benefício?</p>
-        <div className="radio-list-modal__options">
-          {BENEFICIO_TYPES.map((option) => {
-            const isSelected = option === tipo
+      <div className="beneficio-tipo">
+        <p className="beneficio-tipo__label">Qual o tipo de benefício?</p>
+        <div className="beneficio-tipo__grid">
+          {BENEFICIO_TYPES.map((tipo) => {
+            const IconComponent = getBeneficioTypeIcon(tipo)
             return (
               <button
                 type="button"
-                key={option}
-                className="radio-list-modal__option"
-                onClick={() => onTipoChange(option)}
+                key={tipo}
+                className="beneficio-tipo__card"
+                onClick={() => onChoose(tipo)}
               >
-                <img
-                  src={isSelected ? radioButtonIcon : circleIcon}
-                  alt=""
-                  width={24}
-                  height={24}
-                />
-                <span className="radio-list-modal__option-label">{option}</span>
+                <span className="beneficio-tipo__card-icon">
+                  <IconComponent size={48} />
+                </span>
+                <span className="beneficio-tipo__card-label">{tipo}</span>
               </button>
             )
           })}
