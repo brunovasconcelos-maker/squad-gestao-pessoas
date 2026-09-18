@@ -1,21 +1,17 @@
-import { useMemo, useState } from 'react'
-import closeIcon from '../../assets/icons/Close.svg'
-import magnifyingGlassIcon from '../../assets/icons/MagnifyingGlass.svg'
+import { useState } from 'react'
+import caretRightIcon from '../../assets/icons/CaretRight.svg'
 import WizardShell from '../addCollaborator/WizardShell.jsx'
+import BeneficiariosModal from './BeneficiariosModal.jsx'
 import '../addCollaborator/buttons.css'
 import '../addCollaborator/Step1BasicInfo.css'
-import '../addCollaborator/SelectListModal.css'
-import './Step3Beneficiarios.css'
+import '../addCollaborator/Step2AdditionalInfo.css'
 
 function Step3Beneficiarios({
   colaboradorIds,
   teamNames,
   cargoNames,
   todaEmpresa,
-  onToggleColaborador,
-  onToggleTeam,
-  onToggleCargo,
-  onToggleTodaEmpresa,
+  onApplySelection,
   collaborators,
   times,
   cargos,
@@ -23,39 +19,10 @@ function Step3Beneficiarios({
   onExit,
   onContinue,
 }) {
-  const [query, setQuery] = useState('')
+  const [modalOpen, setModalOpen] = useState(false)
 
-  const entities = useMemo(() => {
-    const list = [{ type: 'company', key: '__company__', label: 'Toda a empresa' }]
-    collaborators.forEach((collaborator) =>
-      list.push({ type: 'colaborador', key: collaborator.id, label: collaborator.name }),
-    )
-    times.forEach((team) => list.push({ type: 'time', key: team.name, label: `${team.name} (time)` }))
-    cargos.forEach((cargo) => list.push({ type: 'cargo', key: cargo.name, label: `${cargo.name} (cargo)` }))
-    return list
-  }, [collaborators, times, cargos])
-
-  const isSelected = (entity) => {
-    if (entity.type === 'company') return todaEmpresa
-    if (entity.type === 'colaborador') return colaboradorIds.has(entity.key)
-    if (entity.type === 'time') return teamNames.has(entity.key)
-    return cargoNames.has(entity.key)
-  }
-
-  const toggle = (entity) => {
-    if (entity.type === 'company') onToggleTodaEmpresa()
-    else if (entity.type === 'colaborador') onToggleColaborador(entity.key)
-    else if (entity.type === 'time') onToggleTeam(entity.key)
-    else onToggleCargo(entity.key)
-  }
-
-  const trimmedQuery = query.trim().toLowerCase()
-  const available = entities.filter((entity) => !isSelected(entity))
-  const filtered = trimmedQuery
-    ? available.filter((entity) => entity.label.toLowerCase().includes(trimmedQuery))
-    : available
-
-  const chips = entities.filter(isSelected)
+  const totalSelected =
+    colaboradorIds.size + teamNames.size + cargoNames.size + (todaEmpresa ? 1 : 0)
 
   return (
     <WizardShell
@@ -74,63 +41,44 @@ function Step3Beneficiarios({
       }
     >
       <div className="step1">
-        <p className="step3-beneficiarios__section-label">
-          Adicionar colaboradores, times, cargos ou empresa toda
-        </p>
-
-        {chips.length > 0 && (
-          <div className="step3-beneficiarios__chips">
-            {chips.map((chip) => (
-              <span className="step3-beneficiarios__chip" key={`${chip.type}-${chip.key}`}>
-                {chip.label}
-                <button
-                  type="button"
-                  className="step3-beneficiarios__chip-remove"
-                  onClick={() => toggle(chip)}
-                  aria-label={`Remover ${chip.label}`}
-                >
-                  <img src={closeIcon} alt="" width={14} height={14} />
-                </button>
-              </span>
-            ))}
-          </div>
-        )}
-
-        <div className="select-list__search">
-          <input
-            type="text"
-            className="select-list__search-input"
-            placeholder="Buscar por colaborador, time, cargo ou empresa toda..."
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-          />
-          <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
-        </div>
-
-        <div className="select-list__list">
-          {filtered.map((entity) => (
-            <button
-              type="button"
-              key={`${entity.type}-${entity.key}`}
-              className="select-list__item"
-              onClick={() => {
-                toggle(entity)
-                setQuery('')
-              }}
+        <p className="step2__section-label">Beneficiários</p>
+        <div className="step2__list">
+          <button type="button" className="step2__row" onClick={() => setModalOpen(true)}>
+            <span
+              className={
+                totalSelected > 0
+                  ? 'step2__row-label step2__row-label--filled'
+                  : 'step2__row-label'
+              }
             >
-              <span
-                className={
-                  entity.type === 'company'
-                    ? 'select-list__item-label step3-beneficiarios__company-label'
-                    : 'select-list__item-label'
-                }
-              >
-                {entity.label}
-              </span>
-            </button>
-          ))}
+              Adicionar colaboradores, times, cargos ou empresa toda
+            </span>
+            <span className="step2__row-action">
+              {totalSelected > 0 ? `${totalSelected} selecionados` : 'Adicionar'}
+            </span>
+            <span className="step2__row-icon">
+              <img src={caretRightIcon} alt="" width={24} height={24} />
+            </span>
+          </button>
         </div>
       </div>
+
+      {modalOpen && (
+        <BeneficiariosModal
+          colaboradorIds={colaboradorIds}
+          teamNames={teamNames}
+          cargoNames={cargoNames}
+          todaEmpresa={todaEmpresa}
+          collaborators={collaborators}
+          times={times}
+          cargos={cargos}
+          onClose={() => setModalOpen(false)}
+          onSave={(selection) => {
+            onApplySelection(selection)
+            setModalOpen(false)
+          }}
+        />
+      )}
     </WizardShell>
   )
 }

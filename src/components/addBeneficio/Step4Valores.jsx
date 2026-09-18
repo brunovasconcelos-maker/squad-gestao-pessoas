@@ -8,7 +8,7 @@ import AtribuirModal from './AtribuirModal.jsx'
 import LinkModal from './LinkModal.jsx'
 import ContatoFornecedorModal from './ContatoFornecedorModal.jsx'
 import EmailFornecedorModal from './EmailFornecedorModal.jsx'
-import { formatAmountFromDigits } from '../../utils/formatters.js'
+import { formatAmountFromDigits, formatCurrencyBRL, centsToAmount } from '../../utils/formatters.js'
 import '../addCollaborator/buttons.css'
 import '../addCollaborator/Step1BasicInfo.css'
 import '../addCollaborator/Step2AdditionalInfo.css'
@@ -33,6 +33,8 @@ function Step4Valores({
   const [openInfoModal, setOpenInfoModal] = useState(null)
   const closeInfoModal = () => setOpenInfoModal(null)
 
+  const hasMultipleVariants = variants.length > 1
+
   const people = collaborators
     .filter((collaborator) => resolvedBeneficiaryIds.has(collaborator.id))
     .map((collaborator) => ({ id: collaborator.id, name: collaborator.name }))
@@ -40,9 +42,19 @@ function Step4Valores({
   const assignedIds = new Set()
   variants.forEach((variant) => variant.colaboradorIds.forEach((id) => assignedIds.add(id)))
   const unassignedCount = people.filter((person) => !assignedIds.has(person.id)).length
-  const canContinue = unassignedCount === 0
+  const canContinue = hasMultipleVariants ? unassignedCount === 0 : true
 
   const atribuirVariant = variants.find((variant) => variant.id === atribuirVariantId) ?? null
+
+  const buildAssignedElsewhere = (variantId) => {
+    const map = new Map()
+    variants.forEach((variant) => {
+      if (variant.id === variantId) return
+      const display = formatCurrencyBRL(centsToAmount(variant.digits))
+      variant.colaboradorIds.forEach((personId) => map.set(personId, display))
+    })
+    return map
+  }
 
   return (
     <WizardShell
@@ -65,7 +77,7 @@ function Step4Valores({
         </button>
       }
     >
-      <div className="step1">
+      <div className="step1 step4__page">
         <div className="step4__variants">
           <p className="step4__section-label">Valores</p>
 
@@ -84,16 +96,18 @@ function Step4Valores({
                   }
                 />
               </div>
-              <button
-                type="button"
-                className="step4__variant-atribuir"
-                onClick={() => setAtribuirVariantId(variant.id)}
-              >
-                {variant.colaboradorIds.size > 0
-                  ? `Atribuir (${variant.colaboradorIds.size})`
-                  : 'Atribuir'}
-              </button>
-              {variants.length > 1 && (
+              {hasMultipleVariants && (
+                <button
+                  type="button"
+                  className="step4__variant-atribuir"
+                  onClick={() => setAtribuirVariantId(variant.id)}
+                >
+                  {variant.colaboradorIds.size > 0
+                    ? `Atribuir (${variant.colaboradorIds.size})`
+                    : 'Atribuir'}
+                </button>
+              )}
+              {hasMultipleVariants && (
                 <IconButton
                   icon={trashIcon}
                   alt="Remover variante"
@@ -107,9 +121,11 @@ function Step4Valores({
             + Adicionar variante
           </button>
 
-          <p className="step4__counter">
-            {unassignedCount} de {people.length} colaboradores sem valor atribuído
-          </p>
+          {hasMultipleVariants && (
+            <p className="step4__counter">
+              {unassignedCount} de {people.length} colaboradores sem valor atribuído
+            </p>
+          )}
         </div>
 
         <div className="step4__accordion">
@@ -208,6 +224,7 @@ function Step4Valores({
         <AtribuirModal
           people={people}
           value={Array.from(atribuirVariant.colaboradorIds)}
+          assignedElsewhere={buildAssignedElsewhere(atribuirVariant.id)}
           onClose={() => setAtribuirVariantId(null)}
           onSave={(ids) => {
             onAssign(atribuirVariant.id, ids)
