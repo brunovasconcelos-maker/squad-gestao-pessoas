@@ -1,10 +1,28 @@
-import usersFourIcon from '../assets/icons/UsersFour.svg'
 import usersFourGrayIcon from '../assets/icons/UsersFourGray.svg'
 import pencilRulerIcon from '../assets/icons/PencilRuler.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
-import { getTeamIconSrc } from '../utils/teamOptions.js'
+import { getTeamColorTones, getTeamIconComponent } from '../utils/teamOptions.js'
 import './TimesGrid.css'
+
+function TimeCard({ team }) {
+  const { light, dark } = getTeamColorTones(team.color)
+  const IconComponent = getTeamIconComponent(team.icon)
+  return (
+    <div className="time-card">
+      <div className="time-card__top-row">
+        <div className="time-card__icon-badge" style={{ background: light }}>
+          <IconComponent size={24} color={dark} />
+        </div>
+        <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+      </div>
+      <div className="time-card__info">
+        <span className="time-card__name">{team.name}</span>
+        <span className="time-card__count">{team.memberCount} pessoas</span>
+      </div>
+    </div>
+  )
+}
 
 function TimesGrid({ teams, onCriarTime }) {
   return (
@@ -38,26 +56,7 @@ function TimesGrid({ teams, onCriarTime }) {
             </svg>
           </div>
         ) : (
-          <div className="time-card" key={team.id}>
-            <div className="time-card__top-row">
-              <div
-                className="time-card__icon-badge"
-                style={{ background: team.color || '#fbedd0' }}
-              >
-                <img
-                  src={team.icon ? getTeamIconSrc(team.icon) : usersFourIcon}
-                  width={24}
-                  height={24}
-                  alt=""
-                />
-              </div>
-              <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
-            </div>
-            <div className="time-card__info">
-              <span className="time-card__name">{team.name}</span>
-              <span className="time-card__count">{team.memberCount} pessoas</span>
-            </div>
-          </div>
+          <TimeCard team={team} key={team.id} />
         )
       )}
     </div>
