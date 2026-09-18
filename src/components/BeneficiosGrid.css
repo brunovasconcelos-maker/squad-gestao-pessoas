@@ -1,6 +1,6 @@
 .beneficios-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 
@@ -48,11 +48,11 @@
 .beneficio-card__info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
 }
 
 .beneficio-card__name {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }

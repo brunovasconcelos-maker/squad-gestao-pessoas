@@ -113,7 +113,7 @@
 }
 
 .time-card__pending-name {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
 }
