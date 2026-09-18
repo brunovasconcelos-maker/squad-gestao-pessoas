@@ -4,6 +4,8 @@ import vanIcon from '../assets/icons/Van.svg'
 import aliceImage from '../assets/images/Frame 2147223814.png'
 import cajuImage from '../assets/images/Frame 2147223814-1.png'
 import gympassImage from '../assets/images/Frame 2147223814-2.png'
+import { getBeneficioTypeIcon } from '../utils/beneficioOptions.js'
+import { resolveBeneficiaryIds } from '../utils/beneficiarios.js'
 import './BeneficiosGrid.css'
 
 const IMAGE_BY_KEY = {
@@ -17,39 +19,51 @@ const ICON_BY_KEY = {
   van: vanIcon,
 }
 
-function BeneficiosGrid({ benefits }) {
+function BeneficiosGrid({ benefits, collaborators }) {
   return (
     <div className="beneficios-grid">
-      {benefits.map((benefit) => (
-        <div className="beneficio-card" key={benefit.id}>
-          <div className="beneficio-card__top-row">
-            {benefit.iconType === 'image' ? (
-              <div className="beneficio-card__icon-container">
-                <img
-                  className="beneficio-card__image"
-                  src={IMAGE_BY_KEY[benefit.image]}
-                  alt=""
-                />
-              </div>
-            ) : (
-              <div className="beneficio-card__icon-container beneficio-card__icon-container--badge">
-                <img src={ICON_BY_KEY[benefit.icon]} width={24} height={24} alt="" />
-              </div>
-            )}
-            <img
-              className="beneficio-card__arrow"
-              src={arrowUpRightIcon}
-              width={24}
-              height={24}
-              alt=""
-            />
+      {benefits.map((benefit) => {
+        const isCreatedBenefit = Boolean(benefit.tipo)
+        const memberCount = isCreatedBenefit
+          ? resolveBeneficiaryIds(benefit.beneficiarios, collaborators).size
+          : benefit.memberCount
+        const CategoryIcon = isCreatedBenefit ? getBeneficioTypeIcon(benefit.tipo) : null
+
+        return (
+          <div className="beneficio-card" key={benefit.id}>
+            <div className="beneficio-card__top-row">
+              {isCreatedBenefit ? (
+                <div className="beneficio-card__icon-container beneficio-card__icon-container--badge">
+                  <CategoryIcon size={24} />
+                </div>
+              ) : benefit.iconType === 'image' ? (
+                <div className="beneficio-card__icon-container">
+                  <img
+                    className="beneficio-card__image"
+                    src={IMAGE_BY_KEY[benefit.image]}
+                    alt=""
+                  />
+                </div>
+              ) : (
+                <div className="beneficio-card__icon-container beneficio-card__icon-container--badge">
+                  <img src={ICON_BY_KEY[benefit.icon]} width={24} height={24} alt="" />
+                </div>
+              )}
+              <img
+                className="beneficio-card__arrow"
+                src={arrowUpRightIcon}
+                width={24}
+                height={24}
+                alt=""
+              />
+            </div>
+            <div className="beneficio-card__info">
+              <span className="beneficio-card__name">{benefit.name}</span>
+              <span className="beneficio-card__count">{memberCount} pessoas</span>
+            </div>
           </div>
-          <div className="beneficio-card__info">
-            <span className="beneficio-card__name">{benefit.name}</span>
-            <span className="beneficio-card__count">{benefit.memberCount} pessoas</span>
-          </div>
-        </div>
-      ))}
+        )
+      })}
     </div>
   )
 }

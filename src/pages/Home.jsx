@@ -19,6 +19,7 @@ import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
 import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
+import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
 import {
   getCollection,
   setCollection,
@@ -55,6 +56,7 @@ function Home() {
   const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
   const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
   const [novoCargoId, setNovoCargoId] = useState(null)
+  const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
     getCollection(COLLECTIONS.COLABORADORES),
@@ -359,6 +361,14 @@ function Home() {
     )
   }
 
+  if (novoBeneficioFlowOpen) {
+    return (
+      <NovoBeneficioFlow
+        onExit={() => setNovoBeneficioFlowOpen(false)}
+      />
+    )
+  }
+
   return (
     <div className="home">
       <Sidebar />
@@ -440,7 +450,7 @@ function Home() {
           ) : activeTab === 'beneficios' ? (
             <div className="home__panel">
               <BeneficiosToolbar total={beneficios.length} />
-              <BeneficiosGrid benefits={beneficios} />
+              <BeneficiosGrid benefits={beneficios} collaborators={collaborators} />
             </div>
           ) : (
             <div className="home__panel" />
@@ -464,6 +474,10 @@ function Home() {
             setNovoModalOpen(false)
             setNovoCargoId(null)
             setNovoCargoFlowOpen(true)
+          }}
+          onSelectBeneficio={() => {
+            setNovoModalOpen(false)
+            setNovoBeneficioFlowOpen(true)
           }}
         />
       )}
