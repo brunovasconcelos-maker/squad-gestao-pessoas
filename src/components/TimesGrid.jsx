@@ -33,9 +33,17 @@ function IconCluster({ FrontIcon, tone }) {
 }
 
 function TimesGrid({ teams, onCriarTime }) {
+  // Pending drafts always lead the default grid, regardless of creation
+  // order - once a draft is completed via Criar Time, pending flips false
+  // and it falls back into the regular group in normal order.
+  const sortedTeams = [...teams].sort((a, b) => {
+    if (Boolean(a.pending) === Boolean(b.pending)) return 0
+    return a.pending ? -1 : 1
+  })
+
   return (
     <div className="times-grid">
-      {teams.map((team) => {
+      {sortedTeams.map((team) => {
         if (team.pending) {
           const FrontIcon = getTeamIconComponent(guessTeamIconName(team.name))
           return (
