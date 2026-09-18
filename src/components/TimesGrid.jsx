@@ -3,9 +3,10 @@ import usersFourGrayIcon from '../assets/icons/UsersFourGray.svg'
 import pencilRulerIcon from '../assets/icons/PencilRuler.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import IconButton from './IconButton.jsx'
+import { getTeamIconSrc } from '../utils/teamOptions.js'
 import './TimesGrid.css'
 
-function TimesGrid({ teams }) {
+function TimesGrid({ teams, onCriarTime }) {
   return (
     <div className="times-grid">
       {teams.map((team) =>
@@ -20,7 +21,11 @@ function TimesGrid({ teams }) {
                   <img src={pencilRulerIcon} width={24} height={24} alt="" />
                 </div>
               </div>
-              <button type="button" className="time-card__criar-time-button">
+              <button
+                type="button"
+                className="time-card__criar-time-button"
+                onClick={() => onCriarTime(team.id)}
+              >
                 Criar time
               </button>
             </div>
@@ -35,8 +40,16 @@ function TimesGrid({ teams }) {
         ) : (
           <div className="time-card" key={team.id}>
             <div className="time-card__top-row">
-              <div className="time-card__icon-badge">
-                <img src={usersFourIcon} width={24} height={24} alt="" />
+              <div
+                className="time-card__icon-badge"
+                style={{ background: team.color || '#fbedd0' }}
+              >
+                <img
+                  src={team.icon ? getTeamIconSrc(team.icon) : usersFourIcon}
+                  width={24}
+                  height={24}
+                  alt=""
+                />
               </div>
               <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
             </div>

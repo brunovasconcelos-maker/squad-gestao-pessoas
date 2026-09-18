@@ -39,7 +39,7 @@ const OPTIONS = [
   {
     id: 'time',
     label: 'Time',
-    functional: false,
+    functional: true,
     stickers: [],
   },
   {
@@ -152,7 +152,12 @@ function OptionCard({ option, onClick }) {
   )
 }
 
-function NovoModal({ onClose, onSelectColaborador }) {
+function NovoModal({ onClose, onSelectColaborador, onSelectTime }) {
+  const handlersById = {
+    colaborador: onSelectColaborador,
+    time: onSelectTime,
+  }
+
   return (
     <div className="novo-modal-overlay" onClick={onClose}>
       <div className="novo-modal-stack">
@@ -172,7 +177,7 @@ function NovoModal({ onClose, onSelectColaborador }) {
               <OptionCard
                 key={option.id}
                 option={option}
-                onClick={option.functional ? onSelectColaborador : undefined}
+                onClick={option.functional ? handlersById[option.id] : undefined}
               />
             ))}
           </div>

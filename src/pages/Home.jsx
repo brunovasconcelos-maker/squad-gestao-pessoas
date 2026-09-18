@@ -16,6 +16,7 @@ import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
+import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
 import {
   getCollection,
   getCollaboratorActiveSince,
@@ -48,6 +49,8 @@ function Home() {
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
+  const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
+  const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
     getCollection(COLLECTIONS.COLABORADORES),
@@ -310,6 +313,19 @@ function Home() {
     )
   }
 
+  if (novoTimeFlowOpen) {
+    return (
+      <NovoTimeFlow
+        teamId={novoTimeTeamId}
+        onExit={() => {
+          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
+          setNovoTimeFlowOpen(false)
+          setNovoTimeTeamId(null)
+        }}
+      />
+    )
+  }
+
   return (
     <div className="home">
       <Sidebar />
@@ -355,7 +371,13 @@ function Home() {
           ) : activeTab === 'times' ? (
             <div className="home__panel">
               <TimesToolbar total={times.length} />
-              <TimesGrid teams={filteredTeams} />
+              <TimesGrid
+                teams={filteredTeams}
+                onCriarTime={(teamId) => {
+                  setNovoTimeTeamId(teamId)
+                  setNovoTimeFlowOpen(true)
+                }}
+              />
             </div>
           ) : activeTab === 'cargos' ? (
             <div className="home__panel">
@@ -395,6 +417,11 @@ function Home() {
           onSelectColaborador={() => {
             setNovoModalOpen(false)
             setAddCollaboratorFlowOpen(true)
+          }}
+          onSelectTime={() => {
+            setNovoModalOpen(false)
+            setNovoTimeTeamId(null)
+            setNovoTimeFlowOpen(true)
           }}
         />
       )}

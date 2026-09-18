@@ -2,11 +2,18 @@ import closeIcon from '../../assets/icons/Close.svg'
 import IconButton from '../IconButton.jsx'
 import './WizardShell.css'
 
-function WizardShell({ onClose, progress, footerLeft, footerRight, children }) {
+function WizardShell({
+  title = 'Novo Colaborador',
+  onClose,
+  progress,
+  footerLeft,
+  footerRight,
+  children,
+}) {
   return (
     <div className="wizard-shell">
       <header className="wizard-shell__header">
-        <h1 className="wizard-shell__title">Novo Colaborador</h1>
+        <h1 className="wizard-shell__title">{title}</h1>
         <IconButton icon={closeIcon} alt="Fechar" onClick={onClose} />
       </header>
       <div className="wizard-shell__body">{children}</div>
