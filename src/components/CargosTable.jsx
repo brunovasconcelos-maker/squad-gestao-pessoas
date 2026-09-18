@@ -8,6 +8,7 @@ import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import plusBlackIcon from '../assets/icons/PlusBlack.svg'
 import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
+import { formatFaixaSalarial } from '../utils/formatters.js'
 import './CargosTable.css'
 
 function SortableHeaderCell({ label, active, onClick }) {
@@ -86,6 +87,7 @@ function CargosTable({
   onClearFilter,
   timeOptions,
   atividadeOptions,
+  onCriarCargo,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -240,7 +242,7 @@ function CargosTable({
                 )}
               </div>
               <div className="cargos-table__cell cargos-table__cell--secondary">
-                —
+                {formatFaixaSalarial(row.salaryMin, row.salaryMax)}
               </div>
               <div className="cargos-table__cell cargos-table__cell--secondary">
                 {row.count}
@@ -251,7 +253,11 @@ function CargosTable({
                   : row.teamNames.join(', ')}
               </div>
               {row.isPendingCargo ? (
-                <button type="button" className="cargos-table__criar-cargo-button">
+                <button
+                  type="button"
+                  className="cargos-table__criar-cargo-button"
+                  onClick={() => onCriarCargo(row.cargoRecordId)}
+                >
                   Criar cargo
                   <img src={plusBlackIcon} width={24} height={24} alt="" />
                 </button>

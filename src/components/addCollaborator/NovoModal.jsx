@@ -45,7 +45,7 @@ const OPTIONS = [
   {
     id: 'cargo',
     label: 'Cargo',
-    functional: false,
+    functional: true,
     stickers: [
       { src: cargoStickerIcon, size: 63.697, left: 33, top: 51.5, rotate: -7.01 },
       { src: accentStickerIcon, size: 46.49, left: 80.37, top: 28.5, rotate: 16.61 },
@@ -152,10 +152,11 @@ function OptionCard({ option, onClick }) {
   )
 }
 
-function NovoModal({ onClose, onSelectColaborador, onSelectTime }) {
+function NovoModal({ onClose, onSelectColaborador, onSelectTime, onSelectCargo }) {
   const handlersById = {
     colaborador: onSelectColaborador,
     time: onSelectTime,
+    cargo: onSelectCargo,
   }
 
   return (

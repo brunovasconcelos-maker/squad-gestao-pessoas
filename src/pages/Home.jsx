@@ -17,6 +17,7 @@ import FiltrosPanel from '../components/FiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
+import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import {
   getCollection,
   getCollaboratorActiveSince,
@@ -51,6 +52,8 @@ function Home() {
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
   const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
   const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
+  const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
+  const [novoCargoId, setNovoCargoId] = useState(null)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
     getCollection(COLLECTIONS.COLABORADORES),
@@ -203,6 +206,8 @@ function Home() {
           count: members.length,
           teamNames: [],
           salaryMin: null,
+          salaryMax: null,
+          cargoRecordId: cargoRecord?.id ?? null,
         })
         return
       }
@@ -221,6 +226,10 @@ function Home() {
         groupMembers.forEach((member) =>
           member.times.forEach((name) => teamNameSet.add(name)),
         )
+        const fixoSalaries =
+          contractType === 'Fixo'
+            ? groupMembers.filter((member) => member.salario != null).map((member) => member.salario)
+            : []
         rows.push({
           id: `${cargoName}::${contractType}`,
           cargoName,
@@ -228,7 +237,9 @@ function Home() {
           contractType,
           count: groupMembers.length,
           teamNames: Array.from(teamNameSet),
-          salaryMin: null,
+          salaryMin: fixoSalaries.length ? Math.min(...fixoSalaries) : null,
+          salaryMax: fixoSalaries.length ? Math.max(...fixoSalaries) : null,
+          cargoRecordId: cargoRecord?.id ?? null,
         })
       })
     })
@@ -326,6 +337,19 @@ function Home() {
     )
   }
 
+  if (novoCargoFlowOpen) {
+    return (
+      <NovoCargoFlow
+        cargoId={novoCargoId}
+        onExit={() => {
+          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
+          setNovoCargoFlowOpen(false)
+          setNovoCargoId(null)
+        }}
+      />
+    )
+  }
+
   return (
     <div className="home">
       <Sidebar />
@@ -398,6 +422,10 @@ function Home() {
                 onClearFilter={clearFilter}
                 timeOptions={timeOptions}
                 atividadeOptions={ATIVIDADE_OPTIONS}
+                onCriarCargo={(recordId) => {
+                  setNovoCargoId(recordId)
+                  setNovoCargoFlowOpen(true)
+                }}
               />
             </div>
           ) : activeTab === 'beneficios' ? (
@@ -422,6 +450,11 @@ function Home() {
             setNovoModalOpen(false)
             setNovoTimeTeamId(null)
             setNovoTimeFlowOpen(true)
+          }}
+          onSelectCargo={() => {
+            setNovoModalOpen(false)
+            setNovoCargoId(null)
+            setNovoCargoFlowOpen(true)
           }}
         />
       )}

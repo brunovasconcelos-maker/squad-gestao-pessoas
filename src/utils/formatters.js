@@ -79,6 +79,12 @@ export function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
 }
 
+export function formatFaixaSalarial(min, max) {
+  if (min == null || max == null) return '—'
+  if (min === max) return formatCurrencyBRL(min)
+  return `${formatCurrencyBRL(min)} - ${formatCurrencyBRL(max)}`
+}
+
 export function formatPaymentValue(value, tipoPagamento) {
   const base = formatCurrencyBRL(value)
   if (tipoPagamento === 'Mensal') return `${base} / mês`

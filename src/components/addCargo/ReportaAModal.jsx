@@ -4,24 +4,27 @@ import FieldModalShell from '../addCollaborator/FieldModalShell.jsx'
 import Checkbox from '../addCollaborator/Checkbox.jsx'
 import '../addCollaborator/SelectListModal.css'
 
-function MembrosModal({ title = 'Adicionar membros', collaborators, value, onSave, onClose }) {
+function ReportaAModal({ collaborators, excludedNames, value, onSave, onClose }) {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(() => new Set(value))
 
+  const excludedSet = new Set(excludedNames)
+  const selectable = collaborators.filter((collaborator) => !excludedSet.has(collaborator.name))
+
   const trimmedQuery = query.trim().toLowerCase()
   const filtered = trimmedQuery
-    ? collaborators.filter((collaborator) =>
+    ? selectable.filter((collaborator) =>
         collaborator.name.toLowerCase().includes(trimmedQuery),
       )
-    : collaborators
+    : selectable
 
-  const toggle = (id) => {
+  const toggle = (name) => {
     setSelected((prev) => {
       const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
+      if (next.has(name)) {
+        next.delete(name)
       } else {
-        next.add(id)
+        next.add(name)
       }
       return next
     })
@@ -29,7 +32,7 @@ function MembrosModal({ title = 'Adicionar membros', collaborators, value, onSav
 
   return (
     <FieldModalShell
-      title={title}
+      title="Reporta a"
       onClose={onClose}
       onSave={() => onSave(Array.from(selected))}
     >
@@ -46,13 +49,13 @@ function MembrosModal({ title = 'Adicionar membros', collaborators, value, onSav
 
       <div className="select-list__list">
         {filtered.map((collaborator) => {
-          const checked = selected.has(collaborator.id)
+          const checked = selected.has(collaborator.name)
           return (
             <button
               type="button"
               key={collaborator.id}
               className="select-list__item"
-              onClick={() => toggle(collaborator.id)}
+              onClick={() => toggle(collaborator.name)}
             >
               <Checkbox checked={checked} />
               <span className="select-list__item-label">{collaborator.name}</span>
@@ -64,4 +67,4 @@ function MembrosModal({ title = 'Adicionar membros', collaborators, value, onSav
   )
 }
 
-export default MembrosModal
+export default ReportaAModal
