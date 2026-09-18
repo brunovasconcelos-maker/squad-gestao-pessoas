@@ -98,16 +98,21 @@ function BeneficiariosModal({
         </div>
       )}
 
-      <div className="select-list__search">
-        <input
-          type="text"
-          autoFocus
-          className="select-list__search-input"
-          placeholder="Buscar por colaborador, time, cargo ou empresa toda..."
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
+      <div className="step3-beneficiarios__search-group">
+        <div className="select-list__search">
+          <input
+            type="text"
+            autoFocus
+            className="select-list__search-input"
+            placeholder="Buscar colaborador..."
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
+        </div>
+        <p className="step3-beneficiarios__helper">
+          Busque por nome, time, cargo ou selecione toda a empresa
+        </p>
       </div>
 
       <div className="select-list__list">

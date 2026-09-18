@@ -51,7 +51,7 @@ function Step3Beneficiarios({
                   : 'step2__row-label'
               }
             >
-              Adicionar colaboradores, times, cargos ou empresa toda
+              Adicionar colaboradores
             </span>
             <span className="step2__row-action">
               {totalSelected > 0 ? `${totalSelected} selecionados` : 'Adicionar'}
