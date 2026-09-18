@@ -124,10 +124,15 @@ function Step2TeamInfo({
       {openModal === 'lider' && (
         <LiderModal
           value={leaderId}
-          members={members}
+          collaborators={collaborators}
           onClose={closeModal}
           onSave={(newLeaderId) => {
             onLeaderChange(newLeaderId)
+            if (newLeaderId && !membroIds.has(newLeaderId)) {
+              const nextSet = new Set(membroIds)
+              nextSet.add(newLeaderId)
+              onMembrosChange(nextSet)
+            }
             closeModal()
           }}
         />
@@ -139,11 +144,7 @@ function Step2TeamInfo({
           value={Array.from(membroIds)}
           onClose={closeModal}
           onSave={(ids) => {
-            const nextSet = new Set(ids)
-            if (leaderId && !nextSet.has(leaderId)) {
-              onLeaderChange(null)
-            }
-            onMembrosChange(nextSet)
+            onMembrosChange(new Set(ids))
             closeModal()
           }}
         />

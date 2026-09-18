@@ -5,14 +5,16 @@ import circleIcon from '../../assets/icons/Circle.svg'
 import FieldModalShell from '../addCollaborator/FieldModalShell.jsx'
 import '../addCollaborator/SelectListModal.css'
 
-function LiderModal({ value, members, onSave, onClose }) {
+function LiderModal({ value, collaborators, onSave, onClose }) {
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState(value ?? null)
 
   const trimmedQuery = query.trim().toLowerCase()
-  const filteredMembers = trimmedQuery
-    ? members.filter((member) => member.name.toLowerCase().includes(trimmedQuery))
-    : members
+  const filteredCollaborators = trimmedQuery
+    ? collaborators.filter((collaborator) =>
+        collaborator.name.toLowerCase().includes(trimmedQuery),
+      )
+    : collaborators
 
   return (
     <FieldModalShell
@@ -20,10 +22,8 @@ function LiderModal({ value, members, onSave, onClose }) {
       onClose={onClose}
       onSave={() => onSave(selected)}
     >
-      {members.length === 0 ? (
-        <p className="select-list__empty">
-          Adicione membros ao time antes de escolher um líder.
-        </p>
+      {collaborators.length === 0 ? (
+        <p className="select-list__empty">Nenhum colaborador cadastrado.</p>
       ) : (
         <>
           <div className="select-list__search">
@@ -38,14 +38,14 @@ function LiderModal({ value, members, onSave, onClose }) {
           </div>
 
           <div className="select-list__list">
-            {filteredMembers.map((member) => {
-              const isSelected = selected === member.id
+            {filteredCollaborators.map((collaborator) => {
+              const isSelected = selected === collaborator.id
               return (
                 <button
                   type="button"
-                  key={member.id}
+                  key={collaborator.id}
                   className="select-list__item"
-                  onClick={() => setSelected(isSelected ? null : member.id)}
+                  onClick={() => setSelected(isSelected ? null : collaborator.id)}
                 >
                   <img
                     src={isSelected ? radioButtonIcon : circleIcon}
@@ -53,7 +53,7 @@ function LiderModal({ value, members, onSave, onClose }) {
                     width={24}
                     height={24}
                   />
-                  <span className="select-list__item-label">{member.name}</span>
+                  <span className="select-list__item-label">{collaborator.name}</span>
                 </button>
               )
             })}

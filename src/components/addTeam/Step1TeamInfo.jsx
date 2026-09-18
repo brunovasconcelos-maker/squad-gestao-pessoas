@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import WizardShell from '../addCollaborator/WizardShell.jsx'
-import { TEAM_COLORS, TEAM_ICON_OPTIONS } from '../../utils/teamOptions.js'
+import ColorPickerModal from './ColorPickerModal.jsx'
+import IconPickerModal from './IconPickerModal.jsx'
+import { getTeamColorTones, getTeamIconComponent } from '../../utils/teamOptions.js'
 import '../addCollaborator/buttons.css'
 import '../addCollaborator/Step1BasicInfo.css'
 import './Step1TeamInfo.css'
@@ -7,86 +10,102 @@ import './Step1TeamInfo.css'
 function Step1TeamInfo({
   name,
   onNameChange,
-  color,
+  colorId,
   onColorChange,
-  icon,
+  iconName,
   onIconChange,
   onExit,
   onContinue,
 }) {
+  const [colorModalOpen, setColorModalOpen] = useState(false)
+  const [iconModalOpen, setIconModalOpen] = useState(false)
+
   const canContinue = name.trim().length > 0
+  const { light, dark } = getTeamColorTones(colorId)
+  const IconComponent = getTeamIconComponent(iconName)
 
   return (
-    <WizardShell
-      title="Novo Time"
-      onClose={onExit}
-      progress={50}
-      footerLeft={
-        <button type="button" className="text-button" onClick={onExit}>
-          Voltar
-        </button>
-      }
-      footerRight={
-        <button
-          type="button"
-          className="pill-button"
-          disabled={!canContinue}
-          onClick={onContinue}
-        >
-          Continuar
-        </button>
-      }
-    >
-      <div className="step1">
-        <input
-          type="text"
-          className="step1__name-input"
-          placeholder="Nome do time"
-          value={name}
-          onChange={(event) => onNameChange(event.target.value)}
-        />
+    <>
+      <WizardShell
+        title="Novo Time"
+        onClose={onExit}
+        progress={50}
+        footerLeft={
+          <button type="button" className="text-button" onClick={onExit}>
+            Voltar
+          </button>
+        }
+        footerRight={
+          <button
+            type="button"
+            className="pill-button"
+            disabled={!canContinue}
+            onClick={onContinue}
+          >
+            Continuar
+          </button>
+        }
+      >
+        <div className="step1">
+          <input
+            type="text"
+            className="step1__name-input"
+            placeholder="Nome do time"
+            value={name}
+            onChange={(event) => onNameChange(event.target.value)}
+          />
 
-        <div className="team-option-group">
-          <p className="team-option-group__label">Cor do time</p>
-          <div className="team-option-group__row">
-            {TEAM_COLORS.map((swatch) => (
+          <div className="team-field-row">
+            <span className="team-field-row__label">Cor do time</span>
+            <div className="team-field-row__control">
+              <span className="team-color-dot" style={{ background: light }} />
+              <span className="team-color-dot" style={{ background: dark }} />
               <button
                 type="button"
-                key={swatch}
-                className={
-                  swatch === color
-                    ? 'team-color-swatch team-color-swatch--selected'
-                    : 'team-color-swatch'
-                }
-                style={{ background: swatch }}
-                onClick={() => onColorChange(swatch)}
-                aria-label={swatch}
+                className="team-color-swatch-button"
+                style={{ background: dark }}
+                onClick={() => setColorModalOpen(true)}
+                aria-label="Escolher cor do time"
               />
-            ))}
+            </div>
           </div>
-        </div>
 
-        <div className="team-option-group">
-          <p className="team-option-group__label">Icone do time</p>
-          <div className="team-option-group__row">
-            {TEAM_ICON_OPTIONS.map((option) => (
-              <button
-                type="button"
-                key={option.id}
-                className={
-                  option.id === icon
-                    ? 'team-icon-swatch team-icon-swatch--selected'
-                    : 'team-icon-swatch'
-                }
-                onClick={() => onIconChange(option.id)}
-              >
-                <img src={option.src} alt={option.alt} width={24} height={24} />
-              </button>
-            ))}
+          <div className="team-field-row">
+            <span className="team-field-row__label">Icone do time</span>
+            <button
+              type="button"
+              className="team-icon-swatch-button"
+              style={{ background: light }}
+              onClick={() => setIconModalOpen(true)}
+              aria-label="Escolher icone do time"
+            >
+              <IconComponent size={20} color={dark} />
+            </button>
           </div>
         </div>
-      </div>
-    </WizardShell>
+      </WizardShell>
+
+      {colorModalOpen && (
+        <ColorPickerModal
+          onSelect={(newColorId) => {
+            onColorChange(newColorId)
+            setColorModalOpen(false)
+          }}
+          onClose={() => setColorModalOpen(false)}
+        />
+      )}
+
+      {iconModalOpen && (
+        <IconPickerModal
+          value={iconName}
+          onSelect={(newIconName) => {
+            onIconChange(newIconName)
+            setIconModalOpen(false)
+          }}
+          onClose={() => setIconModalOpen(false)}
+        />
+      )}
+    </>
   )
 }
 

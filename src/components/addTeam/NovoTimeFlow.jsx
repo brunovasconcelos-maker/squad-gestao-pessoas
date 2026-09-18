@@ -8,7 +8,7 @@ import {
   setCollection,
   generateId,
 } from '../../utils/storage.js'
-import { pickDefaultColor, guessTeamIconId } from '../../utils/teamOptions.js'
+import { pickDefaultColorId, guessTeamIconName } from '../../utils/teamOptions.js'
 
 function NovoTimeFlow({ teamId, onExit }) {
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
@@ -36,10 +36,12 @@ function NovoTimeFlow({ teamId, onExit }) {
 
   const [step, setStep] = useState(1)
   const [name, setName] = useState(existingTeam?.name ?? '')
-  const [color, setColor] = useState(existingTeam?.color ?? pickDefaultColor(usedColors))
+  const [colorId, setColorId] = useState(
+    existingTeam?.color ?? pickDefaultColorId(usedColors),
+  )
   const [iconTouched, setIconTouched] = useState(Boolean(existingTeam?.icon))
-  const [icon, setIcon] = useState(
-    existingTeam?.icon ?? guessTeamIconId(existingTeam?.name ?? ''),
+  const [iconName, setIconName] = useState(
+    existingTeam?.icon ?? guessTeamIconName(existingTeam?.name ?? ''),
   )
   const [leaderId, setLeaderId] = useState(existingTeam?.leaderId ?? null)
   const [membroIds, setMembroIds] = useState(() => new Set(initialMemberIds))
@@ -49,13 +51,13 @@ function NovoTimeFlow({ teamId, onExit }) {
   const handleNameChange = (value) => {
     setName(value)
     if (!iconTouched) {
-      setIcon(guessTeamIconId(value))
+      setIconName(guessTeamIconName(value))
     }
   }
 
   const handleIconChange = (value) => {
     setIconTouched(true)
-    setIcon(value)
+    setIconName(value)
   }
 
   const handleSave = () => {
@@ -68,8 +70,8 @@ function NovoTimeFlow({ teamId, onExit }) {
             ? {
                 ...team,
                 name,
-                color,
-                icon,
+                color: colorId,
+                icon: iconName,
                 leaderId,
                 membros: finalMemberIds,
                 descricao,
@@ -82,8 +84,8 @@ function NovoTimeFlow({ teamId, onExit }) {
           {
             id: generateId(),
             name,
-            color,
-            icon,
+            color: colorId,
+            icon: iconName,
             leaderId,
             membros: finalMemberIds,
             descricao,
@@ -128,9 +130,9 @@ function NovoTimeFlow({ teamId, onExit }) {
         <Step1TeamInfo
           name={name}
           onNameChange={handleNameChange}
-          color={color}
-          onColorChange={setColor}
-          icon={icon}
+          colorId={colorId}
+          onColorChange={setColorId}
+          iconName={iconName}
           onIconChange={handleIconChange}
           onExit={() => setDiscardConfirmOpen(true)}
           onContinue={() => setStep(2)}
