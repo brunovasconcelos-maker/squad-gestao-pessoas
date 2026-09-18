@@ -12,6 +12,7 @@ import CargosTable from '../components/CargosTable.jsx'
 import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
 import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
+import AddEmTimeModal from '../components/AddEmTimeModal.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
@@ -20,9 +21,9 @@ import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
 import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import {
   getCollection,
+  setCollection,
   getCollaboratorActiveSince,
   removeItems,
-  duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
 import { formatDateDMonthYear } from '../utils/formatters.js'
@@ -59,6 +60,7 @@ function Home() {
     getCollection(COLLECTIONS.COLABORADORES),
   )
   const [selectedIds, setSelectedIds] = useState(() => new Set())
+  const [addEmTimeModalOpen, setAddEmTimeModalOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [columnFilters, setColumnFilters] = useState(createEmptyColumnFilters)
   const [filtrosPanelOpen, setFiltrosPanelOpen] = useState(false)
@@ -307,9 +309,16 @@ function Home() {
     clearSelection()
   }
 
-  const handleDuplicate = () => {
-    const updated = duplicateItems(COLLECTIONS.COLABORADORES, [...selectedIds])
+  const handleAddEmTime = (teamNames) => {
+    const updated = collaborators.map((collaborator) => {
+      if (!selectedIds.has(collaborator.id)) return collaborator
+      const mergedTimes = new Set(collaborator.times)
+      teamNames.forEach((name) => mergedTimes.add(name))
+      return { ...collaborator, times: Array.from(mergedTimes) }
+    })
+    setCollection(COLLECTIONS.COLABORADORES, updated)
     setCollaborators(updated)
+    setAddEmTimeModalOpen(false)
     clearSelection()
   }
 
@@ -469,10 +478,18 @@ function Home() {
         atividadeOptions={ATIVIDADE_OPTIONS}
       />
 
+      {addEmTimeModalOpen && (
+        <AddEmTimeModal
+          teams={times}
+          onSave={handleAddEmTime}
+          onClose={() => setAddEmTimeModalOpen(false)}
+        />
+      )}
+
       {selectedIds.size > 0 ? (
         <BulkActionBar
           count={selectedIds.size}
-          onDuplicate={handleDuplicate}
+          onAddEmTime={() => setAddEmTimeModalOpen(true)}
           onDelete={handleDelete}
           onClose={clearSelection}
         />

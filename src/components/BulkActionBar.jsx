@@ -1,9 +1,9 @@
-import copySimpleIcon from '../assets/icons/CopySimple.svg'
+import { FolderSimplePlus } from '@phosphor-icons/react'
 import trashIcon from '../assets/icons/Trash.svg'
 import closeIcon from '../assets/icons/Close.svg'
 import './BulkActionBar.css'
 
-function BulkActionBar({ count, onDuplicate, onDelete, onClose }) {
+function BulkActionBar({ count, onAddEmTime, onDelete, onClose }) {
   if (count === 0) return null
 
   return (
@@ -14,18 +14,18 @@ function BulkActionBar({ count, onDuplicate, onDelete, onClose }) {
         <button
           type="button"
           className="bulk-action-bar__button"
-          onClick={onDuplicate}
+          onClick={onAddEmTime}
         >
-          Duplicar
-          <img src={copySimpleIcon} width={24} height={24} alt="" />
+          Add em time
+          <FolderSimplePlus size={24} />
         </button>
 
         <button
           type="button"
-          className="bulk-action-bar__button bulk-action-bar__button--danger"
+          className="bulk-action-bar__icon-button"
           onClick={onDelete}
+          aria-label="Deletar selecionados"
         >
-          Deletar
           <img src={trashIcon} width={24} height={24} alt="" />
         </button>
       </div>
