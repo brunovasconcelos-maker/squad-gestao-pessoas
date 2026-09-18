@@ -8,7 +8,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  justify-content: space-between;
+  height: 180px;
   padding: 24px;
   background: var(--color-bg);
   border: 1px solid #d9d9d9;

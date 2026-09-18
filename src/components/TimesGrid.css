@@ -8,22 +8,16 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  height: 180px;
+  padding: 24px;
   background: var(--color-bg);
-}
-
-.time-card:not(.time-card--pending) {
-  gap: 20px;
-  padding: 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  border-radius: 16px;
 }
 
 .time-card--pending {
-  position: relative;
-  gap: 40px;
-  padding: 24px;
-  border-radius: 16px;
-  height: auto;
+  border-style: dashed;
 }
 
 .time-card:hover {
@@ -36,20 +30,11 @@
   justify-content: space-between;
 }
 
-.time-card__icon-badge {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
-  background: #fbedd0;
-}
-
 .time-card__icon-cluster {
   position: relative;
-  width: 103px;
-  height: 95px;
+  width: 133.467px;
+  height: 72.133px;
+  flex-shrink: 0;
 }
 
 .time-card__sticker {
@@ -57,24 +42,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 63px;
-  height: 63px;
-  background: var(--color-bg);
-  border: 1px solid #eaeaea;
-  border-radius: 10px;
-  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.05);
+  width: 56px;
+  height: 56px;
+  border: 1px solid;
+  border-radius: 10.349px;
+  box-shadow: 0px 3.105px 5.071px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
 .time-card__sticker--back {
-  top: 0;
-  left: 0;
+  left: 2.1px;
+  top: -7px;
   transform: rotate(8.9deg);
   z-index: 1;
 }
 
 .time-card__sticker--front {
-  top: 32px;
-  left: 40px;
+  left: 56.13px;
+  top: 9px;
   transform: rotate(-8.04deg);
   z-index: 2;
 }
@@ -82,37 +67,24 @@
 .time-card__criar-time-button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  height: 40px;
-  box-sizing: border-box;
-  padding: 0 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-bg);
+  justify-self: end;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
   font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);
+  white-space: nowrap;
 }
 
 .time-card__info {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
 .time-card__name {
-  font-size: 16px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-}
-
-.time-card__bottom-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.time-card__pending-name {
   font-size: 16px;
   font-weight: var(--font-weight-semibold);
   color: var(--color-text);
@@ -122,23 +94,4 @@
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
-}
-
-.time-card__dashed-border {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.time-card__dashed-border-rect {
-  width: 100%;
-  height: 100%;
-  fill: none;
-  rx: 16px;
-  ry: 16px;
-  stroke: #d9d9d9;
-  stroke-width: 1px;
-  stroke-dasharray: 6 6;
 }
