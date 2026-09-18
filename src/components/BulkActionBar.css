@@ -6,12 +6,11 @@
   display: flex;
   align-items: center;
   gap: 21px;
-  height: 64px;
   box-sizing: border-box;
   background: var(--color-bg);
   border-radius: 360px;
   padding: 12px 24px;
-  box-shadow: 0px 0px 25.7px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.08);
   /* Same layer as BottomSearchBar (see its comment) - below every
      overlay/modal so it dims along with the rest of the page instead
      of competing with them. */
@@ -28,7 +27,7 @@
 .bulk-action-bar__actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 }
 
 .bulk-action-bar__button {
@@ -47,14 +46,27 @@
   white-space: nowrap;
 }
 
-.bulk-action-bar__button--danger {
-  color: #ff2633;
+.bulk-action-bar__icon-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  border: 1px solid var(--color-border);
+  border-radius: 360px;
+  background: var(--color-bg);
+  padding: 0;
 }
 
 .bulk-action-bar__close {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
   border: none;
   background: none;
   padding: 0;
