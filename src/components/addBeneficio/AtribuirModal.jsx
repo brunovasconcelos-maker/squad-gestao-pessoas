@@ -13,6 +13,15 @@ function AtribuirModal({ people, value, assignedElsewhere, onSave, onClose }) {
     ? people.filter((person) => person.name.toLowerCase().includes(trimmedQuery))
     : people
 
+  // Already-assigned-elsewhere people always sort to the bottom, after every
+  // currently-assignable person, regardless of search/filter state.
+  const sortedPeople = [...filtered].sort((a, b) => {
+    const aAssigned = assignedElsewhere.has(a.id)
+    const bAssigned = assignedElsewhere.has(b.id)
+    if (aAssigned === bAssigned) return 0
+    return aAssigned ? 1 : -1
+  })
+
   const toggle = (id) => {
     setSelected((prev) => {
       const next = new Set(prev)
@@ -43,7 +52,7 @@ function AtribuirModal({ people, value, assignedElsewhere, onSave, onClose }) {
       </div>
 
       <div className="select-list__list">
-        {filtered.map((person) => {
+        {sortedPeople.map((person) => {
           const elsewhereValue = assignedElsewhere.get(person.id)
           if (elsewhereValue) {
             return (

@@ -2,6 +2,18 @@
   font-weight: var(--font-weight-semibold);
 }
 
+.step3-beneficiarios__search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.step3-beneficiarios__helper {
+  font-size: 13px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
 .step3-beneficiarios__chips {
   display: flex;
   flex-wrap: wrap;
