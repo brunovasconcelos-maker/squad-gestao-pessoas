@@ -28,15 +28,16 @@ function BulkActionBar({ count, onAddEmTime, onDelete, onClose }) {
         >
           <img src={trashIcon} width={24} height={24} alt="" />
         </button>
-      </div>
 
-      <button
-        type="button"
-        className="bulk-action-bar__close"
-        onClick={onClose}
-      >
-        <img src={closeIcon} width={24} height={24} alt="Fechar seleção" />
-      </button>
+        <button
+          type="button"
+          className="bulk-action-bar__icon-button"
+          onClick={onClose}
+          aria-label="Fechar seleção"
+        >
+          <img src={closeIcon} width={24} height={24} alt="" />
+        </button>
+      </div>
     </div>
   )
 }
