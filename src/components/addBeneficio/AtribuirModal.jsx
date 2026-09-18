@@ -1,0 +1,69 @@
+import { useState } from 'react'
+import magnifyingGlassIcon from '../../assets/icons/MagnifyingGlass.svg'
+import FieldModalShell from '../addCollaborator/FieldModalShell.jsx'
+import Checkbox from '../addCollaborator/Checkbox.jsx'
+import '../addCollaborator/SelectListModal.css'
+
+function AtribuirModal({ people, value, onSave, onClose }) {
+  const [query, setQuery] = useState('')
+  const [selected, setSelected] = useState(() => new Set(value))
+
+  const trimmedQuery = query.trim().toLowerCase()
+  const filtered = trimmedQuery
+    ? people.filter((person) => person.name.toLowerCase().includes(trimmedQuery))
+    : people
+
+  const toggle = (id) => {
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) {
+        next.delete(id)
+      } else {
+        next.add(id)
+      }
+      return next
+    })
+  }
+
+  return (
+    <FieldModalShell
+      title="Atribuir"
+      onClose={onClose}
+      onSave={() => onSave(Array.from(selected))}
+    >
+      <div className="select-list__search">
+        <input
+          type="text"
+          autoFocus
+          className="select-list__search-input"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+        />
+        <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
+      </div>
+
+      <div className="select-list__list">
+        {filtered.map((person) => {
+          const checked = selected.has(person.id)
+          return (
+            <button
+              type="button"
+              key={person.id}
+              className="select-list__item"
+              onClick={() => toggle(person.id)}
+            >
+              <Checkbox checked={checked} />
+              <span className="select-list__item-label">{person.name}</span>
+            </button>
+          )
+        })}
+
+        {filtered.length === 0 && (
+          <p className="select-list__empty">Ninguém para atribuir ainda.</p>
+        )}
+      </div>
+    </FieldModalShell>
+  )
+}
+
+export default AtribuirModal

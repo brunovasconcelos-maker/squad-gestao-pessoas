@@ -54,7 +54,7 @@ const OPTIONS = [
   {
     id: 'beneficio',
     label: 'Benefício',
-    functional: false,
+    functional: true,
     stickers: [
       { src: giftStickerIcon, size: BENEFICIO_STICKER_SIZE, left: 64.67, top: 37.5, rotate: -17.07 },
       { src: cardStickerIcon, size: BENEFICIO_STICKER_SIZE, left: 80.89, top: 85.32, rotate: -1.11 },
@@ -152,11 +152,12 @@ function OptionCard({ option, onClick }) {
   )
 }
 
-function NovoModal({ onClose, onSelectColaborador, onSelectTime, onSelectCargo }) {
+function NovoModal({ onClose, onSelectColaborador, onSelectTime, onSelectCargo, onSelectBeneficio }) {
   const handlersById = {
     colaborador: onSelectColaborador,
     time: onSelectTime,
     cargo: onSelectCargo,
+    beneficio: onSelectBeneficio,
   }
 
   return (
