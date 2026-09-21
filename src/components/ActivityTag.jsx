@@ -1,6 +1,11 @@
 import './ActivityTag.css'
 
-function ActivityTag({ contractType }) {
+function ActivityTag({ contractType, desligado = false }) {
+  if (desligado) {
+    return (
+      <span className="activity-tag activity-tag--desligado">Desligado</span>
+    )
+  }
   if (contractType === 'Freelancer') {
     return (
       <span className="activity-tag activity-tag--freelancer">
