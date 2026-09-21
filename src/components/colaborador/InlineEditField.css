@@ -1,4 +1,7 @@
 .inline-edit-field {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -8,8 +11,8 @@
 }
 
 .inline-edit-field__input {
+  flex: 1;
   min-width: 0;
-  width: 160px;
   border: none;
   outline: none;
   background: transparent;
@@ -17,7 +20,7 @@
   font-size: 14px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text);
-  text-align: right;
+  text-align: left;
 }
 
 .inline-edit-field__cancel {

@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import plusIcon from '../../assets/icons/Plus.svg'
+import closeIcon from '../../assets/icons/Close.svg'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
 import { addItem, COLLECTIONS } from '../../utils/storage.js'
 import '../addCollaborator/SelectListModal.css'
+import './InlineEditField.css'
 import './ColaboradorDetail.css'
 
 function CargoField({ value, cargos, disabled, onSave }) {
@@ -50,6 +52,11 @@ function CargoField({ value, cargos, disabled, onSave }) {
     setEditing(true)
   }
 
+  const cancelEdit = () => {
+    setEditing(false)
+    setQuery('')
+  }
+
   if (!editing) {
     return (
       <button
@@ -64,15 +71,28 @@ function CargoField({ value, cargos, disabled, onSave }) {
   }
 
   return (
-    <div className="colaborador-field" ref={anchorRef}>
-      <input
-        type="text"
-        autoFocus
-        className="colaborador-field__inline-search-input"
-        placeholder="Buscar cargo..."
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-      />
+    <div className="colaborador-field colaborador-field--fill" ref={anchorRef}>
+      <div className="inline-edit-field">
+        <input
+          type="text"
+          autoFocus
+          className="inline-edit-field__input"
+          placeholder="Buscar cargo..."
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') cancelEdit()
+          }}
+        />
+        <button
+          type="button"
+          className="inline-edit-field__cancel"
+          onMouseDown={(event) => event.preventDefault()}
+          onClick={cancelEdit}
+        >
+          <img src={closeIcon} alt="Cancelar" width={16} height={16} />
+        </button>
+      </div>
 
       {rect && (
         <div
