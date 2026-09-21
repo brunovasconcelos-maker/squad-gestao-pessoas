@@ -164,8 +164,11 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
 
   const pipoBar = (
     <p className="colaborador-detail__pipo-bar">
-      Peça ao Pipo para <strong>Resumir perfil,</strong>
-      <strong> Redigir mensagem</strong> ou <strong> Comparar cargo</strong>
+      <span>Peça ao Pipo para</span>
+      <strong>Resumir perfil,</strong>
+      <strong>Redigir mensagem</strong>
+      <span>ou</span>
+      <strong>Comparar cargo</strong>
     </p>
   )
 
@@ -335,7 +338,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         />
       ) : (
         <button type="button" className="colaborador-detail__add-nota" onClick={startAddNota}>
-          <NotePencil size={20} />
+          <NotePencil size={20} color="var(--color-text-secondary)" />
           Adicionar nota
         </button>
       )}
@@ -411,14 +414,14 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
       <div className="colaborador-detail__scroll">
         {mode === 'full' ? (
           <div className="colaborador-detail__columns">
-            <div className="colaborador-detail__column colaborador-detail__column--notes">
-              {notesSection}
-            </div>
             <div className="colaborador-detail__column colaborador-detail__column--main">
               {profileSection}
               {pipoBar}
               {infoList}
               {beneficiosSection}
+            </div>
+            <div className="colaborador-detail__column colaborador-detail__column--notes">
+              {notesSection}
             </div>
           </div>
         ) : (

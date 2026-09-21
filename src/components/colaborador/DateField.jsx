@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import calendarBlankIcon from '../../assets/icons/CalendarBlank.svg'
 import Checkbox from '../addCollaborator/Checkbox.jsx'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
@@ -22,6 +22,15 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open])
+
+  // Skip the extra click on the calendar icon: as soon as the dropdown is
+  // in the DOM, open the native date picker straight away, so the very
+  // first click on the field goes directly to picking a date.
+  useLayoutEffect(() => {
+    if (!open || inputRef.current?.disabled) return
+    inputRef.current?.showPicker?.() ?? inputRef.current?.focus()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   const startEdit = () => {

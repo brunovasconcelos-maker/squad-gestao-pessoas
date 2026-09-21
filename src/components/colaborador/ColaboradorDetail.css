@@ -140,6 +140,8 @@
   height: 40px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
   background: #fbedd0;
   border-radius: 4px;
   padding: 12px 2px 12px 12px;
@@ -204,6 +206,11 @@
 
 .colaborador-field {
   position: relative;
+}
+
+.colaborador-field--fill {
+  flex: 1;
+  min-width: 0;
 }
 
 .colaborador-field__inline-search-input {
@@ -295,9 +302,12 @@
 }
 
 .colaborador-detail__nota {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  border-left: 1px solid var(--color-text-secondary);
+  padding-left: 16px;
 }
 
 .colaborador-detail__nota-date {
