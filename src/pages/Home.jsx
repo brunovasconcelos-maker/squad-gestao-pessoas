@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
 import Tabs from '../components/Tabs.jsx'
@@ -22,6 +23,7 @@ import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFl
 import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
 import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
+import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import {
   getCollection,
   setCollection,
@@ -43,6 +45,15 @@ const TABS = [
 
 const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 
+// Read once when this module first evaluates - i.e. exactly once per real
+// page load (a hard navigation/refresh reloads the whole bundle, so this
+// is re-evaluated fresh then too). Reading the raw hash directly, before
+// any React Router state has resolved, avoids any dependency on whether
+// useMatch() has already caught up to the real initial URL by the time
+// Home's first render runs.
+const initialHashPath = window.location.hash.replace(/^#/, '')
+const loadedDirectlyOnColaboradorRoute = /^\/colaborador\/[^/]+/.test(initialHashPath)
+
 function createEmptyColumnFilters() {
   return {
     time: new Set(),
@@ -61,6 +72,29 @@ function createEmptyBeneficiosFilters() {
 }
 
 function Home() {
+  const navigate = useNavigate()
+  const colaboradorMatch = useMatch('/colaborador/:id')
+  const [searchParams] = useSearchParams()
+  // Captures whether the very first page load (hard navigation, refresh, or
+  // a pasted link) already landed on the colaborador route - that always
+  // forces full-screen. A later in-app "collapse to panel" action clears
+  // this so refreshing after that no longer forces full-screen again for
+  // the SPA's lifetime (a genuine refresh re-evaluates this fresh anyway).
+  const forceFullScreenRef = useRef(loadedDirectlyOnColaboradorRoute)
+  const colaboradorId = colaboradorMatch?.params?.id ?? null
+  const colaboradorFullScreenRequested = searchParams.get('view') === 'full'
+  const colaboradorOverlayOpen = Boolean(colaboradorId)
+  const colaboradorFullScreen =
+    colaboradorOverlayOpen && (colaboradorFullScreenRequested || forceFullScreenRef.current)
+
+  const openColaborador = (id) => navigate(`/colaborador/${id}`)
+  const expandColaborador = () => navigate(`/colaborador/${colaboradorId}?view=full`)
+  const collapseColaborador = () => {
+    forceFullScreenRef.current = false
+    navigate(`/colaborador/${colaboradorId}`)
+  }
+  const closeColaborador = () => navigate('/')
+
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
@@ -424,6 +458,18 @@ function Home() {
     )
   }
 
+  if (colaboradorFullScreen) {
+    return (
+      <ColaboradorDetail
+        id={colaboradorId}
+        mode="full"
+        onClose={closeColaborador}
+        onCollapse={collapseColaborador}
+        onDataChanged={setCollaborators}
+      />
+    )
+  }
+
   return (
     <div className="home">
       <Sidebar />
@@ -457,12 +503,14 @@ function Home() {
                   timeOptions={timeOptions}
                   cargoOptions={cargoOptions}
                   atividadeOptions={ATIVIDADE_OPTIONS}
+                  onRowClick={openColaborador}
                 />
               ) : (
                 <CollaboratorsGrid
                   collaborators={filteredCollaborators}
                   selectedIds={selectedIds}
                   onToggleSelect={toggleSelect}
+                  onCardClick={openColaborador}
                 />
               )}
             </div>
@@ -570,6 +618,19 @@ function Home() {
         filters={beneficiosFilters}
         onSave={setBeneficiosFilters}
       />
+
+      {colaboradorOverlayOpen && (
+        <>
+          <div className="colaborador-detail-overlay" onClick={closeColaborador} />
+          <ColaboradorDetail
+            id={colaboradorId}
+            mode="panel"
+            onClose={closeColaborador}
+            onExpand={expandColaborador}
+            onDataChanged={setCollaborators}
+          />
+        </>
+      )}
 
       {addEmTimeModalOpen && (
         <AddEmTimeModal

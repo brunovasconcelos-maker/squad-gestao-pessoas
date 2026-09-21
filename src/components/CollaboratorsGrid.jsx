@@ -6,7 +6,7 @@ import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
 import './CollaboratorsGrid.css'
 
-function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect }) {
+function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect, onCardClick }) {
   return (
     <div className="collaborators-grid">
       {collaborators.map((collaborator) => {
@@ -19,12 +19,16 @@ function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect }) {
                 : 'collaborator-card'
             }
             key={collaborator.id}
+            onClick={() => onCardClick?.(collaborator.id)}
           >
             <div className="collaborator-card__top-row">
               <button
                 type="button"
                 className="collaborator-card__checkbox"
-                onClick={() => onToggleSelect(collaborator.id)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onToggleSelect(collaborator.id)
+                }}
               >
                 <img
                   src={isSelected ? checkSquareIcon : squareIcon}
@@ -36,7 +40,12 @@ function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect }) {
               <div className="collaborator-card__avatar">
                 <img src={userIcon} width={20} height={20} alt="" />
               </div>
-              <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+              <IconButton
+                icon={dotsThreeIcon}
+                alt="Mais opções"
+                iconSize={24}
+                onClick={(event) => event.stopPropagation()}
+              />
             </div>
 
             <div className="collaborator-card__info">

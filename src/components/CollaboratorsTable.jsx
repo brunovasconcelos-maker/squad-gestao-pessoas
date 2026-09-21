@@ -88,6 +88,7 @@ function CollaboratorsTable({
   timeOptions,
   cargoOptions,
   atividadeOptions,
+  onRowClick,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -220,11 +221,15 @@ function CollaboratorsTable({
                   : 'collaborators-table__row'
               }
               key={collaborator.id}
+              onClick={() => onRowClick?.(collaborator.id)}
             >
               <button
                 type="button"
                 className="collaborators-table__checkbox-cell"
-                onClick={() => onToggleSelect(collaborator.id)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onToggleSelect(collaborator.id)
+                }}
               >
                 <img
                   src={isSelected ? checkSquareIcon : squareIcon}
@@ -248,7 +253,12 @@ function CollaboratorsTable({
               <div className="collaborators-table__cell">
                 <ActivityTag contractType={collaborator.contractType} />
               </div>
-              <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+              <IconButton
+                icon={dotsThreeIcon}
+                alt="Mais opções"
+                iconSize={24}
+                onClick={(event) => event.stopPropagation()}
+              />
             </div>
           )
         })}
