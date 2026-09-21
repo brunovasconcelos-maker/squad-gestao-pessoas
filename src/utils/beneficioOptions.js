@@ -24,6 +24,16 @@ export function getBeneficioTypeIcon(tipo) {
   return TYPE_ICON_BY_NAME[tipo] ?? Gift
 }
 
+// The value a benefit is matched against when filtering by "Tipo de
+// benefício": one of the 6 named types, or - for "Outro" - its Fixo/Verba
+// subtype instead of the generic "Outro" label. Legacy seed benefits carry
+// no tipo at all and simply never match a tipo filter.
+export function getBenefitFilterTipo(benefit) {
+  if (!benefit.tipo) return null
+  if (benefit.tipo === 'Outro') return benefit.outroSubtipo ?? null
+  return benefit.tipo
+}
+
 export const BENEFICIO_PROVIDER_SUGGESTIONS = {
   'Plano de Saúde': [
     'Alice',

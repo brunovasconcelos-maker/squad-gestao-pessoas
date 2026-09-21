@@ -5,7 +5,7 @@ import aliceImage from '../assets/images/Frame 2147223814.png'
 import cajuImage from '../assets/images/Frame 2147223814-1.png'
 import gympassImage from '../assets/images/Frame 2147223814-2.png'
 import { getBeneficioTypeIcon } from '../utils/beneficioOptions.js'
-import { resolveBeneficiaryIds } from '../utils/beneficiarios.js'
+import { getBenefitMemberCount } from '../utils/beneficiarios.js'
 import './BeneficiosGrid.css'
 
 const IMAGE_BY_KEY = {
@@ -24,9 +24,7 @@ function BeneficiosGrid({ benefits, collaborators }) {
     <div className="beneficios-grid">
       {benefits.map((benefit) => {
         const isCreatedBenefit = Boolean(benefit.tipo)
-        const memberCount = isCreatedBenefit
-          ? resolveBeneficiaryIds(benefit.beneficiarios, collaborators).size
-          : benefit.memberCount
+        const memberCount = getBenefitMemberCount(benefit, collaborators)
         const CategoryIcon = isCreatedBenefit ? getBeneficioTypeIcon(benefit.tipo) : null
 
         return (

@@ -15,6 +15,8 @@ import BulkActionBar from '../components/BulkActionBar.jsx'
 import AddEmTimeModal from '../components/AddEmTimeModal.jsx'
 import BottomSearchBar from '../components/BottomSearchBar.jsx'
 import FiltrosPanel from '../components/FiltrosPanel.jsx'
+import TimesFiltrosPanel from '../components/TimesFiltrosPanel.jsx'
+import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
@@ -28,6 +30,8 @@ import {
   COLLECTIONS,
 } from '../utils/storage.js'
 import { formatDateDMonthYear } from '../utils/formatters.js'
+import { getBenefitMemberCount } from '../utils/beneficiarios.js'
+import { getBenefitFilterTipo } from '../utils/beneficioOptions.js'
 import './Home.css'
 
 const TABS = [
@@ -48,6 +52,14 @@ function createEmptyColumnFilters() {
   }
 }
 
+function createEmptyTimesFilters() {
+  return { status: new Set(), pessoas: { min: null, max: null } }
+}
+
+function createEmptyBeneficiosFilters() {
+  return { tipo: new Set(), pessoas: { min: null, max: null } }
+}
+
 function Home() {
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
@@ -66,6 +78,10 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [columnFilters, setColumnFilters] = useState(createEmptyColumnFilters)
   const [filtrosPanelOpen, setFiltrosPanelOpen] = useState(false)
+  const [timesFilters, setTimesFilters] = useState(createEmptyTimesFilters)
+  const [timesFiltrosOpen, setTimesFiltrosOpen] = useState(false)
+  const [beneficiosFilters, setBeneficiosFilters] = useState(createEmptyBeneficiosFilters)
+  const [beneficiosFiltrosOpen, setBeneficiosFiltrosOpen] = useState(false)
   // Read fresh on every render (not cached in state) so the Times tab always
   // reflects the current localStorage contents, including teams created via
   // the quick-create flow in a collaborator's Time modal after this page
@@ -74,6 +90,29 @@ function Home() {
   const cargos = getCollection(COLLECTIONS.CARGOS)
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
   const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
+
+  const filteredBeneficios = useMemo(() => {
+    return beneficios.filter((benefit) => {
+      if (beneficiosFilters.tipo.size > 0) {
+        const filterTipo = getBenefitFilterTipo(benefit)
+        if (!filterTipo || !beneficiosFilters.tipo.has(filterTipo)) return false
+      }
+      const count = getBenefitMemberCount(benefit, collaborators)
+      const { min, max } = beneficiosFilters.pessoas
+      if (min != null && count < min) return false
+      if (max != null && count > max) return false
+      return true
+    })
+  }, [beneficios, beneficiosFilters, collaborators])
+
+  const beneficiosFiltersSummary = useMemo(() => {
+    const parts = [...beneficiosFilters.tipo]
+    if (beneficiosFilters.pessoas.min != null) parts.push(`Mín. ${beneficiosFilters.pessoas.min}`)
+    if (beneficiosFilters.pessoas.max != null) parts.push(`Máx. ${beneficiosFilters.pessoas.max}`)
+    return parts.join(', ')
+  }, [beneficiosFilters])
+
+  const clearBeneficiosFilters = () => setBeneficiosFilters(createEmptyBeneficiosFilters())
 
   // Only teams/cargos actually assigned to at least one collaborator are
   // valid filter options - a team or cargo that exists in storage but has
@@ -173,11 +212,27 @@ function Home() {
 
   const filteredTeams = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
-    if (!query) return teamsWithCounts
-    return teamsWithCounts.filter((team) =>
-      team.name.toLowerCase().includes(query),
-    )
-  }, [teamsWithCounts, searchQuery])
+    return teamsWithCounts.filter((team) => {
+      if (query && !team.name.toLowerCase().includes(query)) return false
+      if (timesFilters.status.size > 0) {
+        const statusLabel = team.pending ? 'Pendente' : 'Completo'
+        if (!timesFilters.status.has(statusLabel)) return false
+      }
+      const { min, max } = timesFilters.pessoas
+      if (min != null && team.memberCount < min) return false
+      if (max != null && team.memberCount > max) return false
+      return true
+    })
+  }, [teamsWithCounts, searchQuery, timesFilters])
+
+  const timesFiltersSummary = useMemo(() => {
+    const parts = [...timesFilters.status]
+    if (timesFilters.pessoas.min != null) parts.push(`Mín. ${timesFilters.pessoas.min}`)
+    if (timesFilters.pessoas.max != null) parts.push(`Máx. ${timesFilters.pessoas.max}`)
+    return parts.join(', ')
+  }, [timesFilters])
+
+  const clearTimesFilters = () => setTimesFilters(createEmptyTimesFilters())
 
   // Every Cargos row is derived from real collaborators - group them by
   // (cargo name, contract type). A cargo still marked pending (the only kind
@@ -413,7 +468,12 @@ function Home() {
             </div>
           ) : activeTab === 'times' ? (
             <div className="home__panel">
-              <TimesToolbar total={times.length} />
+              <TimesToolbar
+                total={times.length}
+                onFiltrosClick={() => setTimesFiltrosOpen(true)}
+                filtersSummary={timesFiltersSummary}
+                onClearAllFilters={clearTimesFilters}
+              />
               <TimesGrid
                 teams={filteredTeams}
                 onCriarTime={(teamId) => {
@@ -449,8 +509,13 @@ function Home() {
             </div>
           ) : activeTab === 'beneficios' ? (
             <div className="home__panel">
-              <BeneficiosToolbar total={beneficios.length} />
-              <BeneficiosGrid benefits={beneficios} collaborators={collaborators} />
+              <BeneficiosToolbar
+                total={beneficios.length}
+                onFiltrosClick={() => setBeneficiosFiltrosOpen(true)}
+                filtersSummary={beneficiosFiltersSummary}
+                onClearAllFilters={clearBeneficiosFilters}
+              />
+              <BeneficiosGrid benefits={filteredBeneficios} collaborators={collaborators} />
             </div>
           ) : (
             <div className="home__panel" />
@@ -490,6 +555,20 @@ function Home() {
         timeOptions={timeOptions}
         cargoOptions={cargoOptions}
         atividadeOptions={ATIVIDADE_OPTIONS}
+      />
+
+      <TimesFiltrosPanel
+        isOpen={timesFiltrosOpen}
+        onClose={() => setTimesFiltrosOpen(false)}
+        filters={timesFilters}
+        onSave={setTimesFilters}
+      />
+
+      <BeneficiosFiltrosPanel
+        isOpen={beneficiosFiltrosOpen}
+        onClose={() => setBeneficiosFiltrosOpen(false)}
+        filters={beneficiosFilters}
+        onSave={setBeneficiosFilters}
       />
 
       {addEmTimeModalOpen && (
