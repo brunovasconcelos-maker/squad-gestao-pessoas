@@ -46,10 +46,31 @@
   object-fit: cover;
 }
 
+.beneficio-card__bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .beneficio-card__info {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.beneficio-card__menu-button {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.beneficio-card:hover .beneficio-card__menu-button {
+  opacity: 1;
+}
+
+.beneficio-card__menu-button img {
+  transform: rotate(-90deg);
 }
 
 .beneficio-card__name {

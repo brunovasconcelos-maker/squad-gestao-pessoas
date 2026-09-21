@@ -87,11 +87,12 @@
 }
 
 .step2-beneficio__dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  z-index: 20;
+  /* Fixed to the viewport (position/size set inline from the field's
+     bounding rect) rather than absolute within the field, so it always
+     renders above the wizard's fixed footer and is never clipped by the
+     scrollable wizard body. */
+  position: fixed;
+  z-index: 200;
   box-sizing: border-box;
   max-height: 288px;
   overflow-y: auto;

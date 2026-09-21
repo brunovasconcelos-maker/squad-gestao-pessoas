@@ -1,11 +1,13 @@
 import arrowUpRightIcon from '../assets/icons/ArrowUpRight.svg'
 import desktopIcon from '../assets/icons/Desktop.svg'
 import vanIcon from '../assets/icons/Van.svg'
+import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import aliceImage from '../assets/images/Frame 2147223814.png'
 import cajuImage from '../assets/images/Frame 2147223814-1.png'
 import gympassImage from '../assets/images/Frame 2147223814-2.png'
 import { getBeneficioTypeIcon } from '../utils/beneficioOptions.js'
 import { getBenefitMemberCount } from '../utils/beneficiarios.js'
+import IconButton from './IconButton.jsx'
 import './BeneficiosGrid.css'
 
 const IMAGE_BY_KEY = {
@@ -55,9 +57,17 @@ function BeneficiosGrid({ benefits, collaborators }) {
                 alt=""
               />
             </div>
-            <div className="beneficio-card__info">
-              <span className="beneficio-card__name">{benefit.name}</span>
-              <span className="beneficio-card__count">{memberCount} pessoas</span>
+            <div className="beneficio-card__bottom-row">
+              <div className="beneficio-card__info">
+                <span className="beneficio-card__name">{benefit.name}</span>
+                <span className="beneficio-card__count">{memberCount} pessoas</span>
+              </div>
+              <IconButton
+                icon={dotsThreeIcon}
+                alt="Mais opções"
+                iconSize={24}
+                className="beneficio-card__menu-button"
+              />
             </div>
           </div>
         )
