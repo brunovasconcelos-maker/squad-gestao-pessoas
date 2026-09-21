@@ -28,7 +28,10 @@
   border-radius: 8px;
   padding: 24px 24px 0 24px;
   overflow: hidden;
-  transform: translateX(100%);
+  /* translateX(100%) alone only shifts by the panel's own width, leaving
+     the 24px `right` offset still on-screen as a sliver. Push past that
+     too so the panel sits fully outside the viewport while closed. */
+  transform: translateX(calc(100% + 24px));
   transition: transform 280ms ease-out;
   z-index: 151;
 }

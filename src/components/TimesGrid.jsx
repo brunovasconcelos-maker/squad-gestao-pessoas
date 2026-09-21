@@ -1,10 +1,12 @@
 import { UsersFour } from '@phosphor-icons/react'
 import arrowUpRightIcon from '../assets/icons/ArrowUpRight.svg'
+import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import {
   getTeamColorTones,
   getTeamIconComponent,
   guessTeamIconName,
 } from '../utils/teamOptions.js'
+import IconButton from './IconButton.jsx'
 import './TimesGrid.css'
 
 const PENDING_TONE = {
@@ -58,9 +60,17 @@ function TimesGrid({ teams, onCriarTime }) {
                   Criar time
                 </button>
               </div>
-              <div className="time-card__info">
-                <span className="time-card__name">{team.name}</span>
-                <span className="time-card__count">{team.memberCount} pessoas</span>
+              <div className="time-card__bottom-row">
+                <div className="time-card__info">
+                  <span className="time-card__name">{team.name}</span>
+                  <span className="time-card__count">{team.memberCount} pessoas</span>
+                </div>
+                <IconButton
+                  icon={dotsThreeIcon}
+                  alt="Mais opções"
+                  iconSize={24}
+                  className="time-card__menu-button"
+                />
               </div>
             </div>
           )
@@ -76,9 +86,17 @@ function TimesGrid({ teams, onCriarTime }) {
               <IconCluster FrontIcon={FrontIcon} tone={tone} />
               <img src={arrowUpRightIcon} width={24} height={24} alt="" />
             </div>
-            <div className="time-card__info">
-              <span className="time-card__name">{team.name}</span>
-              <span className="time-card__count">{team.memberCount} pessoas</span>
+            <div className="time-card__bottom-row">
+              <div className="time-card__info">
+                <span className="time-card__name">{team.name}</span>
+                <span className="time-card__count">{team.memberCount} pessoas</span>
+              </div>
+              <IconButton
+                icon={dotsThreeIcon}
+                alt="Mais opções"
+                iconSize={24}
+                className="time-card__menu-button"
+              />
             </div>
           </div>
         )

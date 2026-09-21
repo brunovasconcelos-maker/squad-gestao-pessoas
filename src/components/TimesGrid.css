@@ -78,10 +78,31 @@
   white-space: nowrap;
 }
 
+.time-card__bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .time-card__info {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.time-card__menu-button {
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.time-card:hover .time-card__menu-button {
+  opacity: 1;
+}
+
+.time-card__menu-button img {
+  transform: rotate(-90deg);
 }
 
 .time-card__name {

@@ -11,6 +11,7 @@ import './Step2Beneficio.css'
 function Step2Beneficio({ tipo, providerName, onProviderNameChange, onBack, onExit, onContinue }) {
   const [inputValue, setInputValue] = useState(providerName ?? '')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [dropdownRect, setDropdownRect] = useState(null)
   const fieldRef = useRef(null)
 
   const IconComponent = getBeneficioTypeIcon(tipo)
@@ -35,6 +36,26 @@ function Step2Beneficio({ tipo, providerName, onProviderNameChange, onBack, onEx
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [dropdownOpen, providerName])
+
+  // The dropdown is positioned relative to the viewport (not to the field)
+  // so it always renders above the wizard's fixed footer and is never
+  // clipped by the scrollable wizard body - recomputed whenever it opens,
+  // and kept in sync if the page scrolls or resizes while it's open.
+  useEffect(() => {
+    if (!dropdownOpen) return
+    const updateRect = () => {
+      if (!fieldRef.current) return
+      const rect = fieldRef.current.getBoundingClientRect()
+      setDropdownRect({ top: rect.bottom + 8, left: rect.left, width: rect.width })
+    }
+    updateRect()
+    window.addEventListener('resize', updateRect)
+    window.addEventListener('scroll', updateRect, true)
+    return () => {
+      window.removeEventListener('resize', updateRect)
+      window.removeEventListener('scroll', updateRect, true)
+    }
+  }, [dropdownOpen])
 
   const selectProvider = (name) => {
     onProviderNameChange(name)
@@ -82,8 +103,15 @@ function Step2Beneficio({ tipo, providerName, onProviderNameChange, onBack, onEx
             <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
           </div>
 
-          {dropdownOpen && (
-            <div className="step2-beneficio__dropdown">
+          {dropdownOpen && dropdownRect && (
+            <div
+              className="step2-beneficio__dropdown"
+              style={{
+                top: dropdownRect.top,
+                left: dropdownRect.left,
+                width: dropdownRect.width,
+              }}
+            >
               {filtered.map((suggestion) => (
                 <button
                   type="button"

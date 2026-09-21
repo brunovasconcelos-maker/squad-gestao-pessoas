@@ -122,7 +122,10 @@ function NovoBeneficioFlow({ onExit }) {
           tipo={tipo}
           providerName={providerName}
           onProviderNameChange={setProviderName}
-          onBack={() => setStep(1)}
+          onBack={() => {
+            setProviderName(null)
+            setStep(1)
+          }}
           onExit={() => setDiscardConfirmOpen(true)}
           onContinue={() => setStep(3)}
         />
