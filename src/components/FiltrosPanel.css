@@ -165,6 +165,49 @@
   pointer-events: none;
 }
 
+.filtros-panel__range-row {
+  display: flex;
+  align-items: center;
+}
+
+.filtros-panel__range-connector {
+  flex-shrink: 0;
+  padding: 0 12px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.filtros-panel__number-pill {
+  flex: 1;
+  min-width: 0;
+  height: 40px;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  border-radius: 360px;
+  background: var(--color-overlay);
+  padding: 12px 16px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.filtros-panel__number-pill::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.filtros-panel__number-pill::-webkit-inner-spin-button,
+.filtros-panel__number-pill::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.filtros-panel__number-pill[type='number'] {
+  -moz-appearance: textfield;
+}
+
 .filtros-panel__footer {
   position: absolute;
   left: 0;

@@ -21,3 +21,11 @@ export function resolveBeneficiaryIds(beneficiarios, collaborators) {
 
   return result
 }
+
+// Legacy seed benefits carry a static memberCount; benefits created via the
+// Novo Benefício flow always resolve their count live from the current
+// colaboradores/times/cargos collections.
+export function getBenefitMemberCount(benefit, collaborators) {
+  if (!benefit.tipo) return benefit.memberCount
+  return resolveBeneficiaryIds(benefit.beneficiarios, collaborators).size
+}
