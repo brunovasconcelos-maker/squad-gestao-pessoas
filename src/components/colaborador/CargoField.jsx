@@ -6,22 +6,22 @@ import '../addCollaborator/SelectListModal.css'
 import './ColaboradorDetail.css'
 
 function CargoField({ value, cargos, disabled, onSave }) {
-  const [open, setOpen] = useState(false)
+  const [editing, setEditing] = useState(false)
   const [query, setQuery] = useState('')
   const anchorRef = useRef(null)
-  const rect = useDropdownPosition(open, anchorRef)
+  const rect = useDropdownPosition(editing, anchorRef)
 
   useEffect(() => {
-    if (!open) return
+    if (!editing) return
     function handleClickOutside(event) {
       if (anchorRef.current && !anchorRef.current.contains(event.target)) {
-        setOpen(false)
+        setEditing(false)
         setQuery('')
       }
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [open])
+  }, [editing])
 
   const displayValue = value.length ? value.join(', ') : 'Adicionar'
   const trimmedQuery = query.trim()
@@ -35,7 +35,7 @@ function CargoField({ value, cargos, disabled, onSave }) {
 
   const select = (name) => {
     onSave([name])
-    setOpen(false)
+    setEditing(false)
     setQuery('')
   }
 
@@ -44,31 +44,41 @@ function CargoField({ value, cargos, disabled, onSave }) {
     select(newCargo.name)
   }
 
-  return (
-    <div className="colaborador-field" ref={anchorRef}>
+  const startEdit = () => {
+    if (disabled) return
+    setQuery('')
+    setEditing(true)
+  }
+
+  if (!editing) {
+    return (
       <button
         type="button"
         className="colaborador-detail__value-button"
-        onClick={() => !disabled && setOpen((prev) => !prev)}
+        onClick={startEdit}
         disabled={disabled}
       >
         {displayValue}
       </button>
+    )
+  }
 
-      {open && rect && (
+  return (
+    <div className="colaborador-field" ref={anchorRef}>
+      <input
+        type="text"
+        autoFocus
+        className="colaborador-field__inline-search-input"
+        placeholder="Buscar cargo..."
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+      />
+
+      {rect && (
         <div
           className="colaborador-field__dropdown"
           style={{ top: rect.top, right: rect.right }}
         >
-          <div className="select-list__search">
-            <input
-              type="text"
-              autoFocus
-              className="select-list__search-input"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-          </div>
           <div className="select-list__list">
             {filtered.map((cargo) => (
               <button
@@ -88,6 +98,10 @@ function CargoField({ value, cargos, disabled, onSave }) {
                 </span>
                 <img src={plusIcon} alt="" width={24} height={24} />
               </button>
+            )}
+
+            {!showCreate && filtered.length === 0 && (
+              <p className="select-list__empty">Nenhum cargo encontrado.</p>
             )}
           </div>
         </div>
