@@ -7,30 +7,52 @@
 
 .colaborador-detail {
   box-sizing: border-box;
+  position: fixed;
   display: flex;
   flex-direction: column;
   gap: 40px;
   background: var(--color-bg);
   overflow: hidden;
+  transition:
+    top 280ms ease-out,
+    right 280ms ease-out,
+    width 280ms ease-out,
+    height 280ms ease-out,
+    padding 280ms ease-out,
+    border-radius 280ms ease-out,
+    border-color 280ms ease-out,
+    transform 280ms ease-out;
 }
 
 .colaborador-detail--panel {
-  position: fixed;
-  top: 40px;
+  top: 20px;
   right: 24px;
   width: 540px;
-  height: calc(100vh - 80px);
+  height: calc(100vh - 40px);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 24px;
   z-index: 161;
+  /* translateX(100%) alone only shifts by the panel's own width, leaving
+     the 24px `right` offset still on-screen as a sliver. Push past that
+     too so the panel sits fully outside the viewport before it enters. */
+  transform: translateX(calc(100% + 24px));
+}
+
+.colaborador-detail--panel.colaborador-detail--entered {
+  transform: translateX(0);
 }
 
 .colaborador-detail--full {
-  position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  border: 1px solid transparent;
+  border-radius: 0;
   padding: 24px 40px;
   z-index: 200;
+  transform: translateX(0);
 }
 
 .colaborador-detail__header {

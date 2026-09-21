@@ -166,3 +166,25 @@ export function cleanupLegacySeedTimes() {
     writeCollection(COLLECTIONS.TIMES, withDesignPendingFixed)
   }
 }
+
+// One-time cleanup: a colaborador's "times" array should hold at most one
+// team, but records saved before that rule was enforced may still carry
+// more than one. Keep only the first and drop the rest. Naturally a no-op
+// once every record already has 0 or 1 team, so safe to run on every load.
+export function cleanupMultiTeamColaboradores() {
+  const colaboradores = readCollection(COLLECTIONS.COLABORADORES)
+  if (colaboradores === null) return
+
+  let changed = false
+  const fixed = colaboradores.map((colaborador) => {
+    if (Array.isArray(colaborador.times) && colaborador.times.length > 1) {
+      changed = true
+      return { ...colaborador, times: [colaborador.times[0]] }
+    }
+    return colaborador
+  })
+
+  if (changed) {
+    writeCollection(COLLECTIONS.COLABORADORES, fixed)
+  }
+}

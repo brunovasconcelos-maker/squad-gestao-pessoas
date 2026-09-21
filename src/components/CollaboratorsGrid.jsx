@@ -1,12 +1,17 @@
 import userIcon from '../assets/icons/User.svg'
-import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
-import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
+import CollaboratorRowMenu from './colaborador/CollaboratorRowMenu.jsx'
 import './CollaboratorsGrid.css'
 
-function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect, onCardClick }) {
+function CollaboratorsGrid({
+  collaborators,
+  selectedIds,
+  onToggleSelect,
+  onCardClick,
+  onDataChanged,
+}) {
   return (
     <div className="collaborators-grid">
       {collaborators.map((collaborator) => {
@@ -40,11 +45,10 @@ function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect, onCardC
               <div className="collaborator-card__avatar">
                 <img src={userIcon} width={20} height={20} alt="" />
               </div>
-              <IconButton
-                icon={dotsThreeIcon}
-                alt="Mais opções"
-                iconSize={24}
-                onClick={(event) => event.stopPropagation()}
+              <CollaboratorRowMenu
+                collaborator={collaborator}
+                onView={onCardClick}
+                onDataChanged={onDataChanged}
               />
             </div>
 
@@ -60,7 +64,10 @@ function CollaboratorsGrid({ collaborators, selectedIds, onToggleSelect, onCardC
               </span>
             </div>
 
-            <ActivityTag contractType={collaborator.contractType} />
+            <ActivityTag
+              contractType={collaborator.contractType}
+              desligado={Boolean(collaborator.desligado)}
+            />
           </div>
         )
       })}

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, ArrowsOutSimple } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
@@ -43,6 +43,21 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
   const [notaText, setNotaText] = useState('')
   const notaInputRef = useRef(null)
   const notaSavingRef = useRef(false)
+
+  // Opening straight into full-screen (a direct/shared link) has no natural
+  // "closed" state to slide in from, so it starts already entered. Opening
+  // as a panel starts un-entered and flips true on the next frame, playing
+  // the slide-in-from-the-right transition once. It then stays true across
+  // later panel <-> full toggles, which animate via their own layout
+  // transition instead (see ColaboradorDetail.css).
+  const [entered, setEntered] = useState(() => mode === 'full')
+
+  useEffect(() => {
+    if (entered) return
+    const frame = requestAnimationFrame(() => setEntered(true))
+    return () => cancelAnimationFrame(frame)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const collaborator = collaborators.find((item) => item.id === id) ?? null
 
@@ -348,11 +363,13 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
 
   return (
     <div
-      className={
-        mode === 'full'
-          ? 'colaborador-detail colaborador-detail--full'
-          : 'colaborador-detail colaborador-detail--panel'
-      }
+      className={[
+        'colaborador-detail',
+        mode === 'full' ? 'colaborador-detail--full' : 'colaborador-detail--panel',
+        entered ? 'colaborador-detail--entered' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
     >
       <header className="colaborador-detail__header">
         <IconButton icon={closeIcon} alt="Fechar" onClick={onClose} />
