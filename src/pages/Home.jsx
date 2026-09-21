@@ -458,18 +458,6 @@ function Home() {
     )
   }
 
-  if (colaboradorFullScreen) {
-    return (
-      <ColaboradorDetail
-        id={colaboradorId}
-        mode="full"
-        onClose={closeColaborador}
-        onCollapse={collapseColaborador}
-        onDataChanged={setCollaborators}
-      />
-    )
-  }
-
   return (
     <div className="home">
       <Sidebar />
@@ -504,6 +492,7 @@ function Home() {
                   cargoOptions={cargoOptions}
                   atividadeOptions={ATIVIDADE_OPTIONS}
                   onRowClick={openColaborador}
+                  onDataChanged={setCollaborators}
                 />
               ) : (
                 <CollaboratorsGrid
@@ -511,6 +500,7 @@ function Home() {
                   selectedIds={selectedIds}
                   onToggleSelect={toggleSelect}
                   onCardClick={openColaborador}
+                  onDataChanged={setCollaborators}
                 />
               )}
             </div>
@@ -621,12 +611,15 @@ function Home() {
 
       {colaboradorOverlayOpen && (
         <>
-          <div className="colaborador-detail-overlay" onClick={closeColaborador} />
+          {!colaboradorFullScreen && (
+            <div className="colaborador-detail-overlay" onClick={closeColaborador} />
+          )}
           <ColaboradorDetail
             id={colaboradorId}
-            mode="panel"
+            mode={colaboradorFullScreen ? 'full' : 'panel'}
             onClose={closeColaborador}
             onExpand={expandColaborador}
+            onCollapse={collapseColaborador}
             onDataChanged={setCollaborators}
           />
         </>

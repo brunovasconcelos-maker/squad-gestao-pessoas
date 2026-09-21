@@ -6,10 +6,15 @@ import '@fontsource/inter/600.css'
 import '@fontsource/inter/700.css'
 import './index.css'
 import App from './App.jsx'
-import { seedInitialData, cleanupLegacySeedTimes } from './utils/storage.js'
+import {
+  seedInitialData,
+  cleanupLegacySeedTimes,
+  cleanupMultiTeamColaboradores,
+} from './utils/storage.js'
 
 seedInitialData()
 cleanupLegacySeedTimes()
+cleanupMultiTeamColaboradores()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

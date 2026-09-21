@@ -4,9 +4,8 @@ import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/Close.svg'
 import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
-import dotsThreeIcon from '../assets/icons/DotsThree.svg'
-import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
+import CollaboratorRowMenu from './colaborador/CollaboratorRowMenu.jsx'
 import { formatShortDatePt } from '../utils/formatters.js'
 import { getCollaboratorActiveSince } from '../utils/storage.js'
 import './CollaboratorsTable.css'
@@ -89,6 +88,7 @@ function CollaboratorsTable({
   cargoOptions,
   atividadeOptions,
   onRowClick,
+  onDataChanged,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -251,13 +251,15 @@ function CollaboratorsTable({
                 {activeSince ? formatShortDatePt(activeSince) : ''}
               </div>
               <div className="collaborators-table__cell">
-                <ActivityTag contractType={collaborator.contractType} />
+                <ActivityTag
+                  contractType={collaborator.contractType}
+                  desligado={Boolean(collaborator.desligado)}
+                />
               </div>
-              <IconButton
-                icon={dotsThreeIcon}
-                alt="Mais opções"
-                iconSize={24}
-                onClick={(event) => event.stopPropagation()}
+              <CollaboratorRowMenu
+                collaborator={collaborator}
+                onView={onRowClick}
+                onDataChanged={onDataChanged}
               />
             </div>
           )
