@@ -25,6 +25,7 @@ import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import TimeDetail from '../components/time/TimeDetail.jsx'
+import CargoDetail from '../components/cargo/CargoDetail.jsx'
 import {
   getCollection,
   setCollection,
@@ -55,6 +56,7 @@ const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 const initialHashPath = window.location.hash.replace(/^#/, '')
 const loadedDirectlyOnColaboradorRoute = /^\/colaborador\/[^/]+/.test(initialHashPath)
 const loadedDirectlyOnTimeRoute = /^\/time\/[^/]+/.test(initialHashPath)
+const loadedDirectlyOnCargoRoute = /^\/cargo\/[^/]+/.test(initialHashPath)
 
 function createEmptyColumnFilters() {
   return {
@@ -77,6 +79,7 @@ function Home() {
   const navigate = useNavigate()
   const colaboradorMatch = useMatch('/colaborador/:id')
   const timeMatch = useMatch('/time/:id')
+  const cargoMatch = useMatch('/cargo/:id')
   const [searchParams] = useSearchParams()
   // Captures whether the very first page load (hard navigation, refresh, or
   // a pasted link) already landed on the colaborador route - that always
@@ -113,6 +116,22 @@ function Home() {
     navigate(`/time/${timeId}`)
   }
   const closeTime = () => navigate('/')
+
+  // Same convention as the colaborador/time routes above, applied to /cargo/:id.
+  const forceFullScreenCargoRef = useRef(loadedDirectlyOnCargoRoute)
+  const cargoId = cargoMatch?.params?.id ?? null
+  const cargoFullScreenRequested = searchParams.get('view') === 'full'
+  const cargoOverlayOpen = Boolean(cargoId)
+  const cargoFullScreen =
+    cargoOverlayOpen && (cargoFullScreenRequested || forceFullScreenCargoRef.current)
+
+  const openCargo = (id) => navigate(`/cargo/${id}`)
+  const expandCargo = () => navigate(`/cargo/${cargoId}?view=full`)
+  const collapseCargo = () => {
+    forceFullScreenCargoRef.current = false
+    navigate(`/cargo/${cargoId}`)
+  }
+  const closeCargo = () => navigate('/')
 
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
@@ -563,6 +582,7 @@ function Home() {
                   setNovoCargoId(recordId)
                   setNovoCargoFlowOpen(true)
                 }}
+                onRowClick={openCargo}
               />
             </div>
           ) : activeTab === 'beneficios' ? (
@@ -654,6 +674,20 @@ function Home() {
             onClose={closeTime}
             onExpand={expandTime}
             onCollapse={collapseTime}
+            onDataChanged={setCollaborators}
+          />
+        </>
+      )}
+
+      {cargoOverlayOpen && (
+        <>
+          {!cargoFullScreen && <div className="cargo-detail-overlay" onClick={closeCargo} />}
+          <CargoDetail
+            id={cargoId}
+            mode={cargoFullScreen ? 'full' : 'panel'}
+            onClose={closeCargo}
+            onExpand={expandCargo}
+            onCollapse={collapseCargo}
             onDataChanged={setCollaborators}
           />
         </>
