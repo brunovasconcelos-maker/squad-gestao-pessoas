@@ -111,7 +111,7 @@
 
 .cargo-detail__scroll::-webkit-scrollbar,
 .cargo-detail--full .cargo-detail__column::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
 
 .cargo-detail__scroll::-webkit-scrollbar-track,
@@ -119,9 +119,14 @@
   background: transparent;
 }
 
+/* The 4px transparent border, combined with background-clip: padding-box,
+   keeps the painted thumb inset 4px from the scroll container's own right
+   edge instead of sitting flush against it. */
 .cargo-detail__scroll::-webkit-scrollbar-thumb,
 .cargo-detail--full .cargo-detail__column::-webkit-scrollbar-thumb {
   background-color: transparent;
+  background-clip: padding-box;
+  border-right: 4px solid transparent;
   border-radius: 999px;
 }
 

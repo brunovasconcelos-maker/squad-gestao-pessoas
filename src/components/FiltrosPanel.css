@@ -75,15 +75,20 @@
 }
 
 .filtros-panel__scroll::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
 
 .filtros-panel__scroll::-webkit-scrollbar-track {
   background: transparent;
 }
 
+/* The 4px transparent border, combined with background-clip: padding-box,
+   keeps the painted thumb inset 4px from the scroll container's own right
+   edge instead of sitting flush against it. */
 .filtros-panel__scroll::-webkit-scrollbar-thumb {
   background-color: transparent;
+  background-clip: padding-box;
+  border-right: 4px solid transparent;
   border-radius: 999px;
 }
 

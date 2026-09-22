@@ -111,7 +111,7 @@
 
 .time-detail__scroll::-webkit-scrollbar,
 .time-detail--full .time-detail__column::-webkit-scrollbar {
-  width: 6px;
+  width: 10px;
 }
 
 .time-detail__scroll::-webkit-scrollbar-track,
@@ -119,9 +119,14 @@
   background: transparent;
 }
 
+/* The 4px transparent border, combined with background-clip: padding-box,
+   keeps the painted thumb inset 4px from the scroll container's own right
+   edge instead of sitting flush against it. */
 .time-detail__scroll::-webkit-scrollbar-thumb,
 .time-detail--full .time-detail__column::-webkit-scrollbar-thumb {
   background-color: transparent;
+  background-clip: padding-box;
+  border-right: 4px solid transparent;
   border-radius: 999px;
 }
 
