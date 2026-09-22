@@ -171,6 +171,9 @@
 
 .colaborador-detail--full .colaborador-detail__column--main {
   grid-column: 3 / 7;
+  /* Matches the Figma spec: insets this column's own content from the
+     notes column beside it, on top of the 20px grid gutter. */
+  padding-right: 40px;
 }
 
 .colaborador-detail--full .colaborador-detail__column--notes {
