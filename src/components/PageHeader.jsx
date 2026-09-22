@@ -26,8 +26,8 @@ function PageHeader({ title, onNovoClick }) {
           className="page-header__new-button"
           onClick={onNovoClick}
         >
-          <img src={plusIcon} width={24} height={24} alt="" />
           Novo
+          <img src={plusIcon} width={24} height={24} alt="" />
         </button>
       </div>
     </div>
