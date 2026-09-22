@@ -52,7 +52,7 @@ function TimeField({ value, times, disabled, onSave }) {
       {open && rect && (
         <div
           className="colaborador-field__dropdown"
-          style={{ top: rect.top, right: rect.right }}
+          style={{ top: rect.top, left: rect.left }}
         >
           <div className="select-list__list">
             {times.map((team) => {
