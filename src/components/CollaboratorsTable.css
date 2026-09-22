@@ -5,13 +5,15 @@
 }
 
 .collaborators-table__header {
+  box-sizing: border-box;
   display: grid;
   grid-template-columns: 24px minmax(0, 1fr) 160px 240px 160px 120px 40px;
   gap: 12px;
   align-items: center;
+  height: 48px;
   background: var(--color-overlay);
   border-bottom: 1px solid var(--color-border);
-  padding: 12px 16px 16px;
+  padding: 0 16px;
 }
 
 .collaborators-table__header-cell {
