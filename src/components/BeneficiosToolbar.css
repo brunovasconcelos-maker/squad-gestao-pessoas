@@ -8,6 +8,7 @@
 .beneficios-toolbar__total {
   font-size: 14px;
   font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
   color: var(--color-text-secondary);
 }
 
@@ -28,7 +29,8 @@
   background: var(--color-bg);
   padding: 0 16px;
   font-size: 14px;
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
+  letter-spacing: 0;
   color: var(--color-text);
 }
 
