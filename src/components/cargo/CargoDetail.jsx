@@ -413,49 +413,53 @@ function CargoDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged })
         </button>
       </div>
 
-      {members.map((member) => {
-        const memberTeamName = member.times?.[0]
-        const memberTeamRecord = times.find((team) => team.name === memberTeamName)
-        const { dark } = getTeamColorTones(memberTeamRecord?.color)
-        return (
-          <div className="cargo-detail__member-row" key={member.id}>
-            <span className="cargo-detail__member-avatar" style={{ background: dark }}>
-              {getInitials(member.name)}
-            </span>
-            <div className="cargo-detail__member-info">
-              <span className="cargo-detail__member-name">{member.name}</span>
-              <span className="cargo-detail__member-time">{memberTeamName ?? ''}</span>
+      <div className="cargo-detail__member-list">
+        {members.map((member) => {
+          const memberTeamName = member.times?.[0]
+          const memberTeamRecord = times.find((team) => team.name === memberTeamName)
+          const { dark } = getTeamColorTones(memberTeamRecord?.color)
+          return (
+            <div className="cargo-detail__member-row" key={member.id}>
+              <span className="cargo-detail__member-avatar" style={{ background: dark }}>
+                {getInitials(member.name)}
+              </span>
+              <div className="cargo-detail__member-info">
+                <span className="cargo-detail__member-name">{member.name}</span>
+                <span className="cargo-detail__member-time">{memberTeamName ?? ''}</span>
+              </div>
+              <button
+                type="button"
+                className="cargo-detail__member-remove"
+                onClick={() => setRemoveMemberTarget(member)}
+                aria-label="Remover deste cargo"
+              >
+                <X size={24} />
+              </button>
             </div>
-            <button
-              type="button"
-              className="cargo-detail__member-remove"
-              onClick={() => setRemoveMemberTarget(member)}
-              aria-label="Remover deste cargo"
-            >
-              <X size={24} />
-            </button>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 
   const beneficiosSection = beneficiosDoCargo.length > 0 && (
     <div className="cargo-detail__beneficios">
       <p className="cargo-detail__section-label">Benefícios</p>
-      {beneficiosDoCargo.map(({ benefit, filterTipo, Icon, aggregateValue }) => (
-        <div className="cargo-detail__beneficio-row" key={benefit.id}>
-          <span className="cargo-detail__beneficio-icon">
-            <Icon size={18} />
-          </span>
-          <span className="cargo-detail__beneficio-info">
-            <span className="cargo-detail__beneficio-tipo">{filterTipo}</span>
-            <span className="cargo-detail__beneficio-name">{benefit.name}</span>
-          </span>
-          <span className="cargo-detail__beneficio-value">{aggregateValue}</span>
-          <img src={arrowUpRightIcon} width={24} height={24} alt="" />
-        </div>
-      ))}
+      <div className="cargo-detail__beneficio-list">
+        {beneficiosDoCargo.map(({ benefit, filterTipo, Icon, aggregateValue }) => (
+          <div className="cargo-detail__beneficio-row" key={benefit.id}>
+            <span className="cargo-detail__beneficio-icon">
+              <Icon size={18} />
+            </span>
+            <span className="cargo-detail__beneficio-info">
+              <span className="cargo-detail__beneficio-tipo">{filterTipo}</span>
+              <span className="cargo-detail__beneficio-name">{benefit.name}</span>
+            </span>
+            <span className="cargo-detail__beneficio-value">{aggregateValue}</span>
+            <img src={arrowUpRightIcon} width={24} height={24} alt="" />
+          </div>
+        ))}
+      </div>
     </div>
   )
 
