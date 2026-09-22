@@ -34,7 +34,7 @@ function IconCluster({ FrontIcon, tone }) {
   )
 }
 
-function TimesGrid({ teams, onCriarTime }) {
+function TimesGrid({ teams, onCriarTime, onCardClick }) {
   // Pending drafts always lead the default grid, regardless of creation
   // order - once a draft is completed via Criar Time, pending flips false
   // and it falls back into the regular group in normal order.
@@ -81,7 +81,11 @@ function TimesGrid({ teams, onCriarTime }) {
         const tone = { background: light, border: dark, iconColor: dark }
 
         return (
-          <div className="time-card" key={team.id}>
+          <div
+            className="time-card"
+            key={team.id}
+            onClick={() => onCardClick?.(team.id)}
+          >
             <div className="time-card__top-row">
               <IconCluster FrontIcon={FrontIcon} tone={tone} />
               <img src={arrowUpRightIcon} width={24} height={24} alt="" />
@@ -96,6 +100,7 @@ function TimesGrid({ teams, onCriarTime }) {
                 alt="Mais opções"
                 iconSize={24}
                 className="time-card__menu-button"
+                onClick={(event) => event.stopPropagation()}
               />
             </div>
           </div>

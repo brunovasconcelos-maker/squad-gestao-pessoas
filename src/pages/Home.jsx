@@ -24,6 +24,7 @@ import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
 import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
+import TimeDetail from '../components/time/TimeDetail.jsx'
 import {
   getCollection,
   setCollection,
@@ -53,6 +54,7 @@ const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 // Home's first render runs.
 const initialHashPath = window.location.hash.replace(/^#/, '')
 const loadedDirectlyOnColaboradorRoute = /^\/colaborador\/[^/]+/.test(initialHashPath)
+const loadedDirectlyOnTimeRoute = /^\/time\/[^/]+/.test(initialHashPath)
 
 function createEmptyColumnFilters() {
   return {
@@ -74,6 +76,7 @@ function createEmptyBeneficiosFilters() {
 function Home() {
   const navigate = useNavigate()
   const colaboradorMatch = useMatch('/colaborador/:id')
+  const timeMatch = useMatch('/time/:id')
   const [searchParams] = useSearchParams()
   // Captures whether the very first page load (hard navigation, refresh, or
   // a pasted link) already landed on the colaborador route - that always
@@ -94,6 +97,22 @@ function Home() {
     navigate(`/colaborador/${colaboradorId}`)
   }
   const closeColaborador = () => navigate('/')
+
+  // Same convention as the colaborador route above, applied to /time/:id.
+  const forceFullScreenTimeRef = useRef(loadedDirectlyOnTimeRoute)
+  const timeId = timeMatch?.params?.id ?? null
+  const timeFullScreenRequested = searchParams.get('view') === 'full'
+  const timeOverlayOpen = Boolean(timeId)
+  const timeFullScreen =
+    timeOverlayOpen && (timeFullScreenRequested || forceFullScreenTimeRef.current)
+
+  const openTime = (id) => navigate(`/time/${id}`)
+  const expandTime = () => navigate(`/time/${timeId}?view=full`)
+  const collapseTime = () => {
+    forceFullScreenTimeRef.current = false
+    navigate(`/time/${timeId}`)
+  }
+  const closeTime = () => navigate('/')
 
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
@@ -518,6 +537,7 @@ function Home() {
                   setNovoTimeTeamId(teamId)
                   setNovoTimeFlowOpen(true)
                 }}
+                onCardClick={openTime}
               />
             </div>
           ) : activeTab === 'cargos' ? (
@@ -620,6 +640,20 @@ function Home() {
             onClose={closeColaborador}
             onExpand={expandColaborador}
             onCollapse={collapseColaborador}
+            onDataChanged={setCollaborators}
+          />
+        </>
+      )}
+
+      {timeOverlayOpen && (
+        <>
+          {!timeFullScreen && <div className="time-detail-overlay" onClick={closeTime} />}
+          <TimeDetail
+            id={timeId}
+            mode={timeFullScreen ? 'full' : 'panel'}
+            onClose={closeTime}
+            onExpand={expandTime}
+            onCollapse={collapseTime}
             onDataChanged={setCollaborators}
           />
         </>
