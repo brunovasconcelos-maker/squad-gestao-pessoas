@@ -422,44 +422,48 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
         </button>
       </div>
 
-      {members.map((member) => (
-        <div className="time-detail__member-row" key={member.id}>
-          <span className="time-detail__member-avatar" style={{ background: dark }}>
-            {getInitials(member.name)}
-          </span>
-          <div className="time-detail__member-info">
-            <span className="time-detail__member-name">{member.name}</span>
-            <span className="time-detail__member-cargo">{member.cargos?.[0] ?? ''}</span>
+      <div className="time-detail__member-list">
+        {members.map((member) => (
+          <div className="time-detail__member-row" key={member.id}>
+            <span className="time-detail__member-avatar" style={{ background: dark }}>
+              {getInitials(member.name)}
+            </span>
+            <div className="time-detail__member-info">
+              <span className="time-detail__member-name">{member.name}</span>
+              <span className="time-detail__member-cargo">{member.cargos?.[0] ?? ''}</span>
+            </div>
+            <button
+              type="button"
+              className="time-detail__member-remove"
+              onClick={() => setRemoveMemberTarget(member)}
+              aria-label="Remover membro"
+            >
+              <X size={24} />
+            </button>
           </div>
-          <button
-            type="button"
-            className="time-detail__member-remove"
-            onClick={() => setRemoveMemberTarget(member)}
-            aria-label="Remover membro"
-          >
-            <X size={24} />
-          </button>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 
   const beneficiosSection = beneficiosDoTime.length > 0 && (
     <div className="time-detail__beneficios">
       <p className="time-detail__section-label">Benefícios</p>
-      {beneficiosDoTime.map(({ benefit, filterTipo, Icon, aggregateValue }) => (
-        <div className="time-detail__beneficio-row" key={benefit.id}>
-          <span className="time-detail__beneficio-icon">
-            <Icon size={18} />
-          </span>
-          <span className="time-detail__beneficio-info">
-            <span className="time-detail__beneficio-tipo">{filterTipo}</span>
-            <span className="time-detail__beneficio-name">{benefit.name}</span>
-          </span>
-          <span className="time-detail__beneficio-value">{aggregateValue}</span>
-          <img src={arrowUpRightIcon} width={24} height={24} alt="" />
-        </div>
-      ))}
+      <div className="time-detail__beneficio-list">
+        {beneficiosDoTime.map(({ benefit, filterTipo, Icon, aggregateValue }) => (
+          <div className="time-detail__beneficio-row" key={benefit.id}>
+            <span className="time-detail__beneficio-icon">
+              <Icon size={18} />
+            </span>
+            <span className="time-detail__beneficio-info">
+              <span className="time-detail__beneficio-tipo">{filterTipo}</span>
+              <span className="time-detail__beneficio-name">{benefit.name}</span>
+            </span>
+            <span className="time-detail__beneficio-value">{aggregateValue}</span>
+            <img src={arrowUpRightIcon} width={24} height={24} alt="" />
+          </div>
+        ))}
+      </div>
     </div>
   )
 

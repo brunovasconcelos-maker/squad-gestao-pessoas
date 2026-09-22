@@ -443,13 +443,19 @@
 .time-detail__membros {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
 }
 
 .time-detail__section-header {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.time-detail__member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .time-detail__add-membro-button {
@@ -534,6 +540,12 @@
 /* Beneficios */
 
 .time-detail__beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.time-detail__beneficio-list {
   display: flex;
   flex-direction: column;
   gap: 12px;

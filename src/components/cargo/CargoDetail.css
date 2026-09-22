@@ -422,13 +422,19 @@
 .cargo-detail__membros {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 24px;
 }
 
 .cargo-detail__section-header {
   display: flex;
   align-items: center;
   gap: 16px;
+}
+
+.cargo-detail__member-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .cargo-detail__add-membro-button {
@@ -513,6 +519,12 @@
 /* Beneficios */
 
 .cargo-detail__beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.cargo-detail__beneficio-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
