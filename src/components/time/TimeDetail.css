@@ -93,6 +93,43 @@
   overflow: visible;
 }
 
+/* Overlay-style scrollbar: invisible at rest, revealed on hover (which,
+   for wheel/trackpad scrolling, coincides with the cursor already being
+   over the panel). The 8px right padding keeps the thumb from sitting
+   flush against the text; the thumb itself paints inside that gutter. */
+.time-detail__scroll,
+.time-detail--full .time-detail__column {
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.time-detail__scroll:hover,
+.time-detail--full .time-detail__column:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.24) transparent;
+}
+
+.time-detail__scroll::-webkit-scrollbar,
+.time-detail--full .time-detail__column::-webkit-scrollbar {
+  width: 6px;
+}
+
+.time-detail__scroll::-webkit-scrollbar-track,
+.time-detail--full .time-detail__column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.time-detail__scroll::-webkit-scrollbar-thumb,
+.time-detail--full .time-detail__column::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+}
+
+.time-detail__scroll:hover::-webkit-scrollbar-thumb,
+.time-detail--full .time-detail__column:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.24);
+}
+
 .time-detail--full .time-detail__columns {
   box-sizing: border-box;
   display: grid;
@@ -416,15 +453,12 @@
 }
 
 .time-detail__add-membro-button {
-  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 4px;
-  height: 40px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  background: var(--color-bg);
-  padding: 8px 12px 8px 16px;
+  border: none;
+  background: none;
+  padding: 0;
   font-size: 14px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);

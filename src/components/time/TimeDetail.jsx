@@ -22,6 +22,7 @@ import IconPickerModal from '../addTeam/IconPickerModal.jsx'
 import DescricaoModal from '../addTeam/DescricaoModal.jsx'
 import MembrosModal from '../addTeam/MembrosModal.jsx'
 import DeleteTimeModal from './DeleteTimeModal.jsx'
+import RemoveMemberModal from './RemoveMemberModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
 import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
@@ -77,6 +78,7 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+  const [removeMemberTarget, setRemoveMemberTarget] = useState(null)
   const [openFieldModal, setOpenFieldModal] = useState(null)
   const [descExpanded, setDescExpanded] = useState(false)
   const [addingNota, setAddingNota] = useState(false)
@@ -416,7 +418,7 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
           onClick={() => setOpenFieldModal('membros')}
         >
           Add membro
-          <Plus size={24} />
+          <Plus size={20} color="#798282" />
         </button>
       </div>
 
@@ -432,7 +434,7 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
           <button
             type="button"
             className="time-detail__member-remove"
-            onClick={() => handleRemoveMember(member.id)}
+            onClick={() => setRemoveMemberTarget(member)}
             aria-label="Remover membro"
           >
             <X size={24} />
@@ -525,6 +527,17 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
           name={team.name}
           onCancel={() => setDeleteModalOpen(false)}
           onConfirm={handleDelete}
+        />
+      )}
+
+      {removeMemberTarget && (
+        <RemoveMemberModal
+          name={removeMemberTarget.name}
+          onCancel={() => setRemoveMemberTarget(null)}
+          onConfirm={() => {
+            handleRemoveMember(removeMemberTarget.id)
+            setRemoveMemberTarget(null)
+          }}
         />
       )}
 
