@@ -18,8 +18,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
-  font-weight: var(--font-weight-medium);
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
   color: var(--color-text-secondary);
 }
 
@@ -109,16 +110,16 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 14px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
+  letter-spacing: 0;
   color: var(--color-text);
 }
 
 .cargos-table__cell--cargo {
-  font-weight: var(--font-weight-medium);
+  font-weight: 500;
 }
 
 .cargos-table__cell--secondary {
-  font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
