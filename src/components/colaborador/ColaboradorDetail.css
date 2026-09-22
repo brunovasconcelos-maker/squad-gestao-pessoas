@@ -57,7 +57,8 @@
   height: 100vh;
   border: 1px solid transparent;
   border-radius: 0;
-  padding: 24px 40px;
+  padding: 0;
+  gap: 0;
   z-index: 200;
   transform: none;
 }
@@ -68,6 +69,12 @@
   align-items: center;
   gap: 8px;
   height: 40px;
+}
+
+.colaborador-detail--full .colaborador-detail__header {
+  box-sizing: border-box;
+  height: 64px;
+  padding: 0 40px;
 }
 
 .colaborador-detail__header-title {
@@ -98,23 +105,39 @@
 }
 
 .colaborador-detail--full .colaborador-detail__scroll {
-  width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
+  overflow: visible;
 }
 
-.colaborador-detail__columns {
-  display: flex;
-  align-items: flex-start;
-  gap: 64px;
+/* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
+   independently of each other and of the header, so each is capped to the
+   viewport height below the fixed 64px header with its own overflow-y. */
+.colaborador-detail--full .colaborador-detail__columns {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  column-gap: 20px;
+  padding: 0 40px;
+  height: calc(100vh - 64px);
 }
 
 .colaborador-detail__column {
-  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 40px;
+}
+
+.colaborador-detail--full .colaborador-detail__column {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+}
+
+.colaborador-detail--full .colaborador-detail__column--main {
+  grid-column: 3 / 7;
+}
+
+.colaborador-detail--full .colaborador-detail__column--notes {
+  grid-column: 7 / 9;
 }
 
 /* Profile header */
