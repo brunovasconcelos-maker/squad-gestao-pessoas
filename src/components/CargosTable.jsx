@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import arrowsDownUpIcon from '../assets/icons/ArrowsDownUp.svg'
 import caretDownIcon from '../assets/icons/CaretDown.svg'
-import closeIcon from '../assets/icons/Close.svg'
+import closeIcon from '../assets/icons/CloseGray.svg'
 import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
 import dotsThreeIcon from '../assets/icons/DotsThree.svg'
