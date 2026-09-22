@@ -153,6 +153,9 @@
 
 .cargo-detail--full .cargo-detail__column--main {
   grid-column: 3 / 7;
+  /* Matches the Figma spec: insets this column's own content from the
+     notes column beside it, on top of the 20px grid gutter. */
+  padding-right: 40px;
 }
 
 .cargo-detail--full .cargo-detail__column--notes {
