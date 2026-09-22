@@ -96,7 +96,7 @@ function ReportaParaField({ value, ownId, collaborators, disabled, onSave }) {
       {rect && (
         <div
           className="colaborador-field__dropdown"
-          style={{ top: rect.top, right: rect.right }}
+          style={{ top: rect.top, left: rect.left }}
         >
           <div className="select-list__list">
             {filtered.map((collaborator) => (

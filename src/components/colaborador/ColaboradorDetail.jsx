@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, ArrowsOutSimple } from '@phosphor-icons/react'
+import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
 import briefcaseIcon from '../../assets/icons/Briefcase.svg'
@@ -406,7 +406,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
             onClick={onExpand}
             aria-label="Expandir"
           >
-            <ArrowsOutSimple size={24} />
+            <FrameCorners size={24} />
           </button>
         )}
       </header>

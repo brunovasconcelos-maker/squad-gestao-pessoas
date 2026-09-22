@@ -76,7 +76,7 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
       {open && rect && (
         <div
           className="colaborador-field__dropdown colaborador-date-field__dropdown"
-          style={{ top: rect.top, right: rect.right }}
+          style={{ top: rect.top, left: rect.left }}
         >
           {!noEndDate && (
             <Calendar value={typeof value === 'string' ? value : null} onSelect={selectDate} />
