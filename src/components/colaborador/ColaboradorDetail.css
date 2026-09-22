@@ -311,13 +311,13 @@
 }
 
 .colaborador-detail__nota-date {
-  font-size: 12px;
-  font-weight: var(--font-weight-medium);
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
 .colaborador-detail__nota-text {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: var(--font-weight-regular);
   color: var(--color-text);
 }
@@ -429,50 +429,6 @@
   flex-direction: column;
   gap: 12px;
   padding: 12px;
-}
-
-.colaborador-date-field {
-  box-sizing: border-box;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid var(--color-border);
-  border-radius: 4px;
-  padding: 12px;
-}
-
-.colaborador-date-field--disabled {
-  background: var(--color-overlay);
-}
-
-.colaborador-date-field--disabled .colaborador-date-field__value {
-  color: var(--color-text-secondary);
-}
-
-.colaborador-date-field__value {
-  font-size: 14px;
-  font-weight: var(--font-weight-medium);
-  color: var(--color-text);
-}
-
-.colaborador-date-field__calendar-button {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: none;
-  background: none;
-  padding: 0;
-}
-
-.colaborador-date-field__native-input {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .colaborador-date-field__no-end-toggle {

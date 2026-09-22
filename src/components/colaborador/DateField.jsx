@@ -1,16 +1,15 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import calendarBlankIcon from '../../assets/icons/CalendarBlank.svg'
+import { useEffect, useRef, useState } from 'react'
+import closeIcon from '../../assets/icons/Close.svg'
+import Calendar from './Calendar.jsx'
 import Checkbox from '../addCollaborator/Checkbox.jsx'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
-import { todayIso, formatDatePt } from '../../utils/formatters.js'
+import './InlineEditField.css'
 import './ColaboradorDetail.css'
 
 function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
   const [open, setOpen] = useState(false)
-  const [isoDate, setIsoDate] = useState(typeof value === 'string' ? value : todayIso())
   const [noEndDate, setNoEndDate] = useState(Boolean(allowNoEnd) && value === null)
   const anchorRef = useRef(null)
-  const inputRef = useRef(null)
   const rect = useDropdownPosition(open, anchorRef)
 
   useEffect(() => {
@@ -24,24 +23,15 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
-  // Skip the extra click on the calendar icon: as soon as the dropdown is
-  // in the DOM, open the native date picker straight away, so the very
-  // first click on the field goes directly to picking a date.
-  useLayoutEffect(() => {
-    if (!open || inputRef.current?.disabled) return
-    inputRef.current?.showPicker?.() ?? inputRef.current?.focus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
-
   const startEdit = () => {
     if (disabled) return
-    setIsoDate(typeof value === 'string' ? value : todayIso())
     setNoEndDate(Boolean(allowNoEnd) && value === null)
     setOpen(true)
   }
 
+  const cancelEdit = () => setOpen(false)
+
   const selectDate = (date) => {
-    setIsoDate(date)
     setNoEndDate(false)
     onSave(date)
     setOpen(false)
@@ -57,48 +47,40 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
   }
 
   return (
-    <div className="colaborador-field" ref={anchorRef}>
-      <button
-        type="button"
-        className="colaborador-detail__value-button"
-        onClick={startEdit}
-        disabled={disabled}
-      >
-        {displayValue}
-      </button>
+    <div className="colaborador-field colaborador-field--fill" ref={anchorRef}>
+      {open ? (
+        <div className="inline-edit-field">
+          <span className="inline-edit-field__input inline-edit-field__input--readonly">
+            {displayValue}
+          </span>
+          <button
+            type="button"
+            className="inline-edit-field__cancel"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={cancelEdit}
+          >
+            <img src={closeIcon} alt="Cancelar" width={16} height={16} />
+          </button>
+        </div>
+      ) : (
+        <button
+          type="button"
+          className="colaborador-detail__value-button"
+          onClick={startEdit}
+          disabled={disabled}
+        >
+          {displayValue}
+        </button>
+      )}
 
       {open && rect && (
         <div
           className="colaborador-field__dropdown colaborador-date-field__dropdown"
           style={{ top: rect.top, right: rect.right }}
         >
-          <div
-            className={
-              noEndDate
-                ? 'colaborador-date-field colaborador-date-field--disabled'
-                : 'colaborador-date-field'
-            }
-          >
-            <span className="colaborador-date-field__value">{formatDatePt(isoDate)}</span>
-            <button
-              type="button"
-              className="colaborador-date-field__calendar-button"
-              disabled={noEndDate}
-              onClick={() => inputRef.current?.showPicker?.() ?? inputRef.current?.focus()}
-            >
-              <img src={calendarBlankIcon} alt="" width={20} height={20} />
-            </button>
-            <input
-              ref={inputRef}
-              type="date"
-              className="colaborador-date-field__native-input"
-              value={isoDate}
-              disabled={noEndDate}
-              onChange={(event) => {
-                if (event.target.value) selectDate(event.target.value)
-              }}
-            />
-          </div>
+          {!noEndDate && (
+            <Calendar value={typeof value === 'string' ? value : null} onSelect={selectDate} />
+          )}
 
           {allowNoEnd && (
             <button
