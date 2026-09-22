@@ -60,6 +60,37 @@
   padding-bottom: 169px;
 }
 
+/* Overlay-style scrollbar: invisible at rest, revealed on hover (which,
+   for wheel/trackpad scrolling, coincides with the cursor already being
+   over the panel). The 8px right padding keeps the thumb from sitting
+   flush against the text; the thumb itself paints inside that gutter. */
+.filtros-panel__scroll {
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.filtros-panel__scroll:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.24) transparent;
+}
+
+.filtros-panel__scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filtros-panel__scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.filtros-panel__scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+}
+
+.filtros-panel__scroll:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.24);
+}
+
 .filtros-panel__section {
   display: flex;
   flex-direction: column;
