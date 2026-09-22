@@ -23,6 +23,12 @@
   text-align: left;
 }
 
+.inline-edit-field__input--readonly {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
 .inline-edit-field__cancel {
   display: flex;
   align-items: center;

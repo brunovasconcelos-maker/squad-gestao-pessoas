@@ -79,7 +79,7 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
       {open && (
         <div className="collaborator-row-menu__dropdown">
           <button type="button" className="collaborator-row-menu__item" onClick={handleView}>
-            <Eye size={20} />
+            <Eye size={20} color="var(--color-text-secondary)" />
             Ver colaborador
           </button>
           <button
@@ -94,7 +94,7 @@ function CollaboratorRowMenu({ collaborator, onView, onDataChanged }) {
             Excluir
           </button>
           <button type="button" className="collaborator-row-menu__item" onClick={handlePowerClick}>
-            <Power size={20} />
+            <Power size={20} color="var(--color-text-secondary)" />
             {desligado ? 'Reativar' : 'Desligar'}
           </button>
         </div>
