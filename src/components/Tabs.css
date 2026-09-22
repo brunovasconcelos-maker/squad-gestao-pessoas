@@ -15,11 +15,13 @@
   border: none;
   border-bottom: 2px solid transparent;
   font-size: 16px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
   letter-spacing: -0.26px;
-  color: var(--color-text);
+  color: var(--color-text-secondary);
 }
 
 .tabs__item--active {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
   border-bottom-color: var(--color-text);
 }
