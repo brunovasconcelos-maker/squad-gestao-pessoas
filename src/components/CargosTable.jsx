@@ -88,6 +88,7 @@ function CargosTable({
   timeOptions,
   atividadeOptions,
   onCriarCargo,
+  onRowClick,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -218,11 +219,20 @@ function CargosTable({
                   : 'cargos-table__row'
               }
               key={row.id}
+              onClick={
+                row.isPendingCargo
+                  ? undefined
+                  : () => onRowClick?.(row.cargoRecordId)
+              }
+              style={row.isPendingCargo ? undefined : { cursor: 'pointer' }}
             >
               <button
                 type="button"
                 className="cargos-table__checkbox-cell"
-                onClick={() => onToggleSelect(row.id)}
+                onClick={(event) => {
+                  event.stopPropagation()
+                  onToggleSelect(row.id)
+                }}
               >
                 <img
                   src={isSelected ? checkSquareIcon : squareIcon}
@@ -262,7 +272,12 @@ function CargosTable({
                   <img src={plusBlackIcon} width={24} height={24} alt="" />
                 </button>
               ) : (
-                <IconButton icon={dotsThreeIcon} alt="Mais opções" iconSize={24} />
+                <IconButton
+                  icon={dotsThreeIcon}
+                  alt="Mais opções"
+                  iconSize={24}
+                  onClick={(event) => event.stopPropagation()}
+                />
               )}
             </div>
           )
