@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { CalendarPlus, CameraPlus, Check, Square, CheckSquare } from '@phosphor-icons/react'
+import { CalendarPlus, CameraPlus, Check, Square } from '@phosphor-icons/react'
 import closeIcon from '../../../assets/icons/Close.svg'
+import checkSquareIcon from '../../../assets/icons/CheckSquare.svg'
 import CltShell from './CltShell.jsx'
 import InlineEditField from '../../colaborador/InlineEditField.jsx'
 import Calendar from '../../colaborador/Calendar.jsx'
@@ -216,7 +217,7 @@ function DataFimField({ value, onChange }) {
             onClick={toggleNoEnd}
           >
             {noEnd ? (
-              <CheckSquare size={24} color="#000000" />
+              <img src={checkSquareIcon} alt="" width={24} height={24} />
             ) : (
               <Square size={24} color="#000000" />
             )}

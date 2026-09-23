@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { Square, CheckSquare } from '@phosphor-icons/react'
+import { Square } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
+import checkSquareIcon from '../../assets/icons/CheckSquare.svg'
 import Calendar from './Calendar.jsx'
 import { useDropdownPosition } from '../../utils/useDropdownPosition.js'
 import './InlineEditField.css'
@@ -89,7 +90,7 @@ function DateField({ value, allowNoEnd, disabled, displayValue, onSave }) {
               onClick={toggleNoEnd}
             >
               {noEndDate ? (
-                <CheckSquare size={24} color="#000000" />
+                <img src={checkSquareIcon} alt="" width={24} height={24} />
               ) : (
                 <Square size={24} color="#000000" />
               )}
