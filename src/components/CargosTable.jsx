@@ -4,10 +4,9 @@ import caretDownIcon from '../assets/icons/CaretDown.svg'
 import closeIcon from '../assets/icons/CloseGray.svg'
 import squareIcon from '../assets/icons/Square.svg'
 import checkSquareIcon from '../assets/icons/CheckSquare.svg'
-import dotsThreeIcon from '../assets/icons/DotsThree.svg'
 import plusBlackIcon from '../assets/icons/PlusBlack.svg'
-import IconButton from './IconButton.jsx'
 import ActivityTag from './ActivityTag.jsx'
+import CargoRowMenu from './cargo/CargoRowMenu.jsx'
 import { formatFaixaSalarial } from '../utils/formatters.js'
 import './CargosTable.css'
 
@@ -89,6 +88,7 @@ function CargosTable({
   atividadeOptions,
   onCriarCargo,
   onRowClick,
+  onDataChanged,
 }) {
   const [sortColumn, setSortColumn] = useState(null)
   const [openColumn, setOpenColumn] = useState(null)
@@ -272,12 +272,7 @@ function CargosTable({
                   <img src={plusBlackIcon} width={24} height={24} alt="" />
                 </button>
               ) : (
-                <IconButton
-                  icon={dotsThreeIcon}
-                  alt="Mais opções"
-                  iconSize={24}
-                  onClick={(event) => event.stopPropagation()}
-                />
+                <CargoRowMenu row={row} onView={onRowClick} onDataChanged={onDataChanged} />
               )}
             </div>
           )

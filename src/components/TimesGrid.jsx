@@ -7,6 +7,7 @@ import {
   guessTeamIconName,
 } from '../utils/teamOptions.js'
 import IconButton from './IconButton.jsx'
+import TimeCardMenu from './time/TimeCardMenu.jsx'
 import './TimesGrid.css'
 
 const PENDING_TONE = {
@@ -34,7 +35,7 @@ function IconCluster({ FrontIcon, tone }) {
   )
 }
 
-function TimesGrid({ teams, onCriarTime, onCardClick }) {
+function TimesGrid({ teams, onCriarTime, onCardClick, onDataChanged }) {
   // Pending drafts always lead the default grid, regardless of creation
   // order - once a draft is completed via Criar Time, pending flips false
   // and it falls back into the regular group in normal order.
@@ -95,13 +96,7 @@ function TimesGrid({ teams, onCriarTime, onCardClick }) {
                 <span className="time-card__name">{team.name}</span>
                 <span className="time-card__count">{team.memberCount} pessoas</span>
               </div>
-              <IconButton
-                icon={dotsThreeIcon}
-                alt="Mais opções"
-                iconSize={24}
-                className="time-card__menu-button"
-                onClick={(event) => event.stopPropagation()}
-              />
+              <TimeCardMenu team={team} onView={onCardClick} onDataChanged={onDataChanged} />
             </div>
           </div>
         )

@@ -25,7 +25,7 @@ import DeleteBeneficioModal from './DeleteBeneficioModal.jsx'
 import AdicionarTimeModal from './AdicionarTimeModal.jsx'
 import AdicionarMembroModal from './AdicionarMembroModal.jsx'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
-import { getBenefitMemberCount, computeBenefitMetrics } from '../../utils/beneficiarios.js'
+import { computeBenefitMetrics } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import { getTeamColorTones, getTeamIconComponent } from '../../utils/teamOptions.js'
 import { formatDateDMonthYear, formatCurrencyBRL } from '../../utils/formatters.js'
@@ -224,9 +224,7 @@ function BeneficioDetail({ id, mode, onClose, onExpand, onCollapse }) {
     updateBeneficiarios({ ...beneficiarios, todaEmpresa: false, todaEmpresaValor: null })
   }
 
-  const totalBeneficiarios = isCreatedBenefit
-    ? metrics.totalBeneficiarios
-    : getBenefitMemberCount(benefit, collaborators)
+  const totalBeneficiarios = metrics.totalBeneficiarios
 
   const teamRecordByName = new Map(times.map((team) => [team.name, team]))
 

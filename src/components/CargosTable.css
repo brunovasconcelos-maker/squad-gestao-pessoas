@@ -125,10 +125,6 @@
   color: var(--color-text-secondary);
 }
 
-.cargos-table__row > .icon-button {
-  justify-self: end;
-}
-
 .cargos-table__criar-cargo-button {
   display: flex;
   align-items: center;
