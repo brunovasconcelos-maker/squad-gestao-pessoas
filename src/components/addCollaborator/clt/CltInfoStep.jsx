@@ -312,7 +312,12 @@ function computeReportaParaPrefill(cargoName, collaborators) {
   return { name: liderNome, cargo: liderCollaborator?.cargos?.[0] ?? null }
 }
 
-function CltInfoStep({ name, cargoName, teamName, onBack, onClose, onCreate }) {
+// CLT and PJ share this exact screen; PJ just has a plain "Salário" label,
+// no Custo para empresa row, and no custoParaEmpresa field on the saved
+// record (ColaboradorDetail's Custo total already falls back to
+// salário/valor de pagamento whenever custoParaEmpresa isn't set).
+function CltInfoStep({ name, cargoName, teamName, contractType, onBack, onClose, onCreate }) {
+  const isPJ = contractType === 'PJ'
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [dataAdmissao, setDataAdmissao] = useState(null)
   const [email, setEmail] = useState(null)
@@ -326,18 +331,19 @@ function CltInfoStep({ name, cargoName, teamName, onBack, onClose, onCreate }) {
   const [custoParaEmpresa, setCustoParaEmpresa] = useState(0)
 
   const handleCreate = () => {
-    addItem(COLLECTIONS.COLABORADORES, {
+    const record = {
       name,
-      contractType: 'Fixo',
+      contractType,
       cargos: cargoName ? [cargoName] : [],
       times: teamName ? [teamName] : [],
       dataAdmissao,
       email: email ?? buildEmailPrefix(name),
       reportaPara: reportaParaNome,
       salario,
-      custoParaEmpresa,
       notas: [],
-    })
+    }
+    if (!isPJ) record.custoParaEmpresa = custoParaEmpresa
+    addItem(COLLECTIONS.COLABORADORES, record)
     onCreate()
   }
 
@@ -388,14 +394,16 @@ function CltInfoStep({ name, cargoName, teamName, onBack, onClose, onCreate }) {
           </div>
 
           <div className="clt-info__row">
-            <span className="clt-info__row-label">Salário bruto</span>
+            <span className="clt-info__row-label">{isPJ ? 'Salário' : 'Salário bruto'}</span>
             <CurrencyField value={salario} onSave={setSalario} />
           </div>
 
-          <div className="clt-info__row">
-            <span className="clt-info__row-label">Custo para empresa</span>
-            <CurrencyField value={custoParaEmpresa} onSave={setCustoParaEmpresa} />
-          </div>
+          {!isPJ && (
+            <div className="clt-info__row">
+              <span className="clt-info__row-label">Custo para empresa</span>
+              <CurrencyField value={custoParaEmpresa} onSave={setCustoParaEmpresa} />
+            </div>
+          )}
 
           <div className="clt-info__row">
             <span className="clt-info__row-label">Foto</span>

@@ -10,14 +10,16 @@ import CltInfoStep from './clt/CltInfoStep.jsx'
 
 function AddCollaboratorFlow({ onExit }) {
   // 'tipo' -> Tela 1 (shared entry).
-  // 1 / 2 -> the existing, unmodified PJ/Freelancer/Consultor flow.
-  // 'clt-nome' / 'clt-cargo-time' / 'clt-info' -> the rebuilt CLT flow.
+  // 1 / 2 -> the existing, unmodified Freelancer/Consultor flow.
+  // 'clt-nome' / 'clt-cargo-time' / 'clt-info' -> the rebuilt CLT/PJ flow,
+  // shared by both (cltContractType tracks which one: 'Fixo' or 'PJ').
   const [step, setStep] = useState('tipo')
   const [name, setName] = useState('')
   const [contractType, setContractType] = useState('Fixo')
   const [contratoModalOpen, setContratoModalOpen] = useState(false)
   const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false)
 
+  const [cltContractType, setCltContractType] = useState('Fixo')
   const [cltName, setCltName] = useState('')
   const [cltCargo, setCltCargo] = useState('')
   const [cltTeam, setCltTeam] = useState('')
@@ -25,15 +27,12 @@ function AddCollaboratorFlow({ onExit }) {
   const openDiscardConfirm = () => setDiscardConfirmOpen(true)
 
   const handleChooseTipo = (tipo) => {
-    if (tipo === 'CLT') {
+    if (tipo === 'CLT' || tipo === 'PJ') {
+      setCltContractType(tipo === 'CLT' ? 'Fixo' : 'PJ')
       setStep('clt-nome')
       return
     }
-    // The app has no distinct "PJ" contractType yet - PJ and Consultor
-    // share the exact same field set (Step2AdditionalInfo's FIELDS_CONTRATO
-    // branches only on Fixo vs not) and are contractually equivalent here,
-    // so PJ is stored as Consultor until PJ gets its own rebuilt path.
-    setContractType(tipo === 'PJ' ? 'Consultor' : tipo)
+    setContractType(tipo)
     setStep(1)
   }
 
@@ -99,6 +98,7 @@ function AddCollaboratorFlow({ onExit }) {
           name={cltName}
           cargoName={cltCargo}
           teamName={cltTeam}
+          contractType={cltContractType}
           onBack={() => setStep('clt-cargo-time')}
           onClose={openDiscardConfirm}
           onCreate={onExit}
