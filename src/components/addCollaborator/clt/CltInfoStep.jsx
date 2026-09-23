@@ -4,12 +4,15 @@ import closeIcon from '../../../assets/icons/Close.svg'
 import CltShell from './CltShell.jsx'
 import InlineEditField from '../../colaborador/InlineEditField.jsx'
 import Calendar from '../../colaborador/Calendar.jsx'
+import Checkbox from '../Checkbox.jsx'
 import { useDropdownPosition } from '../../../utils/useDropdownPosition.js'
 import { COLLECTIONS, getCollection, addItem } from '../../../utils/storage.js'
 import {
   todayIso,
+  formatDatePt,
   formatCurrencyBRL,
   formatAmountFromDigits,
+  formatPaymentValue,
   centsToAmount,
   buildEmailPrefix,
 } from '../../../utils/formatters.js'
@@ -106,13 +109,119 @@ function AdmissaoField({ value, onChange }) {
   )
 }
 
-function EmailField({ name, value, onSave }) {
+// Single-pill display of the current end-of-contract choice ("Não
+// especificar" or a formatted date), with the calendar-plus button opening
+// the same anchored dropdown DateField.jsx uses for this - a Calendar plus
+// the "Não especificar data de fim" checkbox.
+function DataFimField({ value, onChange }) {
+  const [pickerOpen, setPickerOpen] = useState(false)
+  // Tracks the checkbox's own toggled state within an open dropdown,
+  // independent of the saved value - unchecking it (without picking a date
+  // yet) must reveal the calendar without saving anything, mirroring
+  // DateField.jsx's own noEndDate/allowNoEnd interaction exactly.
+  const [noEnd, setNoEnd] = useState(value === null)
+  const anchorRef = useRef(null)
+  const rect = useDropdownPosition(pickerOpen, anchorRef)
+
+  useEffect(() => {
+    if (!pickerOpen) return
+    function handleClickOutside(event) {
+      if (anchorRef.current && !anchorRef.current.contains(event.target)) {
+        setPickerOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [pickerOpen])
+
+  const openPicker = () => {
+    setNoEnd(value === null)
+    setPickerOpen((prev) => !prev)
+  }
+
+  const toggleNoEnd = () => {
+    const next = !noEnd
+    setNoEnd(next)
+    if (next) {
+      onChange(null)
+      setPickerOpen(false)
+    }
+  }
+
+  const pillLabel = value ? formatDatePt(value) : 'Não especificar'
+
+  return (
+    <div className="clt-info__admissao" ref={anchorRef}>
+      <span className="clt-info__pill clt-info__pill--selected">{pillLabel}</span>
+      <button
+        type="button"
+        className="icon-button clt-info__icon-button"
+        onClick={openPicker}
+        aria-label="Escolher data de fim"
+      >
+        <CalendarPlus size={20} />
+      </button>
+
+      {pickerOpen && rect && (
+        <div
+          className="colaborador-field__dropdown colaborador-date-field__dropdown"
+          style={{ top: rect.top, left: rect.left }}
+        >
+          {!noEnd && (
+            <Calendar
+              value={value}
+              onSelect={(date) => {
+                onChange(date)
+                setPickerOpen(false)
+              }}
+            />
+          )}
+          <button
+            type="button"
+            className="colaborador-date-field__no-end-toggle"
+            onClick={toggleNoEnd}
+          >
+            <Checkbox checked={noEnd} />
+            <span className="colaborador-date-field__no-end-label">
+              Não especificar data de fim
+            </span>
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+const PAGAMENTO_OPTIONS = ['Mensal', 'Anual', 'Valor fixo']
+
+function PagamentoPills({ value, onChange }) {
+  return (
+    <div className="clt-info__pagamento-pills">
+      {PAGAMENTO_OPTIONS.map((option) => (
+        <button
+          type="button"
+          key={option}
+          className={
+            value === option
+              ? 'clt-info__pill clt-info__pill--selected'
+              : 'clt-info__pill'
+          }
+          onClick={() => onChange(option)}
+        >
+          {option}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+function EmailField({ name, value, onSave, noPrefill = false }) {
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState('')
   const inputRef = useRef(null)
   const savingRef = useRef(false)
 
-  const prefix = buildEmailPrefix(name)
+  const prefix = noPrefill ? '' : buildEmailPrefix(name)
 
   useEffect(() => {
     if (editing) inputRef.current?.focus()
@@ -169,7 +278,15 @@ function EmailField({ name, value, onSave }) {
   if (value != null) {
     return (
       <button type="button" className="colaborador-detail__value-button" onClick={startEdit}>
-        {value || prefix}
+        {value || (noPrefill ? 'Adicionar' : prefix)}
+      </button>
+    )
+  }
+
+  if (noPrefill) {
+    return (
+      <button type="button" className="colaborador-detail__value-button" onClick={startEdit}>
+        Adicionar
       </button>
     )
   }
@@ -276,11 +393,11 @@ function ReportarParaField({ value, displaySuffix, collaborators, onSave }) {
   )
 }
 
-function CurrencyField({ value, onSave }) {
+function CurrencyField({ value, onSave, formatDisplay }) {
   return (
     <InlineEditField
       value={toDigits(value)}
-      displayValue={formatCurrencyBRL(value ?? 0)}
+      displayValue={formatDisplay ? formatDisplay(value ?? 0) : formatCurrencyBRL(value ?? 0)}
       formatForInput={(digits) => (digits ? formatAmountFromDigits(digits) : '')}
       parseInput={(text) => text.replace(/\D/g, '')}
       onSave={(digits) => onSave(centsToAmount(digits))}
@@ -316,19 +433,26 @@ function computeReportaParaPrefill(cargoName, collaborators) {
 // no Custo para empresa row, and no custoParaEmpresa field on the saved
 // record (ColaboradorDetail's Custo total already falls back to
 // salário/valor de pagamento whenever custoParaEmpresa isn't set).
+// Freelancer branches to an entirely different row set (contract dates,
+// pagamento type, valor do contrato) and skips the email/reporta-para
+// pre-fills that only make sense for an established Cargo hire.
 function CltInfoStep({ name, cargoName, teamName, contractType, onBack, onClose, onCreate }) {
   const isPJ = contractType === 'PJ'
+  const isFreelancer = contractType === 'Freelancer'
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [dataAdmissao, setDataAdmissao] = useState(null)
+  const [dataFimContrato, setDataFimContrato] = useState(null)
   const [email, setEmail] = useState(null)
   const [reportaParaNome, setReportaParaNome] = useState(
-    () => computeReportaParaPrefill(cargoName, collaborators).name,
+    () => (isFreelancer ? null : computeReportaParaPrefill(cargoName, collaborators).name),
   )
   const [reportaParaCargo, setReportaParaCargo] = useState(
-    () => computeReportaParaPrefill(cargoName, collaborators).cargo,
+    () => (isFreelancer ? null : computeReportaParaPrefill(cargoName, collaborators).cargo),
   )
   const [salario, setSalario] = useState(0)
   const [custoParaEmpresa, setCustoParaEmpresa] = useState(0)
+  const [tipoPagamento, setTipoPagamento] = useState('Mensal')
+  const [valorContrato, setValorContrato] = useState(0)
 
   const handleCreate = () => {
     const record = {
@@ -336,13 +460,21 @@ function CltInfoStep({ name, cargoName, teamName, contractType, onBack, onClose,
       contractType,
       cargos: cargoName ? [cargoName] : [],
       times: teamName ? [teamName] : [],
-      dataAdmissao,
-      email: email ?? buildEmailPrefix(name),
       reportaPara: reportaParaNome,
-      salario,
       notas: [],
     }
-    if (!isPJ) record.custoParaEmpresa = custoParaEmpresa
+    if (isFreelancer) {
+      record.dataInicioContrato = dataAdmissao
+      record.dataFimContrato = dataFimContrato ?? null
+      record.email = email ?? ''
+      record.tipoPagamento = tipoPagamento
+      record.valorContrato = valorContrato
+    } else {
+      record.dataAdmissao = dataAdmissao
+      record.email = email ?? buildEmailPrefix(name)
+      record.salario = salario
+      if (!isPJ) record.custoParaEmpresa = custoParaEmpresa
+    }
     addItem(COLLECTIONS.COLABORADORES, record)
     onCreate()
   }
@@ -370,47 +502,102 @@ function CltInfoStep({ name, cargoName, teamName, contractType, onBack, onClose,
         </h1>
 
         <div className="clt-info__list">
-          <div className="clt-info__row">
-            <span className="clt-info__row-label">Data de admissão</span>
-            <AdmissaoField value={dataAdmissao} onChange={setDataAdmissao} />
-          </div>
+          {isFreelancer ? (
+            <>
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Data de início do contrato</span>
+                <AdmissaoField value={dataAdmissao} onChange={setDataAdmissao} />
+              </div>
 
-          <div className="clt-info__row">
-            <span className="clt-info__row-label">Email</span>
-            <EmailField name={name} value={email} onSave={setEmail} />
-          </div>
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Data de fim do contrato</span>
+                <DataFimField value={dataFimContrato} onChange={setDataFimContrato} />
+              </div>
 
-          <div className="clt-info__row">
-            <span className="clt-info__row-label">Reportar para</span>
-            <ReportarParaField
-              value={reportaParaNome}
-              displaySuffix={reportaParaCargo}
-              collaborators={collaborators.filter((collaborator) => collaborator.name !== name)}
-              onSave={(nome, cargo) => {
-                setReportaParaNome(nome)
-                setReportaParaCargo(cargo)
-              }}
-            />
-          </div>
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Email</span>
+                <EmailField name={name} value={email} onSave={setEmail} noPrefill />
+              </div>
 
-          <div className="clt-info__row">
-            <span className="clt-info__row-label">{isPJ ? 'Salário' : 'Salário bruto'}</span>
-            <CurrencyField value={salario} onSave={setSalario} />
-          </div>
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Reportar para</span>
+                <ReportarParaField
+                  value={reportaParaNome}
+                  displaySuffix={reportaParaCargo}
+                  collaborators={collaborators.filter((collaborator) => collaborator.name !== name)}
+                  onSave={(nome, cargo) => {
+                    setReportaParaNome(nome)
+                    setReportaParaCargo(cargo)
+                  }}
+                />
+              </div>
 
-          {!isPJ && (
-            <div className="clt-info__row">
-              <span className="clt-info__row-label">Custo para empresa</span>
-              <CurrencyField value={custoParaEmpresa} onSave={setCustoParaEmpresa} />
-            </div>
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Pagamento</span>
+                <PagamentoPills value={tipoPagamento} onChange={setTipoPagamento} />
+              </div>
+
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Valor do contrato</span>
+                <CurrencyField
+                  value={valorContrato}
+                  onSave={setValorContrato}
+                  formatDisplay={(v) => formatPaymentValue(v, tipoPagamento)}
+                />
+              </div>
+
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Foto</span>
+                <button type="button" className="icon-button clt-info__icon-button" aria-label="Adicionar foto">
+                  <CameraPlus size={20} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Data de admissão</span>
+                <AdmissaoField value={dataAdmissao} onChange={setDataAdmissao} />
+              </div>
+
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Email</span>
+                <EmailField name={name} value={email} onSave={setEmail} />
+              </div>
+
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Reportar para</span>
+                <ReportarParaField
+                  value={reportaParaNome}
+                  displaySuffix={reportaParaCargo}
+                  collaborators={collaborators.filter((collaborator) => collaborator.name !== name)}
+                  onSave={(nome, cargo) => {
+                    setReportaParaNome(nome)
+                    setReportaParaCargo(cargo)
+                  }}
+                />
+              </div>
+
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">{isPJ ? 'Salário' : 'Salário bruto'}</span>
+                <CurrencyField value={salario} onSave={setSalario} />
+              </div>
+
+              {!isPJ && (
+                <div className="clt-info__row">
+                  <span className="clt-info__row-label">Custo para empresa</span>
+                  <CurrencyField value={custoParaEmpresa} onSave={setCustoParaEmpresa} />
+                </div>
+              )}
+
+              <div className="clt-info__row">
+                <span className="clt-info__row-label">Foto</span>
+                <button type="button" className="icon-button clt-info__icon-button" aria-label="Adicionar foto">
+                  <CameraPlus size={20} />
+                </button>
+              </div>
+            </>
           )}
-
-          <div className="clt-info__row">
-            <span className="clt-info__row-label">Foto</span>
-            <button type="button" className="icon-button clt-info__icon-button" aria-label="Adicionar foto">
-              <CameraPlus size={20} />
-            </button>
-          </div>
         </div>
       </div>
     </CltShell>

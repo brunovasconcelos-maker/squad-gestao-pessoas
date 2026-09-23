@@ -154,11 +154,19 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
       }
     })
 
+  // The rebuilt Freelancer flow saves the contract value as valorContrato;
+  // Consultor still goes through the older flow, which saves valorPagamento
+  // - read whichever is actually set, preferring the newer name.
   const salarioValue = collaborator
     ? isFreelancerOrConsultor
-      ? collaborator.valorPagamento
+      ? (collaborator.valorContrato ?? collaborator.valorPagamento)
       : collaborator.salario
     : null
+  const salarioFieldName = isFreelancerOrConsultor
+    ? collaborator?.valorContrato != null
+      ? 'valorContrato'
+      : 'valorPagamento'
+    : 'salario'
   const salarioDisplay =
     salarioValue == null
       ? 'Adicionar'
@@ -382,12 +390,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
           disabled={desligado}
           formatForInput={(digits) => (digits ? formatAmountFromDigits(digits) : '')}
           parseInput={(text) => text.replace(/\D/g, '')}
-          onSave={(digits) =>
-            updateField(
-              isFreelancerOrConsultor ? 'valorPagamento' : 'salario',
-              centsToAmount(digits),
-            )
-          }
+          onSave={(digits) => updateField(salarioFieldName, centsToAmount(digits))}
         />
         <button
           type="button"
