@@ -423,6 +423,76 @@
   color: var(--color-text);
 }
 
+/* Metricas */
+
+.colaborador-detail__metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.colaborador-detail__stats-row {
+  display: flex;
+  gap: 16px;
+}
+
+.colaborador-detail__stat-card {
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.colaborador-detail__stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.colaborador-detail__stat-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__stat-label--medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.colaborador-detail__stat-toggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
+}
+
+.colaborador-detail__stat-value {
+  font-size: 40px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+/* Mask toggle (Salario row) */
+
+.colaborador-detail__mask-toggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
+}
+
 /* Beneficios */
 
 .colaborador-detail__beneficios {
