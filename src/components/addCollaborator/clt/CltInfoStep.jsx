@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { CalendarPlus, CameraPlus } from '@phosphor-icons/react'
+import { CalendarPlus, CameraPlus, Check } from '@phosphor-icons/react'
 import closeIcon from '../../../assets/icons/Close.svg'
 import CltShell from './CltShell.jsx'
 import InlineEditField from '../../colaborador/InlineEditField.jsx'
@@ -60,31 +60,41 @@ function AdmissaoField({ value, onChange }) {
 
   const today = todayIso()
   const nextMonday = nextMondayIso()
+  const isCustomDate = Boolean(value) && value !== today && value !== nextMonday
 
   return (
     <div className="clt-info__admissao" ref={anchorRef}>
-      <button
-        type="button"
-        className={
-          value === today
-            ? 'clt-info__pill clt-info__pill--selected'
-            : 'clt-info__pill'
-        }
-        onClick={() => onChange(today)}
-      >
-        Hoje
-      </button>
-      <button
-        type="button"
-        className={
-          value === nextMonday
-            ? 'clt-info__pill clt-info__pill--selected'
-            : 'clt-info__pill'
-        }
-        onClick={() => onChange(nextMonday)}
-      >
-        Próxima segunda
-      </button>
+      {isCustomDate ? (
+        <span className="clt-info__confirmed">
+          <Check size={16} weight="bold" className="clt-info__confirmed-icon" />
+          {formatDatePt(value)}
+        </span>
+      ) : (
+        <>
+          <button
+            type="button"
+            className={
+              value === today
+                ? 'clt-info__pill clt-info__pill--selected'
+                : 'clt-info__pill'
+            }
+            onClick={() => onChange(today)}
+          >
+            Hoje
+          </button>
+          <button
+            type="button"
+            className={
+              value === nextMonday
+                ? 'clt-info__pill clt-info__pill--selected'
+                : 'clt-info__pill'
+            }
+            onClick={() => onChange(nextMonday)}
+          >
+            Próxima segunda
+          </button>
+        </>
+      )}
       <button
         type="button"
         className="icon-button clt-info__icon-button"
@@ -152,7 +162,13 @@ function DataFimField({ value, onChange }) {
 
   return (
     <div className="clt-info__admissao" ref={anchorRef}>
-      <span className="clt-info__pill clt-info__pill--selected">{pillLabel}</span>
+      <button
+        type="button"
+        className="colaborador-detail__value-button"
+        onClick={openPicker}
+      >
+        {pillLabel}
+      </button>
       <button
         type="button"
         className="icon-button clt-info__icon-button"

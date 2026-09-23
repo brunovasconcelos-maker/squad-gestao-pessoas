@@ -1,3 +1,19 @@
+/* Vertically centers Tela 1's content within the space between the
+   64px header and where an 80px footer would sit (this step renders no
+   footer of its own, so the reserved space is virtual). */
+.tipo-contratacao__center {
+  box-sizing: border-box;
+  min-height: calc(100vh - 144px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.tipo-contratacao__content {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
 .tipo-contratacao__grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
