@@ -10,10 +10,11 @@ import CltInfoStep from './clt/CltInfoStep.jsx'
 
 function AddCollaboratorFlow({ onExit }) {
   // 'tipo' -> Tela 1 (shared entry).
-  // 1 / 2 -> the existing, unmodified Consultor flow.
+  // 1 / 2 -> the old flow, now unused (kept only as dead-simple fallback
+  // plumbing; every Tela 1 card routes into the rebuilt flow below).
   // 'clt-nome' / 'clt-cargo-time' / 'clt-info' -> the rebuilt CLT/PJ/
-  // Freelancer flow, shared by all three (cltContractType tracks which:
-  // 'Fixo', 'PJ', or 'Freelancer').
+  // Freelancer/Consultor flow, shared by all four (cltContractType tracks
+  // which: 'Fixo', 'PJ', 'Freelancer', or 'Consultor').
   const [step, setStep] = useState('tipo')
   const [name, setName] = useState('')
   const [contractType, setContractType] = useState('Fixo')
@@ -28,7 +29,7 @@ function AddCollaboratorFlow({ onExit }) {
   const openDiscardConfirm = () => setDiscardConfirmOpen(true)
 
   const handleChooseTipo = (tipo) => {
-    if (tipo === 'CLT' || tipo === 'PJ' || tipo === 'Freelancer') {
+    if (tipo === 'CLT' || tipo === 'PJ' || tipo === 'Freelancer' || tipo === 'Consultor') {
       setCltContractType(tipo === 'CLT' ? 'Fixo' : tipo)
       setStep('clt-nome')
       return
