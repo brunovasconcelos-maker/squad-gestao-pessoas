@@ -126,7 +126,7 @@
 
 .colaborador-detail__scroll::-webkit-scrollbar,
 .colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 
 .colaborador-detail__scroll::-webkit-scrollbar-track,
@@ -134,20 +134,27 @@
   background: transparent;
 }
 
-/* The 4px transparent border, combined with background-clip: padding-box,
-   keeps the painted thumb inset 4px from the scroll container's own right
-   edge instead of sitting flush against it. */
 .colaborador-detail__scroll::-webkit-scrollbar-thumb,
 .colaborador-detail--full .colaborador-detail__column::-webkit-scrollbar-thumb {
   background-color: transparent;
-  background-clip: padding-box;
-  border-right: 4px solid transparent;
   border-radius: 999px;
 }
 
 .colaborador-detail__scroll:hover::-webkit-scrollbar-thumb,
 .colaborador-detail--full .colaborador-detail__column:hover::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0.24);
+}
+
+/* Panel mode: the panel's own 1px border + 24px padding also govern the
+   header, so they can't simply be reduced. Instead the scroll container
+   reclaims 21px of that 25px inset via a negative margin, pulling its own
+   right edge - and so the scrollbar gutter flush against it - in to 4px
+   from the panel's true outer edge. Re-padding by 13px keeps the content
+   aligned with the header (4px reclaim + 8px gutter + 13px content gap =
+   the original 25px border+padding inset). */
+.colaborador-detail--panel .colaborador-detail__scroll {
+  margin-right: -21px;
+  padding-right: 13px;
 }
 
 /* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
@@ -172,13 +179,18 @@
 .colaborador-detail--full .colaborador-detail__column {
   height: calc(100vh - 64px);
   overflow-y: auto;
+  /* Pulls the column in from its own grid-track edge so the scrollbar
+     gutter sits 4px from it, leaving the padding-right below as clear
+     space between the gutter and the content. */
+  margin-right: 4px;
 }
 
 .colaborador-detail--full .colaborador-detail__column--main {
   grid-column: 3 / 7;
-  /* Matches the Figma spec: insets this column's own content from the
-     notes column beside it, on top of the 20px grid gutter. */
-  padding-right: 40px;
+  /* Matches the Figma spec: keeps this column's content inset 40px from
+     the notes column beside it (4px margin + 8px gutter + 28px content
+     gap = the original 40px), on top of the 20px grid gutter. */
+  padding-right: 28px;
 }
 
 .colaborador-detail--full .colaborador-detail__column--notes {
