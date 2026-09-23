@@ -1,0 +1,561 @@
+.beneficio-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(227, 230, 230, 0.4);
+  z-index: 160;
+}
+
+.beneficio-detail {
+  box-sizing: border-box;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  background: var(--color-bg);
+  overflow: hidden;
+  transition:
+    top 280ms ease-out,
+    right 280ms ease-out,
+    width 280ms ease-out,
+    height 280ms ease-out,
+    padding 280ms ease-out,
+    border-radius 280ms ease-out,
+    border-color 280ms ease-out,
+    transform 280ms ease-out;
+}
+
+.beneficio-detail--panel {
+  top: 20px;
+  right: 24px;
+  width: 540px;
+  height: calc(100vh - 40px);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 24px;
+  z-index: 161;
+  transform: translateX(calc(100% + 24px));
+}
+
+.beneficio-detail--panel.beneficio-detail--entered {
+  transform: none;
+}
+
+.beneficio-detail--full {
+  top: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  border: 1px solid transparent;
+  border-radius: 0;
+  padding: 0;
+  gap: 0;
+  z-index: 200;
+  transform: none;
+}
+
+.beneficio-detail__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+}
+
+.beneficio-detail--full .beneficio-detail__header {
+  box-sizing: border-box;
+  height: 64px;
+  padding: 0 40px;
+}
+
+.beneficio-detail__header-title {
+  flex: 1;
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.beneficio-detail__expand-button {
+  width: 40px;
+  height: 40px;
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.beneficio-detail--full .beneficio-detail__scroll {
+  overflow: visible;
+}
+
+/* Overlay-style scrollbar: invisible at rest, revealed on hover (which,
+   for wheel/trackpad scrolling, coincides with the cursor already being
+   over the panel). The 8px right padding keeps the thumb from sitting
+   flush against the text; the thumb itself paints inside that gutter. */
+.beneficio-detail__scroll,
+.beneficio-detail--full .beneficio-detail__column {
+  padding-right: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.beneficio-detail__scroll:hover,
+.beneficio-detail--full .beneficio-detail__column:hover {
+  scrollbar-color: rgba(0, 0, 0, 0.24) transparent;
+}
+
+.beneficio-detail__scroll::-webkit-scrollbar,
+.beneficio-detail--full .beneficio-detail__column::-webkit-scrollbar {
+  width: 8px;
+}
+
+.beneficio-detail__scroll::-webkit-scrollbar-track,
+.beneficio-detail--full .beneficio-detail__column::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.beneficio-detail__scroll::-webkit-scrollbar-thumb,
+.beneficio-detail--full .beneficio-detail__column::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+}
+
+.beneficio-detail__scroll:hover::-webkit-scrollbar-thumb,
+.beneficio-detail--full .beneficio-detail__column:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.24);
+}
+
+/* Panel mode: the panel's own 1px border + 24px padding also govern the
+   header, so they can't simply be reduced. Instead the scroll container
+   reclaims 21px of that 25px inset via a negative margin, pulling its own
+   right edge - and so the scrollbar gutter flush against it - in to 4px
+   from the panel's true outer edge. Re-padding by 13px keeps the content
+   aligned with the header (4px reclaim + 8px gutter + 13px content gap =
+   the original 25px border+padding inset). */
+.beneficio-detail--panel .beneficio-detail__scroll {
+  margin-right: -21px;
+  padding-right: 13px;
+}
+
+/* 10-column grid, stretch, 40px page margin, 20px gutter. Columns scroll
+   independently of each other and of the header, so each is capped to the
+   viewport height below the fixed 64px header with its own overflow-y. */
+.beneficio-detail--full .beneficio-detail__columns {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  column-gap: 20px;
+  padding: 0 40px;
+  height: calc(100vh - 64px);
+}
+
+.beneficio-detail__column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.beneficio-detail--full .beneficio-detail__column {
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+  margin-right: 4px;
+}
+
+.beneficio-detail--full .beneficio-detail__column--main {
+  grid-column: 3 / 7;
+  padding-right: 28px;
+}
+
+.beneficio-detail--full .beneficio-detail__column--notes {
+  grid-column: 7 / 9;
+}
+
+/* Profile header */
+
+.beneficio-detail__profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.beneficio-detail__badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #e5f4ff;
+  color: var(--color-text);
+}
+
+.beneficio-detail__badge-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.beneficio-detail__title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.beneficio-detail__name {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.beneficio-detail__type {
+  font-size: 20px;
+  font-weight: var(--font-weight-medium);
+  color: #798282;
+  white-space: nowrap;
+}
+
+/* Info list */
+
+.beneficio-detail__info-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.beneficio-detail__row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 62px;
+  padding: 16px 0;
+}
+
+.beneficio-detail__row-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__row-label {
+  flex-shrink: 0;
+  width: 140px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.beneficio-detail__row-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.beneficio-detail__copy-feedback {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__copy-button {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
+}
+
+/* Notes */
+
+.beneficio-detail__notes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 30px;
+  padding-bottom: 16px;
+  border-top: 1px solid var(--color-border);
+}
+
+.beneficio-detail__nota {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-left: 1px solid var(--color-text-secondary);
+  padding-left: 16px;
+}
+
+.beneficio-detail__nota-date {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__nota-text {
+  font-size: 16px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.beneficio-detail__add-nota {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.beneficio-detail__add-nota-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  background: var(--color-overlay);
+  border-radius: 4px;
+  padding: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+/* Metricas */
+
+.beneficio-detail__metrics {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.beneficio-detail__section-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.beneficio-detail__section-label--flex {
+  flex: 1;
+}
+
+.beneficio-detail__stats-row {
+  display: flex;
+  gap: 16px;
+}
+
+.beneficio-detail__stat-card {
+  box-sizing: border-box;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.beneficio-detail__stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.beneficio-detail__stat-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__stat-label--medium {
+  font-weight: var(--font-weight-medium);
+}
+
+.beneficio-detail__stat-toggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__stat-value {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 40px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.beneficio-detail__value-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.beneficio-detail__value-amount {
+  flex: 1;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: #798282;
+}
+
+.beneficio-detail__value-count {
+  font-size: 24px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.beneficio-detail__team-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--color-overlay);
+}
+
+.beneficio-detail__team-legend {
+  margin: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: #798282;
+}
+
+/* Times / Membros individuais (shared row styling) */
+
+.beneficio-detail__times,
+.beneficio-detail__membros {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.beneficio-detail__section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.beneficio-detail__add-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.beneficio-detail__source-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.beneficio-detail__source-row {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 56px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.beneficio-detail__source-row:hover {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
+
+.beneficio-detail__source-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.beneficio-detail__source-badge--avatar {
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: #ffffff;
+}
+
+.beneficio-detail__source-badge--empresa {
+  border-radius: 999px;
+  background: var(--color-overlay);
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__source-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow: hidden;
+}
+
+.beneficio-detail__source-name {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.beneficio-detail__source-meta {
+  flex-shrink: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-secondary);
+}
+
+.beneficio-detail__source-remove {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--color-text-secondary);
+}
