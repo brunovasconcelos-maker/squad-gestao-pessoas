@@ -433,12 +433,13 @@ function computeReportaParaPrefill(cargoName, collaborators) {
 // no Custo para empresa row, and no custoParaEmpresa field on the saved
 // record (ColaboradorDetail's Custo total already falls back to
 // salário/valor de pagamento whenever custoParaEmpresa isn't set).
-// Freelancer branches to an entirely different row set (contract dates,
-// pagamento type, valor do contrato) and skips the email/reporta-para
-// pre-fills that only make sense for an established Cargo hire.
+// Freelancer and Consultor are contractually equivalent here and share
+// one branch (isFreelancer) to an entirely different row set (contract
+// dates, pagamento type, valor do contrato), skipping the email/reporta-
+// para pre-fills that only make sense for an established Cargo hire.
 function CltInfoStep({ name, cargoName, teamName, contractType, onBack, onClose, onCreate }) {
   const isPJ = contractType === 'PJ'
-  const isFreelancer = contractType === 'Freelancer'
+  const isFreelancer = contractType === 'Freelancer' || contractType === 'Consultor'
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [dataAdmissao, setDataAdmissao] = useState(null)
   const [dataFimContrato, setDataFimContrato] = useState(null)
