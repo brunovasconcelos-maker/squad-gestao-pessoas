@@ -21,7 +21,7 @@ const ICON_BY_KEY = {
   van: vanIcon,
 }
 
-function BeneficiosGrid({ benefits, collaborators }) {
+function BeneficiosGrid({ benefits, collaborators, onCardClick }) {
   return (
     <div className="beneficios-grid">
       {benefits.map((benefit) => {
@@ -30,7 +30,12 @@ function BeneficiosGrid({ benefits, collaborators }) {
         const CategoryIcon = isCreatedBenefit ? getBeneficioTypeIcon(benefit.tipo) : null
 
         return (
-          <div className="beneficio-card" key={benefit.id}>
+          <div
+            className="beneficio-card"
+            key={benefit.id}
+            onClick={() => onCardClick?.(benefit.id)}
+            style={{ cursor: 'pointer' }}
+          >
             <div className="beneficio-card__top-row">
               {isCreatedBenefit ? (
                 <div className="beneficio-card__icon-container beneficio-card__icon-container--badge">
