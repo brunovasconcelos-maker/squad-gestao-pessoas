@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMatch, useNavigate, useSearchParams } from 'react-router-dom'
 import Sidebar from '../components/Sidebar.jsx'
 import PageHeader from '../components/PageHeader.jsx'
@@ -176,11 +176,26 @@ function Home() {
   // Read fresh on every render (not cached in state) so the Times tab always
   // reflects the current localStorage contents, including teams created via
   // the quick-create flow in a collaborator's Time modal after this page
-  // already mounted.
+  // already mounted. Deleting a time/cargo elsewhere on this page always
+  // triggers a collaborators state update too (even a no-op cascade still
+  // produces a new array reference), which re-renders Home and so re-reads
+  // these fresh - so they don't need their own state for that to work.
   const times = getCollection(COLLECTIONS.TIMES)
   const cargos = getCollection(COLLECTIONS.CARGOS)
-  const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
+  // Benefícios has no such natural collaborators-state side effect on
+  // delete, so it needs real state of its own to react to the Beneficios
+  // card menu's delete action.
+  const [beneficios, setBeneficios] = useState(() => getCollection(COLLECTIONS.BENEFICIOS))
   const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
+
+  // The detail panel persists its own edits (notes, times, membros, delete)
+  // straight to storage with no callback into Home - re-sync state here the
+  // moment it closes, the same point a route-driven re-render used to pick
+  // fresh data up naturally before beneficios became real state.
+  useEffect(() => {
+    if (beneficioOverlayOpen) return
+    setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
+  }, [beneficioOverlayOpen])
 
   const filteredBeneficios = useMemo(() => {
     return beneficios.filter((benefit) => {
@@ -510,7 +525,10 @@ function Home() {
   if (novoBeneficioFlowOpen) {
     return (
       <NovoBeneficioFlow
-        onExit={() => setNovoBeneficioFlowOpen(false)}
+        onExit={() => {
+          setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
+          setNovoBeneficioFlowOpen(false)
+        }}
       />
     )
   }
@@ -576,6 +594,7 @@ function Home() {
                   setNovoTimeFlowOpen(true)
                 }}
                 onCardClick={openTime}
+                onDataChanged={setCollaborators}
               />
             </div>
           ) : activeTab === 'cargos' ? (
@@ -602,6 +621,7 @@ function Home() {
                   setNovoCargoFlowOpen(true)
                 }}
                 onRowClick={openCargo}
+                onDataChanged={setCollaborators}
               />
             </div>
           ) : activeTab === 'beneficios' ? (
@@ -616,6 +636,7 @@ function Home() {
                 benefits={filteredBeneficios}
                 collaborators={collaborators}
                 onCardClick={openBeneficio}
+                onDataChanged={setBeneficios}
               />
             </div>
           ) : (
