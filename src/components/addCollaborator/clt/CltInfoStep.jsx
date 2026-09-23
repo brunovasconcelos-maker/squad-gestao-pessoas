@@ -119,12 +119,19 @@ function AdmissaoField({ value, onChange }) {
   )
 }
 
-// Single-pill display of the current end-of-contract choice ("Não
-// especificar" or a formatted date), with the calendar-plus button opening
-// the same anchored dropdown DateField.jsx uses for this - a Calendar plus
-// the "Não especificar data de fim" checkbox.
+// Mirrors AdmissaoField exactly, but with a single "Não especificar" pill
+// instead of two preset pills. That pill starts unselected - it isn't the
+// same thing as a picked date, so it only switches to the filled/selected
+// treatment once the user explicitly clicks it. Once a real date is picked
+// (via the calendar-plus button), the pill is replaced entirely by
+// confirmed text + a check icon, same pattern as AdmissaoField's custom
+// date and CltNomeStep's filled input. The anchored dropdown - Calendar
+// plus the "Não especificar data de fim" checkbox - is the one already
+// built for DateField.jsx; re-checking that checkbox from a picked date
+// reverts the display back to the (unselected) pill.
 function DataFimField({ value, onChange }) {
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [selected, setSelected] = useState(false)
   // Tracks the checkbox's own toggled state within an open dropdown,
   // independent of the saved value - unchecking it (without picking a date
   // yet) must reveal the calendar without saving anything, mirroring
@@ -149,26 +156,37 @@ function DataFimField({ value, onChange }) {
     setPickerOpen((prev) => !prev)
   }
 
+  const selectNaoEspecificar = () => {
+    setSelected(true)
+    onChange(null)
+  }
+
   const toggleNoEnd = () => {
     const next = !noEnd
     setNoEnd(next)
     if (next) {
+      setSelected(false)
       onChange(null)
       setPickerOpen(false)
     }
   }
 
-  const pillLabel = value ? formatDatePt(value) : 'Não especificar'
-
   return (
     <div className="clt-info__admissao" ref={anchorRef}>
-      <button
-        type="button"
-        className="colaborador-detail__value-button"
-        onClick={openPicker}
-      >
-        {pillLabel}
-      </button>
+      {value ? (
+        <button type="button" className="clt-info__confirmed clt-info__confirmed-button" onClick={openPicker}>
+          <Check size={24} weight="bold" className="clt-info__confirmed-icon" />
+          {formatDatePt(value)}
+        </button>
+      ) : (
+        <button
+          type="button"
+          className={selected ? 'clt-info__pill clt-info__pill--selected' : 'clt-info__pill'}
+          onClick={selectNaoEspecificar}
+        >
+          Não especificar
+        </button>
+      )}
       <button
         type="button"
         className="icon-button clt-info__icon-button"
@@ -187,6 +205,7 @@ function DataFimField({ value, onChange }) {
             <Calendar
               value={value}
               onSelect={(date) => {
+                setSelected(false)
                 onChange(date)
                 setPickerOpen(false)
               }}

@@ -68,6 +68,15 @@
   color: #1a9c4a;
 }
 
+.clt-info__confirmed-button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
 .clt-info__email-hint {
   color: var(--color-text-secondary);
 }
