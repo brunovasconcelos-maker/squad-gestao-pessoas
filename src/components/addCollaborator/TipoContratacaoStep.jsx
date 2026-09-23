@@ -31,9 +31,9 @@ function TipoContratacaoStep({ onChoose, onExit }) {
               >
                 <div className="tipo-contratacao__card-top">
                   <span className="tipo-contratacao__card-badge">
-                    <FileText size={24} />
+                    <FileText size={24} color="#5d4309" />
                   </span>
-                  <ArrowUpRight size={24} />
+                  <ArrowUpRight size={24} color="var(--color-text-secondary)" />
                 </div>
                 <span className="tipo-contratacao__card-label">{card.label}</span>
               </button>
