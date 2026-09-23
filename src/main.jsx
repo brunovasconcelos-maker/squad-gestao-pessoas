@@ -10,11 +10,13 @@ import {
   seedInitialData,
   cleanupLegacySeedTimes,
   cleanupMultiTeamColaboradores,
+  cleanupCargoBeneficiarios,
 } from './utils/storage.js'
 
 seedInitialData()
 cleanupLegacySeedTimes()
 cleanupMultiTeamColaboradores()
+cleanupCargoBeneficiarios()
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

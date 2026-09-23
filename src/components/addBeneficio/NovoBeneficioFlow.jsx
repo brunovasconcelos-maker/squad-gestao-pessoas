@@ -17,7 +17,6 @@ function createEmptyVariant() {
 function NovoBeneficioFlow({ onExit }) {
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
-  const [cargos] = useState(() => getCollection(COLLECTIONS.CARGOS))
 
   const [step, setStep] = useState(1)
   const [tipo, setTipo] = useState(null)
@@ -27,7 +26,6 @@ function NovoBeneficioFlow({ onExit }) {
   const [beneficiarios, setBeneficiarios] = useState({
     colaboradorIds: new Set(),
     teamNames: new Set(),
-    cargoNames: new Set(),
     todaEmpresa: false,
   })
   const [variants, setVariants] = useState(() => [createEmptyVariant()])
@@ -40,7 +38,6 @@ function NovoBeneficioFlow({ onExit }) {
         {
           colaboradorIds: Array.from(beneficiarios.colaboradorIds),
           teamNames: Array.from(beneficiarios.teamNames),
-          cargoNames: Array.from(beneficiarios.cargoNames),
           todaEmpresa: beneficiarios.todaEmpresa,
         },
         collaborators,
@@ -91,7 +88,6 @@ function NovoBeneficioFlow({ onExit }) {
       beneficiarios: {
         colaboradorIds: Array.from(beneficiarios.colaboradorIds),
         teamNames: Array.from(beneficiarios.teamNames),
-        cargoNames: Array.from(beneficiarios.cargoNames),
         todaEmpresa: beneficiarios.todaEmpresa,
       },
       valores: variants.map((variant) => ({
@@ -154,12 +150,10 @@ function NovoBeneficioFlow({ onExit }) {
         <Step3Beneficiarios
           colaboradorIds={beneficiarios.colaboradorIds}
           teamNames={beneficiarios.teamNames}
-          cargoNames={beneficiarios.cargoNames}
           todaEmpresa={beneficiarios.todaEmpresa}
           onApplySelection={setBeneficiarios}
           collaborators={collaborators}
           times={times}
-          cargos={cargos}
           onBack={() => setStep(tipo === 'Outro' ? '2n' : 2)}
           onExit={() => setDiscardConfirmOpen(true)}
           onContinue={() => setStep(4)}
