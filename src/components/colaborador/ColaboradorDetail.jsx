@@ -166,9 +166,13 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         ? formatPaymentValue(salarioValue, collaborator.tipoPagamento)
         : formatCurrencyBRL(salarioValue)
 
+  // "Custo para empresa" is the intended cost base when set - salário
+  // bruto stays purely informational in that case. Falls back to
+  // salário/valor de pagamento for records that predate the field (or
+  // simply never set it).
+  const custoBase = collaborator?.custoParaEmpresa ?? salarioValue ?? 0
   const custoTotal =
-    (salarioValue ?? 0) +
-    beneficiosDoColaborador.reduce((sum, item) => sum + item.assignedValueRaw, 0)
+    custoBase + beneficiosDoColaborador.reduce((sum, item) => sum + item.assignedValueRaw, 0)
   const tenureMonths = collaborator ? computeTenureMonths(collaborator) : null
 
   // These two must be called unconditionally, before the early return below,

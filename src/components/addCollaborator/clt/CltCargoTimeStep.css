@@ -1,0 +1,129 @@
+.clt-cargo-time__name-highlight {
+  color: #e9a716;
+}
+
+.clt-cargo-time__field {
+  position: relative;
+}
+
+.clt-cargo-time__time-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.clt-cargo-time__time-label {
+  margin: 0;
+  font-size: 16px;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.clt-cargo-time__dropdown {
+  box-sizing: border-box;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  max-height: 288px;
+  overflow-y: auto;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px;
+  z-index: 30;
+}
+
+.clt-cargo-time__dropdown-item {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text);
+}
+
+.clt-cargo-time__dropdown-item:hover {
+  background: #f4f5f5;
+}
+
+.clt-cargo-time__dropdown-item-label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.clt-cargo-time__dropdown-dot {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+}
+
+.clt-cargo-time__dropdown-empty {
+  margin: 0;
+  padding: 12px;
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+.clt-cargo-time__dropdown-create {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-cargo-time__dropdown-create:hover {
+  background: #f4f5f5;
+}
+
+.clt-cargo-time__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.clt-cargo-time__chip {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--color-bg);
+}
+
+.clt-cargo-time__chip-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+}
+
+.clt-cargo-time__chip-label {
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  white-space: nowrap;
+}

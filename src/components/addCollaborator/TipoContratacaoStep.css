@@ -1,0 +1,44 @@
+.tipo-contratacao__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.tipo-contratacao__card {
+  box-sizing: border-box;
+  height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: left;
+}
+
+.tipo-contratacao__card:hover {
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.12);
+}
+
+.tipo-contratacao__card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.tipo-contratacao__card-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  background: #fbedd0;
+}
+
+.tipo-contratacao__card-label {
+  font-size: 16px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}

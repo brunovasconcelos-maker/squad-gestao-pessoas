@@ -1,0 +1,239 @@
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Briefcase, Check, Plus } from '@phosphor-icons/react'
+import CltShell from './CltShell.jsx'
+import NovoCargoPanel from './NovoCargoPanel.jsx'
+import NovoTimePanel from './NovoTimePanel.jsx'
+import Checkbox from '../Checkbox.jsx'
+import { COLLECTIONS, getCollection } from '../../../utils/storage.js'
+import { getTeamColorTones, getTeamIconComponent } from '../../../utils/teamOptions.js'
+import '../buttons.css'
+import './CltShell.css'
+import './CltCargoTimeStep.css'
+
+function EntityField({ value, onChange, items, placeholder, onOpenCreate, renderItemIcon }) {
+  const [open, setOpen] = useState(false)
+  const containerRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    function handleClickOutside(event) {
+      if (containerRef.current && !containerRef.current.contains(event.target)) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open])
+
+  const trimmed = value.trim()
+  const filtered = trimmed
+    ? items.filter((item) => item.name.toLowerCase().includes(trimmed.toLowerCase()))
+    : items
+  const exactMatch = items.some((item) => item.name.toLowerCase() === trimmed.toLowerCase())
+  const showCreate = trimmed.length > 0 && !exactMatch
+
+  const select = (name) => {
+    onChange(name)
+    setOpen(false)
+  }
+
+  return (
+    <div className="clt-cargo-time__field" ref={containerRef}>
+      <div
+        className={
+          value
+            ? 'clt-large-input-wrap clt-large-input-wrap--filled'
+            : 'clt-large-input-wrap'
+        }
+      >
+        <input
+          type="text"
+          className="clt-large-input"
+          placeholder={placeholder}
+          value={value}
+          onFocus={() => setOpen(true)}
+          onChange={(event) => {
+            onChange(event.target.value)
+            setOpen(true)
+          }}
+        />
+        {value && <Check size={24} weight="bold" className="clt-large-input-check" />}
+      </div>
+
+      {open && (
+        <div className="clt-cargo-time__dropdown">
+          {filtered.map((item) => (
+            <button
+              type="button"
+              key={item.id}
+              className="clt-cargo-time__dropdown-item"
+              onClick={() => select(item.name)}
+            >
+              {renderItemIcon ? renderItemIcon(item) : <Briefcase size={24} />}
+              <span className="clt-cargo-time__dropdown-item-label">{item.name}</span>
+            </button>
+          ))}
+
+          {filtered.length === 0 && !showCreate && (
+            <p className="clt-cargo-time__dropdown-empty">Nenhum resultado.</p>
+          )}
+
+          {showCreate && (
+            <button
+              type="button"
+              className="clt-cargo-time__dropdown-create"
+              onClick={() => {
+                onOpenCreate(trimmed)
+                setOpen(false)
+              }}
+            >
+              <span>Add &quot;{trimmed}&quot;</span>
+              <Plus size={24} />
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+function CltCargoTimeStep({ name, initialCargo, initialTeam, onBack, onClose, onSkip, onContinue }) {
+  const [cargos, setCargos] = useState(() => getCollection(COLLECTIONS.CARGOS))
+  const [times, setTimes] = useState(() => getCollection(COLLECTIONS.TIMES))
+  const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
+
+  const [cargoName, setCargoName] = useState(initialCargo ?? '')
+  const [teamName, setTeamName] = useState(initialTeam ?? '')
+
+  const [novoCargoName, setNovoCargoName] = useState(null)
+  const [novoTimeName, setNovoTimeName] = useState(null)
+
+  const teamsWithCounts = useMemo(() => {
+    return times.map((team) => ({
+      ...team,
+      memberCount: collaborators.filter(
+        (collaborator) => Array.isArray(collaborator.times) && collaborator.times.includes(team.name),
+      ).length,
+    }))
+  }, [times, collaborators])
+
+  const suggestedTeams = useMemo(
+    () => [...teamsWithCounts].sort((a, b) => b.memberCount - a.memberCount).slice(0, 4),
+    [teamsWithCounts],
+  )
+
+  const selectTeamChip = (team) => {
+    setTeamName(team.name)
+  }
+
+  return (
+    <>
+      <CltShell
+        onClose={onClose}
+        progress={67}
+        footerLeft={
+          <button type="button" className="text-button" onClick={onBack}>
+            Voltar
+          </button>
+        }
+        footerRight={
+          <div className="clt-shell__footer-row-right">
+            <button type="button" className="text-button" onClick={onSkip}>
+              Não tenho ainda, pular
+            </button>
+            <button
+              type="button"
+              className="pill-button"
+              onClick={() => onContinue(cargoName.trim(), teamName.trim())}
+            >
+              Continuar
+            </button>
+          </div>
+        }
+      >
+        <div className="clt-shell__content">
+          <h1 className="clt-shell__title">
+            Muito bem,
+            <br />
+            hora de definir o cargo e time
+            <br />
+            de <span className="clt-cargo-time__name-highlight">{name}</span>.
+          </h1>
+
+          <EntityField
+            value={cargoName}
+            onChange={setCargoName}
+            items={cargos}
+            placeholder="Cargo"
+            onOpenCreate={setNovoCargoName}
+          />
+
+          <div className="clt-cargo-time__time-group">
+            <p className="clt-cargo-time__time-label">Time:</p>
+            <EntityField
+              value={teamName}
+              onChange={setTeamName}
+              items={times}
+              placeholder="Time"
+              onOpenCreate={setNovoTimeName}
+              renderItemIcon={(team) => {
+                const { dark } = getTeamColorTones(team.color)
+                return <span className="clt-cargo-time__dropdown-dot" style={{ background: dark }} />
+              }}
+            />
+          </div>
+
+          {suggestedTeams.length > 0 && (
+            <div className="clt-cargo-time__chips">
+              {suggestedTeams.map((team) => {
+                const { light, dark } = getTeamColorTones(team.color)
+                const TeamIcon = getTeamIconComponent(team.icon)
+                const checked = teamName.trim().toLowerCase() === team.name.toLowerCase()
+                return (
+                  <button
+                    type="button"
+                    key={team.id}
+                    className="clt-cargo-time__chip"
+                    onClick={() => selectTeamChip(team)}
+                  >
+                    <Checkbox checked={checked} />
+                    <span className="clt-cargo-time__chip-badge" style={{ background: light }}>
+                      <TeamIcon size={16} color={dark} />
+                    </span>
+                    <span className="clt-cargo-time__chip-label">{team.name}</span>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
+      </CltShell>
+
+      {novoCargoName !== null && (
+        <NovoCargoPanel
+          name={novoCargoName}
+          onClose={() => setNovoCargoName(null)}
+          onCreated={(newName) => {
+            setCargos(getCollection(COLLECTIONS.CARGOS))
+            setCargoName(newName)
+            setNovoCargoName(null)
+          }}
+        />
+      )}
+
+      {novoTimeName !== null && (
+        <NovoTimePanel
+          name={novoTimeName}
+          onClose={() => setNovoTimeName(null)}
+          onCreated={(newName) => {
+            setTimes(getCollection(COLLECTIONS.TIMES))
+            setTeamName(newName)
+            setNovoTimeName(null)
+          }}
+        />
+      )}
+    </>
+  )
+}
+
+export default CltCargoTimeStep
