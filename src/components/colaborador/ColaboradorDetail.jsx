@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners } from '@phosphor-icons/react'
+import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners, Eye, EyeSlash } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
 import briefcaseIcon from '../../assets/icons/Briefcase.svg'
@@ -16,7 +16,7 @@ import ReportaParaField from './ReportaParaField.jsx'
 import DateField from './DateField.jsx'
 import DeleteColaboradorModal from './DeleteColaboradorModal.jsx'
 import DesligarColaboradorModal from './DesligarColaboradorModal.jsx'
-import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
 import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import {
@@ -31,6 +31,23 @@ import {
 } from '../../utils/formatters.js'
 import './ColaboradorDetail.css'
 
+function computeTenureMonths(collaborator) {
+  const iso = getCollaboratorActiveSince(collaborator)
+  if (!iso) return null
+  const [year, month, day] = iso.split('-').map(Number)
+  const start = new Date(year, month - 1, day)
+  const now = new Date()
+  const totalMonths = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+  return Math.max(totalMonths, 0)
+}
+
+function formatTenure(months) {
+  if (months == null) return '—'
+  const years = Math.floor(months / 12)
+  const remMonths = months % 12
+  return `${years}a ${remMonths}m`
+}
+
 function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
@@ -43,6 +60,12 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
   const [notaText, setNotaText] = useState('')
   const notaInputRef = useRef(null)
   const notaSavingRef = useRef(false)
+  // Both visibility toggles are independent local state, so they naturally
+  // reset to hidden every time this component mounts (i.e. every time the
+  // panel/page is opened) - Home only renders ColaboradorDetail while the
+  // overlay is open, so closing it unmounts this component entirely.
+  const [custoVisible, setCustoVisible] = useState(false)
+  const [salarioVisible, setSalarioVisible] = useState(false)
 
   // Opening straight into full-screen (a direct/shared link) has no natural
   // "closed" state to slide in from, so it starts already entered. Opening
@@ -141,6 +164,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         filterTipo: getBenefitFilterTipo(benefit),
         Icon: getBeneficioTypeIcon(benefit.tipo),
         assignedValue: variantWithValue ? formatCurrencyBRL(variantWithValue.valor) : '—',
+        assignedValueRaw: variantWithValue?.valor ?? 0,
       }
     })
 
@@ -151,6 +175,11 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
       : isFreelancerOrConsultor
         ? formatPaymentValue(salarioValue, collaborator.tipoPagamento)
         : formatCurrencyBRL(salarioValue)
+
+  const custoTotal =
+    (salarioValue ?? 0) +
+    beneficiosDoColaborador.reduce((sum, item) => sum + item.assignedValueRaw, 0)
+  const tenureMonths = computeTenureMonths(collaborator)
 
   const profileSection = (
     <div className="colaborador-detail__profile">
@@ -292,7 +321,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         <span className="colaborador-detail__row-label">Salário</span>
         <InlineEditField
           value={amountToDigits(salarioValue)}
-          displayValue={salarioDisplay}
+          displayValue={salarioVisible ? salarioDisplay : '••••••'}
           disabled={desligado}
           formatForInput={(digits) => (digits ? formatAmountFromDigits(digits) : '')}
           parseInput={(text) => text.replace(/\D/g, '')}
@@ -303,6 +332,14 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
             )
           }
         />
+        <button
+          type="button"
+          className="colaborador-detail__mask-toggle"
+          onClick={() => setSalarioVisible((value) => !value)}
+          aria-label={salarioVisible ? 'Ocultar salário' : 'Mostrar salário'}
+        >
+          {salarioVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
+        </button>
       </div>
     </div>
   )
@@ -342,6 +379,36 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
           Adicionar nota
         </button>
       )}
+    </div>
+  )
+
+  const metricsSection = (
+    <div className="colaborador-detail__metrics">
+      <p className="colaborador-detail__section-label">Métricas</p>
+      <div className="colaborador-detail__stats-row">
+        <div className="colaborador-detail__stat-card">
+          <div className="colaborador-detail__stat-header">
+            <span className="colaborador-detail__stat-label colaborador-detail__stat-label--medium">
+              Custo total
+            </span>
+            <button
+              type="button"
+              className="colaborador-detail__stat-toggle"
+              onClick={() => setCustoVisible((value) => !value)}
+              aria-label={custoVisible ? 'Ocultar custo total' : 'Mostrar custo total'}
+            >
+              {custoVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
+            </button>
+          </div>
+          <span className="colaborador-detail__stat-value">
+            {custoVisible ? formatCurrencyBRL(custoTotal) : '••••••'}
+          </span>
+        </div>
+        <div className="colaborador-detail__stat-card">
+          <span className="colaborador-detail__stat-label">Tempo de casa</span>
+          <span className="colaborador-detail__stat-value">{formatTenure(tenureMonths)}</span>
+        </div>
+      </div>
     </div>
   )
 
@@ -418,6 +485,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
               {profileSection}
               {pipoBar}
               {infoList}
+              {metricsSection}
               {beneficiosSection}
             </div>
             <div className="colaborador-detail__column colaborador-detail__column--notes">
@@ -430,6 +498,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
             {pipoBar}
             {infoList}
             {notesSection}
+            {metricsSection}
             {beneficiosSection}
           </>
         )}
