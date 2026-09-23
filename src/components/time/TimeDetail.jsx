@@ -9,6 +9,8 @@ import {
   CaretDown,
   Plus,
   X,
+  Eye,
+  EyeSlash,
 } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
@@ -72,6 +74,30 @@ function formatBeneficioAggregate(values) {
   return `R$${fmt(min)}-${fmt(max)}`
 }
 
+// Custo total has no currency prefix - just the number.
+function formatNumberBRL(value) {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+// Same "Custo total" formula as the Colaborador page: the member's own
+// salário/valorPagamento plus every benefit value individually assigned to
+// them (not aggregated across the team, which is what beneficiosDoTime does).
+function computeMemberCusto(member, collaborators, beneficios) {
+  const isFreelancerOrConsultor =
+    member.contractType === 'Freelancer' || member.contractType === 'Consultor'
+  const salarioValue = (isFreelancerOrConsultor ? member.valorPagamento : member.salario) ?? 0
+  const beneficiosValue = beneficios
+    .filter((benefit) => Boolean(benefit.tipo))
+    .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(member.id))
+    .reduce((sum, benefit) => {
+      const variant = benefit.valores?.find(
+        (item) => item.aplicaATodos || item.colaboradorIds?.includes(member.id),
+      )
+      return sum + (variant?.valor ?? 0)
+    }, 0)
+  return salarioValue + beneficiosValue
+}
+
 function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
   const [times, setTimes] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
@@ -85,6 +111,10 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
   const [notaText, setNotaText] = useState('')
   const notaInputRef = useRef(null)
   const notaSavingRef = useRef(false)
+  // Local state, so it naturally resets to hidden every time this component
+  // mounts (i.e. every time the panel/page is opened) - Home only renders
+  // TimeDetail while the overlay is open, so closing it unmounts it entirely.
+  const [custoVisible, setCustoVisible] = useState(false)
 
   const [entered, setEntered] = useState(() => mode === 'full')
 
@@ -182,6 +212,12 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
   }
 
   const avgTenureMonths = computeAverageTenureMonths(members)
+
+  const custoTotalTime = useMemo(
+    () => members.reduce((sum, member) => sum + computeMemberCusto(member, collaborators, beneficios), 0),
+    [members, collaborators, beneficios],
+  )
+  const custoDisplayText = custoVisible ? formatNumberBRL(custoTotalTime) : '••••••'
 
   const cargoCounts = useMemo(() => {
     const map = new Map()
@@ -377,6 +413,23 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
           <span className="time-detail__stat-label">Tempo média de casa</span>
           <span className="time-detail__stat-value">{formatTenure(avgTenureMonths)}</span>
         </div>
+      </div>
+
+      <div className="time-detail__stat-card">
+        <div className="time-detail__stat-header">
+          <span className="time-detail__stat-label time-detail__stat-label--medium">
+            Custo total do time
+          </span>
+          <button
+            type="button"
+            className="time-detail__stat-toggle"
+            onClick={() => setCustoVisible((value) => !value)}
+            aria-label={custoVisible ? 'Ocultar custo total do time' : 'Mostrar custo total do time'}
+          >
+            {custoVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
+          </button>
+        </div>
+        <span className="time-detail__stat-value">{custoDisplayText}</span>
       </div>
 
       <div className="time-detail__stat-card">
