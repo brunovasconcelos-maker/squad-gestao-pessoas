@@ -182,3 +182,35 @@ export function cleanupMultiTeamColaboradores() {
     writeCollection(COLLECTIONS.COLABORADORES, fixed)
   }
 }
+
+// One-time migration: cargo is no longer a valid beneficiary source for
+// Benefícios (only colaboradores, times, and "Toda a empresa" are). Strips
+// any leftover cargoNames reference from records saved under the old Step 3,
+// without deleting the benefit record itself - if that leaves it with no
+// beneficiary source at all, it's left as an empty selection rather than
+// removed. Logged to the console since this silently changes saved data.
+// Naturally a no-op once a given browser's storage no longer has any
+// cargoNames left, so it's safe to run on every load.
+export function cleanupCargoBeneficiarios() {
+  const beneficios = readCollection(COLLECTIONS.BENEFICIOS)
+  if (beneficios === null) return
+
+  const affected = []
+
+  const fixed = beneficios.map((benefit) => {
+    const cargoNames = benefit.beneficiarios?.cargoNames
+    if (!Array.isArray(cargoNames) || cargoNames.length === 0) return benefit
+    affected.push({ id: benefit.id, name: benefit.name })
+    return { ...benefit, beneficiarios: { ...benefit.beneficiarios, cargoNames: [] } }
+  })
+
+  if (affected.length > 0) {
+    writeCollection(COLLECTIONS.BENEFICIOS, fixed)
+    console.log(
+      'cleanupCargoBeneficiarios: removed stale cargo beneficiary references from',
+      affected.length,
+      'benefit record(s):',
+      affected,
+    )
+  }
+}

@@ -4,7 +4,6 @@ import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
 import briefcaseIcon from '../../assets/icons/Briefcase.svg'
 import userIcon from '../../assets/icons/User.svg'
-import arrowUpRightIcon from '../../assets/icons/ArrowUpRight.svg'
 import backToModalIcon from '../../assets/icons/Back-to-Modal.svg'
 import IconButton from '../IconButton.jsx'
 import DescricaoModal from '../addTeam/DescricaoModal.jsx'
@@ -13,9 +12,7 @@ import ReportaAModal from '../addCargo/ReportaAModal.jsx'
 import DeleteCargoModal from './DeleteCargoModal.jsx'
 import RemoveCargoMemberModal from './RemoveCargoMemberModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, getCollaboratorActiveSince } from '../../utils/storage.js'
-import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
-import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
-import { formatDateDMonthYear, formatCurrencyBRL, formatFaixaSalarial } from '../../utils/formatters.js'
+import { formatDateDMonthYear, formatFaixaSalarial } from '../../utils/formatters.js'
 import { getTeamColorTones } from '../../utils/teamOptions.js'
 import './CargoDetail.css'
 
@@ -50,21 +47,10 @@ function formatTenure(months) {
   return `${years}a ${remMonths}m`
 }
 
-function formatBeneficioAggregate(values) {
-  if (values.length === 0) return '—'
-  const min = Math.min(...values)
-  const max = Math.max(...values)
-  if (min === max) return formatCurrencyBRL(min)
-  const fmt = (value) =>
-    value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  return `R$${fmt(min)}-${fmt(max)}`
-}
-
 function CargoDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
   const [cargos, setCargos] = useState(() => getCollection(COLLECTIONS.CARGOS))
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
-  const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [removeMemberTarget, setRemoveMemberTarget] = useState(null)
@@ -221,33 +207,6 @@ function CargoDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged })
     const memberIds = new Set(members.map((member) => member.id))
     return collaborators.filter((collaborator) => !memberIds.has(collaborator.id))
   }, [collaborators, members])
-
-  const beneficiosDoCargo = useMemo(() => {
-    return beneficios
-      .filter((benefit) => Boolean(benefit.tipo))
-      .map((benefit) => {
-        const beneficiaryIds = resolveBeneficiaryIds(benefit.beneficiarios, collaborators)
-        const qualifyingMemberIds = members
-          .filter((member) => beneficiaryIds.has(member.id))
-          .map((member) => member.id)
-        if (qualifyingMemberIds.length === 0) return null
-        const values = qualifyingMemberIds
-          .map((memberId) => {
-            const variant = benefit.valores?.find(
-              (item) => item.aplicaATodos || item.colaboradorIds?.includes(memberId),
-            )
-            return variant ? variant.valor : null
-          })
-          .filter((value) => value != null)
-        return {
-          benefit,
-          filterTipo: getBenefitFilterTipo(benefit),
-          Icon: getBeneficioTypeIcon(benefit.tipo),
-          aggregateValue: formatBeneficioAggregate(values),
-        }
-      })
-      .filter(Boolean)
-  }, [beneficios, collaborators, members])
 
   const profileSection = (
     <div className="cargo-detail__profile">
@@ -442,27 +401,6 @@ function CargoDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged })
     </div>
   )
 
-  const beneficiosSection = beneficiosDoCargo.length > 0 && (
-    <div className="cargo-detail__beneficios">
-      <p className="cargo-detail__section-label">Benefícios</p>
-      <div className="cargo-detail__beneficio-list">
-        {beneficiosDoCargo.map(({ benefit, filterTipo, Icon, aggregateValue }) => (
-          <div className="cargo-detail__beneficio-row" key={benefit.id}>
-            <span className="cargo-detail__beneficio-icon">
-              <Icon size={18} />
-            </span>
-            <span className="cargo-detail__beneficio-info">
-              <span className="cargo-detail__beneficio-tipo">{filterTipo}</span>
-              <span className="cargo-detail__beneficio-name">{benefit.name}</span>
-            </span>
-            <span className="cargo-detail__beneficio-value">{aggregateValue}</span>
-            <img src={arrowUpRightIcon} width={24} height={24} alt="" />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-
   return (
     <div
       className={[
@@ -506,7 +444,6 @@ function CargoDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged })
               {infoList}
               {metricsSection}
               {membrosSection}
-              {beneficiosSection}
             </div>
             <div className="cargo-detail__column cargo-detail__column--notes">{notesSection}</div>
           </div>
@@ -517,7 +454,6 @@ function CargoDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged })
             {notesSection}
             {metricsSection}
             {membrosSection}
-            {beneficiosSection}
           </>
         )}
       </div>
