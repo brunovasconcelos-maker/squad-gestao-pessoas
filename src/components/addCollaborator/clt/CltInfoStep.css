@@ -56,3 +56,8 @@
 .clt-info__email-hint {
   color: var(--color-text-secondary);
 }
+
+.clt-info__pagamento-pills {
+  display: flex;
+  gap: 8px;
+}
