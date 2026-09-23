@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
-import { CalendarPlus, CameraPlus, Check } from '@phosphor-icons/react'
+import { CalendarPlus, CameraPlus, Check, Square, CheckSquare } from '@phosphor-icons/react'
 import closeIcon from '../../../assets/icons/Close.svg'
 import CltShell from './CltShell.jsx'
 import InlineEditField from '../../colaborador/InlineEditField.jsx'
 import Calendar from '../../colaborador/Calendar.jsx'
-import Checkbox from '../Checkbox.jsx'
 import { useDropdownPosition } from '../../../utils/useDropdownPosition.js'
 import { COLLECTIONS, getCollection, addItem } from '../../../utils/storage.js'
 import {
@@ -216,7 +215,11 @@ function DataFimField({ value, onChange }) {
             className="colaborador-date-field__no-end-toggle"
             onClick={toggleNoEnd}
           >
-            <Checkbox checked={noEnd} />
+            {noEnd ? (
+              <CheckSquare size={24} color="#000000" />
+            ) : (
+              <Square size={24} color="#000000" />
+            )}
             <span className="colaborador-date-field__no-end-label">
               Não especificar data de fim
             </span>
