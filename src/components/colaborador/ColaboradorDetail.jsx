@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { At, CheckCircle, Flag, PiggyBank, NotePencil, Power, FrameCorners, Eye, EyeSlash } from '@phosphor-icons/react'
 import closeIcon from '../../assets/icons/Close.svg'
 import trashIcon from '../../assets/icons/Trash.svg'
@@ -48,6 +48,46 @@ function formatTenure(months) {
   return `${years}a ${remMonths}m`
 }
 
+// Custo total has no currency prefix - just the number.
+function formatNumberBRL(value) {
+  return value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
+const STAT_VALUE_MAX_FONT = 40
+const STAT_VALUE_MIN_FONT = 20
+const STAT_VALUE_FONT_STEP = 2
+
+// The stat cards have a fixed width (see .colaborador-detail__stat-card) and
+// must never grow to fit their value - instead, shrink the value's own
+// font-size until it fits the card's fixed width. Re-measures whenever the
+// text changes or the card itself is resized (e.g. switching between panel
+// and full-screen).
+function useFitStatFontSize(text) {
+  const ref = useRef(null)
+
+  useLayoutEffect(() => {
+    const el = ref.current
+    if (!el) return
+
+    const fit = () => {
+      let size = STAT_VALUE_MAX_FONT
+      el.style.fontSize = `${size}px`
+      while (size > STAT_VALUE_MIN_FONT && el.scrollWidth > el.clientWidth) {
+        size -= STAT_VALUE_FONT_STEP
+        el.style.fontSize = `${size}px`
+      }
+    }
+
+    fit()
+
+    const observer = new ResizeObserver(fit)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [text])
+
+  return ref
+}
+
 function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
@@ -95,11 +135,53 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
     persist(collaborators.map((item) => (item.id === id ? { ...item, [field]: value } : item)))
   }
 
+  const isFreelancerOrConsultor =
+    collaborator?.contractType === 'Freelancer' || collaborator?.contractType === 'Consultor'
+
+  const beneficiosDoColaborador = beneficios
+    .filter((benefit) => Boolean(benefit.tipo))
+    .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(id))
+    .map((benefit) => {
+      const variantWithValue = benefit.valores?.find(
+        (variant) => variant.aplicaATodos || variant.colaboradorIds?.includes(id),
+      )
+      return {
+        benefit,
+        filterTipo: getBenefitFilterTipo(benefit),
+        Icon: getBeneficioTypeIcon(benefit.tipo),
+        assignedValue: variantWithValue ? formatCurrencyBRL(variantWithValue.valor) : '—',
+        assignedValueRaw: variantWithValue?.valor ?? 0,
+      }
+    })
+
+  const salarioValue = collaborator
+    ? isFreelancerOrConsultor
+      ? collaborator.valorPagamento
+      : collaborator.salario
+    : null
+  const salarioDisplay =
+    salarioValue == null
+      ? 'Adicionar'
+      : isFreelancerOrConsultor
+        ? formatPaymentValue(salarioValue, collaborator.tipoPagamento)
+        : formatCurrencyBRL(salarioValue)
+
+  const custoTotal =
+    (salarioValue ?? 0) +
+    beneficiosDoColaborador.reduce((sum, item) => sum + item.assignedValueRaw, 0)
+  const tenureMonths = collaborator ? computeTenureMonths(collaborator) : null
+
+  // These two must be called unconditionally, before the early return below,
+  // so the same number of hooks runs on every render regardless of whether
+  // collaborator was found.
+  const custoDisplayText = custoVisible ? formatNumberBRL(custoTotal) : '••••••'
+  const tenureDisplayText = formatTenure(tenureMonths)
+  const custoValueRef = useFitStatFontSize(custoDisplayText)
+  const tenureValueRef = useFitStatFontSize(tenureDisplayText)
+
   if (!collaborator) return null
 
   const desligado = Boolean(collaborator.desligado)
-  const isFreelancerOrConsultor =
-    collaborator.contractType === 'Freelancer' || collaborator.contractType === 'Consultor'
 
   const handleDelete = () => {
     const updated = collaborators.filter((item) => item.id !== id)
@@ -151,35 +233,6 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
     }
     cancelAddNota()
   }
-
-  const beneficiosDoColaborador = beneficios
-    .filter((benefit) => Boolean(benefit.tipo))
-    .filter((benefit) => resolveBeneficiaryIds(benefit.beneficiarios, collaborators).has(id))
-    .map((benefit) => {
-      const variantWithValue = benefit.valores?.find(
-        (variant) => variant.aplicaATodos || variant.colaboradorIds?.includes(id),
-      )
-      return {
-        benefit,
-        filterTipo: getBenefitFilterTipo(benefit),
-        Icon: getBeneficioTypeIcon(benefit.tipo),
-        assignedValue: variantWithValue ? formatCurrencyBRL(variantWithValue.valor) : '—',
-        assignedValueRaw: variantWithValue?.valor ?? 0,
-      }
-    })
-
-  const salarioValue = isFreelancerOrConsultor ? collaborator.valorPagamento : collaborator.salario
-  const salarioDisplay =
-    salarioValue == null
-      ? 'Adicionar'
-      : isFreelancerOrConsultor
-        ? formatPaymentValue(salarioValue, collaborator.tipoPagamento)
-        : formatCurrencyBRL(salarioValue)
-
-  const custoTotal =
-    (salarioValue ?? 0) +
-    beneficiosDoColaborador.reduce((sum, item) => sum + item.assignedValueRaw, 0)
-  const tenureMonths = computeTenureMonths(collaborator)
 
   const profileSection = (
     <div className="colaborador-detail__profile">
@@ -400,13 +453,15 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
               {custoVisible ? <EyeSlash size={24} /> : <Eye size={24} />}
             </button>
           </div>
-          <span className="colaborador-detail__stat-value">
-            {custoVisible ? formatCurrencyBRL(custoTotal) : '••••••'}
+          <span ref={custoValueRef} className="colaborador-detail__stat-value">
+            {custoDisplayText}
           </span>
         </div>
         <div className="colaborador-detail__stat-card">
           <span className="colaborador-detail__stat-label">Tempo de casa</span>
-          <span className="colaborador-detail__stat-value">{formatTenure(tenureMonths)}</span>
+          <span ref={tenureValueRef} className="colaborador-detail__stat-value">
+            {tenureDisplayText}
+          </span>
         </div>
       </div>
     </div>
