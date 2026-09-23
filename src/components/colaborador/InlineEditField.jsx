@@ -40,12 +40,15 @@ function InlineEditField({
 
   const handleBlur = () => {
     // Pressing Enter triggers save() then a blur as the input unmounts -
-    // that blur must not also cancel and revert the just-saved value.
+    // guard against re-saving the same value a second time here. Clicking
+    // outside the field also saves (matching Enter) - only the explicit
+    // cancel (X) button discards the draft, and it works around this via
+    // onMouseDown's preventDefault so it never reaches this handler.
     if (savingRef.current) {
       savingRef.current = false
       return
     }
-    cancel()
+    save()
   }
 
   if (!editing) {

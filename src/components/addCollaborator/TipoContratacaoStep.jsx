@@ -13,30 +13,32 @@ const CARDS = [
 function TipoContratacaoStep({ onChoose, onExit }) {
   return (
     <CltShell onClose={onExit}>
-      <div className="clt-shell__content">
-        <h1 className="clt-shell__title">
-          Qual o tipo
-          <br />
-          de contratação?
-        </h1>
+      <div className="tipo-contratacao__center">
+        <div className="clt-shell__content tipo-contratacao__content">
+          <h1 className="clt-shell__title">
+            Qual o tipo
+            <br />
+            de contratação?
+          </h1>
 
-        <div className="tipo-contratacao__grid">
-          {CARDS.map((card) => (
-            <button
-              type="button"
-              key={card.id}
-              className="tipo-contratacao__card"
-              onClick={() => onChoose(card.id)}
-            >
-              <div className="tipo-contratacao__card-top">
-                <span className="tipo-contratacao__card-badge">
-                  <FileText size={24} />
-                </span>
-                <ArrowUpRight size={24} />
-              </div>
-              <span className="tipo-contratacao__card-label">{card.label}</span>
-            </button>
-          ))}
+          <div className="tipo-contratacao__grid">
+            {CARDS.map((card) => (
+              <button
+                type="button"
+                key={card.id}
+                className="tipo-contratacao__card"
+                onClick={() => onChoose(card.id)}
+              >
+                <div className="tipo-contratacao__card-top">
+                  <span className="tipo-contratacao__card-badge">
+                    <FileText size={24} />
+                  </span>
+                  <ArrowUpRight size={24} />
+                </div>
+                <span className="tipo-contratacao__card-label">{card.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </CltShell>

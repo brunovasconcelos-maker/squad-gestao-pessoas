@@ -53,6 +53,21 @@
   color: var(--color-bg);
 }
 
+.clt-info__confirmed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+}
+
+.clt-info__confirmed-icon {
+  flex-shrink: 0;
+  color: #1a9c4a;
+}
+
 .clt-info__email-hint {
   color: var(--color-text-secondary);
 }
