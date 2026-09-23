@@ -21,6 +21,7 @@ import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
+import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
 import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
@@ -157,6 +158,7 @@ function Home() {
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
   const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
   const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
+  const [novoTimeStepFlowOpen, setNovoTimeStepFlowOpen] = useState(false)
   const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
   const [novoCargoId, setNovoCargoId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
@@ -509,6 +511,17 @@ function Home() {
     )
   }
 
+  if (novoTimeStepFlowOpen) {
+    return (
+      <NovoTimeStepFlow
+        onExit={() => {
+          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
+          setNovoTimeStepFlowOpen(false)
+        }}
+      />
+    )
+  }
+
   if (novoCargoFlowOpen) {
     return (
       <NovoCargoFlow
@@ -654,8 +667,7 @@ function Home() {
           }}
           onSelectTime={() => {
             setNovoModalOpen(false)
-            setNovoTimeTeamId(null)
-            setNovoTimeFlowOpen(true)
+            setNovoTimeStepFlowOpen(true)
           }}
           onSelectCargo={() => {
             setNovoModalOpen(false)

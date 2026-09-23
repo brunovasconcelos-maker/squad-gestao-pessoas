@@ -2,17 +2,18 @@ import closeIcon from '../../../assets/icons/Close.svg'
 import IconButton from '../../IconButton.jsx'
 import './CltShell.css'
 
-// Shared shell for the CLT path of Novo Colaborador: the soft gradient
-// background, fixed header, and (when footerLeft/footerRight are given) a
-// fixed footer with a progress bar. Tela 1 (tipo de contratação) renders no
-// footer at all, since it navigates immediately on card click.
-function CltShell({ onClose, progress, footerLeft, footerRight, children }) {
+// Shared shell, reused across flows (Novo Colaborador, Novo Time, ...): the
+// soft gradient background, fixed header, and (when footerLeft/footerRight
+// are given) a fixed footer with a progress bar. Tela 1 (tipo de
+// contratação) renders no footer at all, since it navigates immediately on
+// card click.
+function CltShell({ title = 'Novo Colaborador', onClose, progress, footerLeft, footerRight, children }) {
   const hasFooter = Boolean(footerLeft || footerRight)
 
   return (
     <div className="clt-shell">
       <header className="clt-shell__header">
-        <span className="clt-shell__header-title">Novo Colaborador</span>
+        <span className="clt-shell__header-title">{title}</span>
         <IconButton icon={closeIcon} alt="Fechar" onClick={onClose} />
       </header>
 
