@@ -1,7 +1,7 @@
 .beneficio-detail-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(227, 230, 230, 0.4);
+  background: rgba(227, 230, 230, 0.6);
   z-index: 160;
   opacity: 1;
   transition: opacity 280ms ease-out;

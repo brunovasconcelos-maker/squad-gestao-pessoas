@@ -178,7 +178,7 @@
 .beneficio-step__variant-currency-prefix {
   flex-shrink: 0;
   font-size: 24px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
   color: var(--color-text-secondary);
 }
 
@@ -190,8 +190,12 @@
   background: transparent;
   font-family: inherit;
   font-size: 24px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
   color: var(--color-text);
+}
+
+.beneficio-step__variant-input::placeholder {
+  color: var(--color-text-secondary);
 }
 
 /* Right-aligned Atribuir + Trash group, 4px apart - inline in the row,
