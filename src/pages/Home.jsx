@@ -43,6 +43,12 @@ const TABS = [
 
 const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 
+// Matches the detail panels' own slide-in transition duration (see
+// ColaboradorDetail.css/TimeDetail.css/BeneficioDetail.css) - closing
+// waits this long before actually navigating away, so the panel finishes
+// sliding back off-screen instead of vanishing mid-transition.
+const PANEL_CLOSE_ANIMATION_MS = 280
+
 // Read once when this module first evaluates - i.e. exactly once per real
 // page load (a hard navigation/refresh reloads the whole bundle, so this
 // is re-evaluated fresh then too). Reading the raw hash directly, before
@@ -95,7 +101,23 @@ function Home() {
     forceFullScreenRef.current = false
     navigate(`/colaborador/${colaboradorId}`)
   }
-  const closeColaborador = () => navigate('/')
+  // Panel mode slides in from the right on open (ColaboradorDetail's own
+  // "entered" state) - closing plays the same transition in reverse by
+  // forcing that state off first and only navigating away (which unmounts
+  // the panel) once it's finished sliding off-screen. Full-screen has no
+  // off-screen direction to slide toward, so it still closes instantly.
+  const [colaboradorClosing, setColaboradorClosing] = useState(false)
+  const closeColaborador = () => {
+    if (colaboradorFullScreen) {
+      navigate('/')
+      return
+    }
+    setColaboradorClosing(true)
+    setTimeout(() => {
+      navigate('/')
+      setColaboradorClosing(false)
+    }, PANEL_CLOSE_ANIMATION_MS)
+  }
 
   // Same convention as the colaborador route above, applied to /time/:id.
   const forceFullScreenTimeRef = useRef(loadedDirectlyOnTimeRoute)
@@ -111,7 +133,18 @@ function Home() {
     forceFullScreenTimeRef.current = false
     navigate(`/time/${timeId}`)
   }
-  const closeTime = () => navigate('/')
+  const [timeClosing, setTimeClosing] = useState(false)
+  const closeTime = () => {
+    if (timeFullScreen) {
+      navigate('/')
+      return
+    }
+    setTimeClosing(true)
+    setTimeout(() => {
+      navigate('/')
+      setTimeClosing(false)
+    }, PANEL_CLOSE_ANIMATION_MS)
+  }
 
   // Same convention as the routes above, applied to /beneficio/:id.
   const forceFullScreenBeneficioRef = useRef(loadedDirectlyOnBeneficioRoute)
@@ -127,7 +160,18 @@ function Home() {
     forceFullScreenBeneficioRef.current = false
     navigate(`/beneficio/${beneficioId}`)
   }
-  const closeBeneficio = () => navigate('/')
+  const [beneficioClosing, setBeneficioClosing] = useState(false)
+  const closeBeneficio = () => {
+    if (beneficioFullScreen) {
+      navigate('/')
+      return
+    }
+    setBeneficioClosing(true)
+    setTimeout(() => {
+      navigate('/')
+      setBeneficioClosing(false)
+    }, PANEL_CLOSE_ANIMATION_MS)
+  }
 
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
@@ -514,11 +558,19 @@ function Home() {
       {colaboradorOverlayOpen && (
         <>
           {!colaboradorFullScreen && (
-            <div className="colaborador-detail-overlay" onClick={closeColaborador} />
+            <div
+              className={
+                colaboradorClosing
+                  ? 'colaborador-detail-overlay colaborador-detail-overlay--closing'
+                  : 'colaborador-detail-overlay'
+              }
+              onClick={closeColaborador}
+            />
           )}
           <ColaboradorDetail
             id={colaboradorId}
             mode={colaboradorFullScreen ? 'full' : 'panel'}
+            closing={colaboradorClosing}
             onClose={closeColaborador}
             onExpand={expandColaborador}
             onCollapse={collapseColaborador}
@@ -529,10 +581,18 @@ function Home() {
 
       {timeOverlayOpen && (
         <>
-          {!timeFullScreen && <div className="time-detail-overlay" onClick={closeTime} />}
+          {!timeFullScreen && (
+            <div
+              className={
+                timeClosing ? 'time-detail-overlay time-detail-overlay--closing' : 'time-detail-overlay'
+              }
+              onClick={closeTime}
+            />
+          )}
           <TimeDetail
             id={timeId}
             mode={timeFullScreen ? 'full' : 'panel'}
+            closing={timeClosing}
             onClose={closeTime}
             onExpand={expandTime}
             onCollapse={collapseTime}
@@ -544,11 +604,19 @@ function Home() {
       {beneficioOverlayOpen && (
         <>
           {!beneficioFullScreen && (
-            <div className="beneficio-detail-overlay" onClick={closeBeneficio} />
+            <div
+              className={
+                beneficioClosing
+                  ? 'beneficio-detail-overlay beneficio-detail-overlay--closing'
+                  : 'beneficio-detail-overlay'
+              }
+              onClick={closeBeneficio}
+            />
           )}
           <BeneficioDetail
             id={beneficioId}
             mode={beneficioFullScreen ? 'full' : 'panel'}
+            closing={beneficioClosing}
             onClose={closeBeneficio}
             onExpand={expandBeneficio}
             onCollapse={collapseBeneficio}

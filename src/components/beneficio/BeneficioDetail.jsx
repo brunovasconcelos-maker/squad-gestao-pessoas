@@ -83,7 +83,7 @@ function getInitials(name) {
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 
-function BeneficioDetail({ id, mode, onClose, onExpand, onCollapse }) {
+function BeneficioDetail({ id, mode, closing, onClose, onExpand, onCollapse }) {
   const [benefits, setBenefits] = useState(() => getCollection(COLLECTIONS.BENEFICIOS))
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
@@ -557,7 +557,7 @@ function BeneficioDetail({ id, mode, onClose, onExpand, onCollapse }) {
       className={[
         'beneficio-detail',
         mode === 'full' ? 'beneficio-detail--full' : 'beneficio-detail--panel',
-        entered ? 'beneficio-detail--entered' : '',
+        entered && !closing ? 'beneficio-detail--entered' : '',
       ]
         .filter(Boolean)
         .join(' ')}
