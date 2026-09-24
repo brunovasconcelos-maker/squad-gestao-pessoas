@@ -1,23 +1,16 @@
-import ModalOverlay from '../addCollaborator/ModalOverlay.jsx'
-import '../addCollaborator/buttons.css'
-import '../addCollaborator/DiscardConfirmModal.css'
+import { Trash } from '@phosphor-icons/react'
+import ConfirmModal from '../ConfirmModal.jsx'
 
 function DeleteTimeModal({ name, onCancel, onConfirm }) {
   return (
-    <ModalOverlay width={360} className="discard-confirm-modal">
-      <h2 className="discard-confirm-modal__title">Tem certeza?</h2>
-      <p className="discard-confirm-modal__message">
-        Tem certeza que deseja excluir o time {name}? Os colaboradores ficarão sem time atribuído.
-      </p>
-      <div className="discard-confirm-modal__footer">
-        <button type="button" className="text-button" onClick={onCancel}>
-          Cancelar
-        </button>
-        <button type="button" className="pill-button" onClick={onConfirm}>
-          Excluir
-        </button>
-      </div>
-    </ModalOverlay>
+    <ConfirmModal
+      icon={Trash}
+      title={`Excluir ${name}?`}
+      message={`Tem certeza que quer excluir o time ${name}? Essa ação não pode ser desfeita. Os colaboradores desse time ficarão sem time atribuído.`}
+      confirmLabel="Excluir"
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+    />
   )
 }
 

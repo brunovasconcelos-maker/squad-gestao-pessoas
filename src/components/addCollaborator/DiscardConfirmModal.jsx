@@ -1,28 +1,16 @@
-import ModalOverlay from './ModalOverlay.jsx'
-import './buttons.css'
-import './DiscardConfirmModal.css'
+import { XCircle } from '@phosphor-icons/react'
+import ConfirmModal from '../ConfirmModal.jsx'
 
 function DiscardConfirmModal({ onCancel, onConfirm }) {
   return (
-    <ModalOverlay width={360} className="discard-confirm-modal">
-      <h2 className="discard-confirm-modal__title">Tem certeza?</h2>
-      <p className="discard-confirm-modal__message">
-        Ao voltar, todo o progresso será perdido. Nenhuma informação foi
-        salva.
-      </p>
-      <div className="discard-confirm-modal__footer">
-        <button type="button" className="text-button" onClick={onCancel}>
-          Cancelar
-        </button>
-        <button
-          type="button"
-          className="pill-button"
-          onClick={onConfirm}
-        >
-          Descartar
-        </button>
-      </div>
-    </ModalOverlay>
+    <ConfirmModal
+      icon={XCircle}
+      title="Descartar edições."
+      message="Tem certeza que deseja descartar? Ao sair, todo o progresso será perdido. Nenhuma informação será salva."
+      confirmLabel="Descartar"
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+    />
   )
 }
 
