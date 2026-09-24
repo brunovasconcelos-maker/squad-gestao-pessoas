@@ -69,8 +69,10 @@
 
 .clt-shell__title {
   margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 32px;
   font-weight: var(--font-weight-semibold);
+  letter-spacing: -1px;
   color: var(--color-text);
 }
 

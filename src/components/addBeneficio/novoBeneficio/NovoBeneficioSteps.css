@@ -164,7 +164,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid #e3e6e6;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .beneficio-step__variant-input-wrap {
