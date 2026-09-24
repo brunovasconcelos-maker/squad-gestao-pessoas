@@ -19,19 +19,19 @@
   color: var(--color-text);
 }
 
+/* Fixed (not absolute) and anchored via useDropdownPosition so it escapes
+   .clt-shell__body's overflow-y:auto clipping and always paints above the
+   shell's fixed footer, instead of being clipped/hidden behind it. */
 .clt-cargo-time__dropdown {
   box-sizing: border-box;
-  position: absolute;
-  top: calc(100% + 4px);
-  left: 0;
-  width: 100%;
+  position: fixed;
   max-height: 288px;
   overflow-y: auto;
   background: var(--color-bg);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 4px;
-  z-index: 30;
+  z-index: 220;
 }
 
 .clt-cargo-time__dropdown-item {

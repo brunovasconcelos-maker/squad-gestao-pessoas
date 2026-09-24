@@ -16,9 +16,8 @@ import './SidePanel.css'
 
 function NovoTimePanel({ name, onClose, onCreated }) {
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
-  const [colorId, setColorId] = useState(() =>
-    pickDefaultColorId(times.filter((team) => team.color).map((team) => team.color)),
-  )
+  const usedColors = times.filter((team) => team.color).map((team) => team.color)
+  const [colorId, setColorId] = useState(() => pickDefaultColorId(usedColors))
   const [iconName, setIconName] = useState(() => guessTeamIconName(name))
   const [descricao, setDescricao] = useState('')
   const [colorModalOpen, setColorModalOpen] = useState(false)
@@ -112,6 +111,7 @@ function NovoTimePanel({ name, onClose, onCreated }) {
 
       {colorModalOpen && (
         <ColorPickerModal
+          usedColorIds={usedColors}
           onSelect={(newColorId) => {
             setColorId(newColorId)
             setColorModalOpen(false)
