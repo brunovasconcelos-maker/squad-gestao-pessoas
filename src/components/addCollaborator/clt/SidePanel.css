@@ -1,7 +1,7 @@
 .clt-side-panel-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(227, 230, 230, 0.4);
+  background: rgba(227, 230, 230, 0.6);
   /* Above the clt-shell (z-index 50) but below ModalOverlay (z-index 100),
      since the reused ColorPickerModal/IconPickerModal must render on top
      of this panel, not behind it. */
