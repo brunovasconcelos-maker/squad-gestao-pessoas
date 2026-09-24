@@ -12,6 +12,7 @@ import DiscardConfirmModal from '../../addCollaborator/DiscardConfirmModal.jsx'
 import { COLLECTIONS, getCollection, addItem, generateId } from '../../../utils/storage.js'
 import { resolveBeneficiaryIds } from '../../../utils/beneficiarios.js'
 import { centsToAmount } from '../../../utils/formatters.js'
+import { useToast } from '../../toast/ToastContext.jsx'
 
 function createEmptyVariant() {
   return { id: generateId(), digits: '', colaboradorIds: new Set() }
@@ -25,6 +26,7 @@ function createEmptyVariant() {
 // here; both paths share the same beneficiarios/variants/infoAdicional
 // state shape and converge on the same handleSave.
 function NovoBeneficioStepFlow({ onExit }) {
+  const { showToast } = useToast()
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
 
@@ -116,6 +118,7 @@ function NovoBeneficioStepFlow({ onExit }) {
       emailFornecedor: infoAdicional.email.trim() || null,
     }
     addItem(COLLECTIONS.BENEFICIOS, record)
+    showToast('success', 'Benefício criado com sucesso')
     onExit()
   }
 

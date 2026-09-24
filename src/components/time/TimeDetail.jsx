@@ -30,6 +30,7 @@ import { resolveBeneficiaryIds } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import { formatDateDMonthYear, formatCurrencyBRL } from '../../utils/formatters.js'
 import { getTeamColorTones, getTeamIconComponent } from '../../utils/teamOptions.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import '../addTeam/Step1TeamInfo.css'
 import './TimeDetail.css'
 
@@ -99,6 +100,7 @@ function computeMemberCusto(member, collaborators, beneficios) {
 }
 
 function TimeDetail({ id, mode, closing, onClose, onExpand, onCollapse, onDataChanged }) {
+  const { showToast } = useToast()
   const [times, setTimes] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
@@ -167,6 +169,7 @@ function TimeDetail({ id, mode, closing, onClose, onExpand, onCollapse, onDataCh
     )
     setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
     onDataChanged?.(updatedCollaborators)
+    showToast('danger', 'Time excluído com sucesso')
     onClose()
   }
 

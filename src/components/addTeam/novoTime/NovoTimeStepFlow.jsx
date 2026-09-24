@@ -6,6 +6,7 @@ import TimeInfoStep from './TimeInfoStep.jsx'
 import DiscardConfirmModal from '../../addCollaborator/DiscardConfirmModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, generateId } from '../../../utils/storage.js'
 import { pickDefaultColorId, guessTeamIconName } from '../../../utils/teamOptions.js'
+import { useToast } from '../../toast/ToastContext.jsx'
 
 // The step-by-step full-screen flow for creating a team, triggered from the
 // "Time" card in the Criar Novo modal (brand-new team, starts at Tela 1 -
@@ -14,6 +15,7 @@ import { pickDefaultColorId, guessTeamIconName } from '../../../utils/teamOption
 // skipped and the flow opens straight at Cor e Ícone, pre-filled with the
 // team's already-selected members).
 function NovoTimeStepFlow({ teamId, onExit }) {
+  const { showToast } = useToast()
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
 
@@ -121,6 +123,7 @@ function NovoTimeStepFlow({ teamId, onExit }) {
     })
     setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
 
+    showToast('success', 'Time criado com sucesso')
     onExit()
   }
 

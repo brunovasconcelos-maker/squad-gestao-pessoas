@@ -5,9 +5,11 @@ import trashIcon from '../../assets/icons/Trash.svg'
 import IconButton from '../IconButton.jsx'
 import DeleteBeneficioModal from './DeleteBeneficioModal.jsx'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './BeneficioCardMenu.css'
 
 function BeneficioCardMenu({ benefit, onView, onDataChanged }) {
+  const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const containerRef = useRef(null)
@@ -32,6 +34,7 @@ function BeneficioCardMenu({ benefit, onView, onDataChanged }) {
     const updated = getCollection(COLLECTIONS.BENEFICIOS).filter((item) => item.id !== benefit.id)
     setCollection(COLLECTIONS.BENEFICIOS, updated)
     onDataChanged?.(updated)
+    showToast('danger', 'Benefício excluído com sucesso')
     setDeleteModalOpen(false)
   }
 

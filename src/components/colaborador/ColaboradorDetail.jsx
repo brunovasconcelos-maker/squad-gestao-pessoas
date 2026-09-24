@@ -29,6 +29,7 @@ import {
   formatAmountFromDigits,
   centsToAmount,
 } from '../../utils/formatters.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './ColaboradorDetail.css'
 
 function computeTenureMonths(collaborator) {
@@ -89,6 +90,7 @@ function useFitStatFontSize(text) {
 }
 
 function ColaboradorDetail({ id, mode, closing, onClose, onExpand, onCollapse, onDataChanged }) {
+  const { showToast } = useToast()
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
@@ -204,6 +206,7 @@ function ColaboradorDetail({ id, mode, closing, onClose, onExpand, onCollapse, o
     const updated = collaborators.filter((item) => item.id !== id)
     setCollection(COLLECTIONS.COLABORADORES, updated)
     onDataChanged?.(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
     onClose()
   }
 

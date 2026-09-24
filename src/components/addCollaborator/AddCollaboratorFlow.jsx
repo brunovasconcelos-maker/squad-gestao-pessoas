@@ -7,8 +7,15 @@ import DiscardConfirmModal from './DiscardConfirmModal.jsx'
 import CltNomeStep from './clt/CltNomeStep.jsx'
 import CltCargoTimeStep from './clt/CltCargoTimeStep.jsx'
 import CltInfoStep from './clt/CltInfoStep.jsx'
+import { useToast } from '../toast/ToastContext.jsx'
 
 function AddCollaboratorFlow({ onExit }) {
+  const { showToast } = useToast()
+
+  const handleCreated = () => {
+    showToast('success', 'Colaborador criado com sucesso')
+    onExit()
+  }
   // 'tipo' -> Tela 1 (shared entry).
   // 1 / 2 -> the old flow, now unused (kept only as dead-simple fallback
   // plumbing; every Tela 1 card routes into the rebuilt flow below).
@@ -72,7 +79,7 @@ function AddCollaboratorFlow({ onExit }) {
           contractType={contractType}
           onBack={() => setStep(1)}
           onExit={openDiscardConfirm}
-          onContinue={onExit}
+          onContinue={handleCreated}
         />
       )}
 
@@ -114,7 +121,7 @@ function AddCollaboratorFlow({ onExit }) {
           contractType={cltContractType}
           onBack={() => setStep('clt-cargo-time')}
           onClose={openDiscardConfirm}
-          onCreate={onExit}
+          onCreate={handleCreated}
         />
       )}
 
