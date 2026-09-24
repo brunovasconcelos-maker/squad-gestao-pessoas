@@ -73,11 +73,13 @@
   white-space: nowrap;
 }
 
-/* Tela 3 - beneficiary suggestion cards, chips for search-added extras
-   (chip classes reused from the older Step3Beneficiarios.css). */
+/* Tela 3 - beneficiary suggestion cards. 2 per row at ~260px each (532px
+   content width, 12px gap) - "Toda a empresa", the top-3 team suggestions,
+   and any team/colaborador picked via search (which grows this same grid
+   instead of tracking the pick in a separate summary). */
 .beneficio-step__beneficiarios-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
@@ -86,7 +88,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  min-width: 200px;
+  width: 100%;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 12px;
@@ -96,6 +98,11 @@
 
 .beneficio-step__beneficiario-card--selected {
   border-color: var(--color-text);
+}
+
+.beneficio-step__beneficiario-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .beneficio-step__beneficiario-badge {
@@ -134,13 +141,22 @@
 .beneficio-step__variants {
   display: flex;
   flex-direction: column;
+}
+
+.beneficio-step__variants-rows {
+  display: flex;
+  flex-direction: column;
   gap: 24px;
 }
 
 .beneficio-step__variant-row {
+  box-sizing: border-box;
+  height: 61px;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 16px;
+  border-bottom: 1px solid #e3e6e6;
 }
 
 .beneficio-step__variant-input-wrap {
@@ -149,8 +165,6 @@
   display: flex;
   align-items: baseline;
   gap: 8px;
-  border-bottom: 1px solid var(--color-border);
-  padding: 0 0 12px;
 }
 
 .beneficio-step__variant-currency-prefix {
@@ -172,21 +186,44 @@
   color: var(--color-text);
 }
 
-.beneficio-step__variant-atribuir {
+/* Right-aligned Atribuir + Trash group, 4px apart - inline in the row,
+   not stacked below or styled as a bordered pill. */
+.beneficio-step__variant-actions {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.beneficio-step__variant-atribuir {
+  box-sizing: border-box;
+  flex-shrink: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
   border: none;
+  border-radius: 999px;
   background: none;
-  padding: 0;
+  padding: 0 8px;
   font-size: 16px;
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-regular);
   color: var(--color-text);
+}
+
+.beneficio-step__variant-atribuir:hover {
+  background: var(--color-overlay);
 }
 
 .beneficio-step__variant-atribuir-count {
   color: #0091ff;
+  font-weight: var(--font-weight-regular);
+}
+
+.beneficio-step__variant-atribuir-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .beneficio-step__add-variant {
@@ -195,6 +232,7 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  margin-top: 40px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 16px;
@@ -209,7 +247,7 @@
 }
 
 .beneficio-step__assign-counter {
-  margin: 0;
+  margin: 20px 0 0;
   font-size: 16px;
   font-weight: var(--font-weight-medium);
   color: var(--color-text);

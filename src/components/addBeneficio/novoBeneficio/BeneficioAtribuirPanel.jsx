@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { CheckCircle } from '@phosphor-icons/react'
 import closeIcon from '../../../assets/icons/Close.svg'
 import IconButton from '../../IconButton.jsx'
 import Checkbox from '../../addCollaborator/Checkbox.jsx'
@@ -9,11 +10,23 @@ import './NovoBeneficioSteps.css'
 
 // The same 428px side-panel shell already used for Novo Cargo/Novo Time
 // quick-create. A plain checklist, no search - anyone already assigned to
-// a different value variant shows checked-and-disabled, since they must be
-// unassigned via that other variant's own Atribuir panel first.
+// a different value variant shows a plain green check (not a clickable
+// checkbox, since they must be unassigned via that other variant's own
+// Atribuir panel first) and sorts to the bottom, below every selectable
+// person.
 function BeneficioAtribuirPanel({ people, value, assignedElsewhere, onClose, onSave }) {
   const [selected, setSelected] = useState(() => new Set(value))
   const [entered, setEntered] = useState(false)
+
+  const sortedPeople = useMemo(
+    () =>
+      [...people].sort((a, b) => {
+        const aElsewhere = assignedElsewhere.has(a.id) ? 1 : 0
+        const bElsewhere = assignedElsewhere.has(b.id) ? 1 : 0
+        return aElsewhere - bElsewhere
+      }),
+    [people, assignedElsewhere],
+  )
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setEntered(true))
@@ -44,9 +57,8 @@ function BeneficioAtribuirPanel({ people, value, assignedElsewhere, onClose, onS
 
         <div className="clt-side-panel__body">
           <div className="beneficio-step__atribuir-list">
-            {people.map((person) => {
+            {sortedPeople.map((person) => {
               const disabledElsewhere = assignedElsewhere.has(person.id)
-              const checked = disabledElsewhere || selected.has(person.id)
               return (
                 <button
                   type="button"
@@ -55,7 +67,11 @@ function BeneficioAtribuirPanel({ people, value, assignedElsewhere, onClose, onS
                   disabled={disabledElsewhere}
                   onClick={() => toggle(person.id)}
                 >
-                  <Checkbox checked={checked} />
+                  {disabledElsewhere ? (
+                    <CheckCircle size={20} weight="fill" color="#039300" />
+                  ) : (
+                    <Checkbox checked={selected.has(person.id)} />
+                  )}
                   <span className="beneficio-step__atribuir-name">{person.name}</span>
                 </button>
               )

@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import CltShell from '../../addCollaborator/clt/CltShell.jsx'
 import Checkbox from '../../addCollaborator/Checkbox.jsx'
-import closeIcon from '../../../assets/icons/Close.svg'
 import magnifyingGlassIcon from '../../../assets/icons/MagnifyingGlass.svg'
 import { useDropdownPosition } from '../../../utils/useDropdownPosition.js'
 import { getTeamColorTones, getTeamIconComponent } from '../../../utils/teamOptions.js'
 import '../../addCollaborator/buttons.css'
 import '../../addCollaborator/clt/CltShell.css'
 import '../../addTeam/novoTime/NovoTimeSteps.css'
-import '../Step3Beneficiarios.css'
 import './NovoBeneficioSteps.css'
 
 const MAX_TEAM_SUGGESTIONS = 3
@@ -40,16 +38,29 @@ function BeneficioBeneficiariosStep({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [searchOpen])
 
-  const suggestedTeams = useMemo(() => {
-    return [...times]
-      .map((team) => ({
+  const teamsWithCounts = useMemo(
+    () =>
+      times.map((team) => ({
         ...team,
         memberCount: collaborators.filter((collaborator) => collaborator.times.includes(team.name))
           .length,
-      }))
-      .sort((a, b) => b.memberCount - a.memberCount)
-      .slice(0, MAX_TEAM_SUGGESTIONS)
-  }, [times, collaborators])
+      })),
+    [times, collaborators],
+  )
+
+  const suggestedTeams = useMemo(
+    () => [...teamsWithCounts].sort((a, b) => b.memberCount - a.memberCount).slice(0, MAX_TEAM_SUGGESTIONS),
+    [teamsWithCounts],
+  )
+
+  // Teams/colaboradores selected via search but not among the initial
+  // suggestions still need a card of their own - the list grows instead of
+  // tracking them invisibly.
+  const suggestedTeamNames = useMemo(() => new Set(suggestedTeams.map((team) => team.name)), [suggestedTeams])
+  const extraTeams = teamsWithCounts.filter(
+    (team) => teamNames.has(team.name) && !suggestedTeamNames.has(team.name),
+  )
+  const extraColaboradores = collaborators.filter((collaborator) => colaboradorIds.has(collaborator.id))
 
   const toggleTodaEmpresa = () => onChange({ colaboradorIds, teamNames, todaEmpresa: !todaEmpresa })
 
@@ -98,26 +109,6 @@ function BeneficioBeneficiariosStep({
     }
   }
 
-  // Chips summarize every current selection (search-added individuals and
-  // teams beyond the top-3 suggestion row included), each removable - the
-  // same at-a-glance pattern BeneficiariosModal already uses.
-  const chips = []
-  if (todaEmpresa) chips.push({ type: 'company', key: '__company__', label: 'Toda a empresa' })
-  times.forEach((team) => {
-    if (teamNames.has(team.name)) chips.push({ type: 'time', key: team.name, label: team.name })
-  })
-  collaborators.forEach((collaborator) => {
-    if (colaboradorIds.has(collaborator.id)) {
-      chips.push({ type: 'colaborador', key: collaborator.id, label: collaborator.name })
-    }
-  })
-
-  const removeChip = (chip) => {
-    if (chip.type === 'company') toggleTodaEmpresa()
-    else if (chip.type === 'time') toggleTeam(chip.key)
-    else toggleColaborador(chip.key)
-  }
-
   return (
     <CltShell
       title="Novo Benefício"
@@ -148,6 +139,7 @@ function BeneficioBeneficiariosStep({
               className="time-step__search-input"
               placeholder="Buscar nome ou time..."
               value={query}
+              disabled={todaEmpresa}
               onFocus={() => setSearchOpen(true)}
               onChange={(event) => {
                 setQuery(event.target.value)
@@ -156,7 +148,7 @@ function BeneficioBeneficiariosStep({
             />
             <img src={magnifyingGlassIcon} alt="" width={24} height={24} />
 
-            {searchOpen && rect && (
+            {searchOpen && rect && !todaEmpresa && (
               <div
                 className="time-step__search-dropdown"
                 style={{ top: rect.top, left: rect.left, width: rect.width }}
@@ -179,24 +171,6 @@ function BeneficioBeneficiariosStep({
             )}
           </div>
 
-          {chips.length > 0 && (
-            <div className="step3-beneficiarios__chips" style={{ marginTop: 12 }}>
-              {chips.map((chip) => (
-                <span className="step3-beneficiarios__chip" key={`${chip.type}-${chip.key}`}>
-                  {chip.label}
-                  <button
-                    type="button"
-                    className="step3-beneficiarios__chip-remove"
-                    onClick={() => removeChip(chip)}
-                    aria-label={`Remover ${chip.label}`}
-                  >
-                    <img src={closeIcon} alt="" width={14} height={14} />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-
           <div className="beneficio-step__beneficiarios-grid" style={{ marginTop: 12 }}>
             <button
               type="button"
@@ -216,7 +190,7 @@ function BeneficioBeneficiariosStep({
               </div>
             </button>
 
-            {suggestedTeams.map((team) => {
+            {[...suggestedTeams, ...extraTeams].map((team) => {
               const { light, dark } = getTeamColorTones(team.color)
               const TeamIcon = getTeamIconComponent(team.icon)
               const checked = teamNames.has(team.name)
@@ -224,6 +198,7 @@ function BeneficioBeneficiariosStep({
                 <button
                   type="button"
                   key={team.id}
+                  disabled={todaEmpresa}
                   className={
                     checked
                       ? 'beneficio-step__beneficiario-card beneficio-step__beneficiario-card--selected'
@@ -244,6 +219,21 @@ function BeneficioBeneficiariosStep({
                 </button>
               )
             })}
+
+            {extraColaboradores.map((collaborator) => (
+              <button
+                type="button"
+                key={collaborator.id}
+                disabled={todaEmpresa}
+                className="beneficio-step__beneficiario-card beneficio-step__beneficiario-card--selected"
+                onClick={() => toggleColaborador(collaborator.id)}
+              >
+                <Checkbox checked />
+                <div className="beneficio-step__beneficiario-info">
+                  <span className="beneficio-step__beneficiario-name">{collaborator.name}</span>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
