@@ -1,13 +1,12 @@
 import closeIcon from '../../assets/icons/Close.svg'
 import IconButton from '../IconButton.jsx'
 import ModalOverlay from '../addCollaborator/ModalOverlay.jsx'
-import { TEAM_COLOR_PALETTE } from '../../utils/teamOptions.js'
+import { getAvailableColorOptions } from '../../utils/teamOptions.js'
 import '../addCollaborator/FieldModalShell.css'
 import './ColorPickerModal.css'
 
-function ColorPickerModal({ onSelect, onClose, excludedColorIds = [] }) {
-  const excludedSet = new Set(excludedColorIds)
-  const availableColors = TEAM_COLOR_PALETTE.filter((entry) => !excludedSet.has(entry.id))
+function ColorPickerModal({ onSelect, onClose, usedColorIds = [] }) {
+  const availableColors = getAvailableColorOptions(usedColorIds)
 
   return (
     <ModalOverlay width={360} className="field-modal">

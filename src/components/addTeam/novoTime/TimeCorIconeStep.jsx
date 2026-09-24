@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Eyedropper, Smiley, Palette, CaretDown } from '@phosphor-icons/react'
+import { Eyedropper, Smiley, CaretDown } from '@phosphor-icons/react'
 import CltShell from '../../addCollaborator/clt/CltShell.jsx'
 import ColorPickerModal from '../ColorPickerModal.jsx'
 import IconPickerModal from '../IconPickerModal.jsx'
-import { getTeamColorTones } from '../../../utils/teamOptions.js'
+import { getTeamColorTones, getTeamIconComponent } from '../../../utils/teamOptions.js'
 import '../../addCollaborator/buttons.css'
 import '../../addCollaborator/clt/CltShell.css'
 import './NovoTimeSteps.css'
@@ -23,6 +23,7 @@ function TimeCorIconeStep({
   const [iconModalOpen, setIconModalOpen] = useState(false)
 
   const { light, dark } = getTeamColorTones(colorId)
+  const IconComponent = getTeamIconComponent(iconName)
 
   return (
     <>
@@ -85,7 +86,7 @@ function TimeCorIconeStep({
                 onClick={() => setIconModalOpen(true)}
                 aria-label="Escolher icone do time"
               >
-                <Palette size={24} />
+                <IconComponent size={24} />
                 <CaretDown size={16} />
               </button>
             </div>
@@ -95,7 +96,7 @@ function TimeCorIconeStep({
 
       {colorModalOpen && (
         <ColorPickerModal
-          excludedColorIds={usedColors}
+          usedColorIds={usedColors}
           onSelect={(newColorId) => {
             onColorChange(newColorId)
             setColorModalOpen(false)

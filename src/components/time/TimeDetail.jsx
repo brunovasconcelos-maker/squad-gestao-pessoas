@@ -612,6 +612,9 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
 
       {openFieldModal === 'cor' && (
         <ColorPickerModal
+          usedColorIds={times
+            .filter((otherTeam) => otherTeam.id !== team.id && otherTeam.color)
+            .map((otherTeam) => otherTeam.color)}
           onClose={() => setOpenFieldModal(null)}
           onSelect={(colorId) => {
             updateTeamField('color', colorId)
