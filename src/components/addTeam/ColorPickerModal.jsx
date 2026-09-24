@@ -5,7 +5,10 @@ import { TEAM_COLOR_PALETTE } from '../../utils/teamOptions.js'
 import '../addCollaborator/FieldModalShell.css'
 import './ColorPickerModal.css'
 
-function ColorPickerModal({ onSelect, onClose }) {
+function ColorPickerModal({ onSelect, onClose, excludedColorIds = [] }) {
+  const excludedSet = new Set(excludedColorIds)
+  const availableColors = TEAM_COLOR_PALETTE.filter((entry) => !excludedSet.has(entry.id))
+
   return (
     <ModalOverlay width={360} className="field-modal">
       <div className="field-modal__header">
@@ -15,7 +18,7 @@ function ColorPickerModal({ onSelect, onClose }) {
 
       <div className="field-modal__body">
         <div className="color-picker__grid">
-          {TEAM_COLOR_PALETTE.map((entry) => (
+          {availableColors.map((entry) => (
             <button
               type="button"
               key={entry.id}

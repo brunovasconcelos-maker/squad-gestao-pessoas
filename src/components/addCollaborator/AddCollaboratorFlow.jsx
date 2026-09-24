@@ -28,6 +28,17 @@ function AddCollaboratorFlow({ onExit }) {
 
   const openDiscardConfirm = () => setDiscardConfirmOpen(true)
 
+  // Voltar on Tela 2 has no earlier CLT-path step to return the user's
+  // progress to - Tela 1 is a fresh contract-type pick, so going back to it
+  // clears whatever was typed/chosen from Tela 2 on, same as if the flow
+  // were started over.
+  const handleBackToTipo = () => {
+    setCltName('')
+    setCltCargo('')
+    setCltTeam('')
+    setStep('tipo')
+  }
+
   const handleChooseTipo = (tipo) => {
     if (tipo === 'CLT' || tipo === 'PJ' || tipo === 'Freelancer' || tipo === 'Consultor') {
       setCltContractType(tipo === 'CLT' ? 'Fixo' : tipo)
@@ -69,7 +80,7 @@ function AddCollaboratorFlow({ onExit }) {
         <CltNomeStep
           name={cltName}
           onNameChange={setCltName}
-          onBack={openDiscardConfirm}
+          onBack={handleBackToTipo}
           onClose={openDiscardConfirm}
           onContinue={() => setStep('clt-cargo-time')}
         />

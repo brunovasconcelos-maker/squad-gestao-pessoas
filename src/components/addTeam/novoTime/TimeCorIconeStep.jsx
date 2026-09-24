@@ -14,6 +14,7 @@ function TimeCorIconeStep({
   onColorChange,
   iconName,
   onIconChange,
+  usedColors,
   onBack,
   onClose,
   onContinue,
@@ -94,6 +95,7 @@ function TimeCorIconeStep({
 
       {colorModalOpen && (
         <ColorPickerModal
+          excludedColorIds={usedColors}
           onSelect={(newColorId) => {
             onColorChange(newColorId)
             setColorModalOpen(false)
