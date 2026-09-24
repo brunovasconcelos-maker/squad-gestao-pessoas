@@ -45,10 +45,7 @@
 }
 
 .novo-modal__title-gradient {
-  background: linear-gradient(90deg, #ffd668, #d39a00);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: #e9a716;
 }
 
 .novo-modal__grid {
