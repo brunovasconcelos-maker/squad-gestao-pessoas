@@ -69,6 +69,7 @@ import {
   Storefront,
   ShoppingBag,
   ShoppingCart,
+  Tag,
   Bank,
   Wallet,
   CreditCard,
@@ -233,6 +234,7 @@ export const TEAM_ICON_CATEGORIES = [
       { name: 'Storefront', Icon: Storefront },
       { name: 'ShoppingBag', Icon: ShoppingBag },
       { name: 'ShoppingCart', Icon: ShoppingCart },
+      { name: 'Tag', Icon: Tag },
       { name: 'Bank', Icon: Bank },
       { name: 'Wallet', Icon: Wallet },
       { name: 'CreditCard', Icon: CreditCard },
@@ -287,12 +289,15 @@ export function getTeamIconComponent(iconName) {
 }
 
 const KEYWORD_ICON_MAP = [
-  { keywords: ['design'], iconName: 'PencilRuler' },
-  { keywords: ['dev', 'desenvolv', 'engenharia', 'tech', 'tecno'], iconName: 'Code' },
-  { keywords: ['venda', 'comercial', 'sales', 'negocio', 'negóci'], iconName: 'ShoppingCart' },
-  { keywords: ['log', 'operac', 'operaç'], iconName: 'Truck' },
-  { keywords: ['rh', 'pessoa', 'people', 'humano', 'gente'], iconName: 'GraduationCap' },
+  { keywords: ['venda', 'comercial', 'sales', 'negocio', 'negóci'], iconName: 'Tag' },
+  { keywords: ['design', 'produto'], iconName: 'PencilRuler' },
   { keywords: ['marketing', 'growth', 'crescimento'], iconName: 'Megaphone' },
+  { keywords: ['dev', 'desenvolv', 'engenharia', 'tech', 'tecno'], iconName: 'Code' },
+  { keywords: ['financeiro', 'finança', 'financa'], iconName: 'Wallet' },
+  { keywords: ['rh', 'pessoa', 'people', 'humano', 'gente'], iconName: 'UsersFour' },
+  { keywords: ['suporte', 'atendimento', 'cs'], iconName: 'Headset' },
+  { keywords: ['juridico', 'jurídico', 'legal'], iconName: 'Scales' },
+  { keywords: ['log', 'operac', 'operaç'], iconName: 'Truck' },
 ]
 
 export function guessTeamIconName(name) {

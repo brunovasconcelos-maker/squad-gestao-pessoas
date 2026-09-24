@@ -74,7 +74,7 @@ function NovoTimeStepFlow({ onExit }) {
         <TimeNomeStep
           name={name}
           onNameChange={handleNameChange}
-          onBack={openDiscardConfirm}
+          onBack={onExit}
           onClose={openDiscardConfirm}
           onContinue={() => setStep('cor-icone')}
         />
@@ -87,6 +87,7 @@ function NovoTimeStepFlow({ onExit }) {
           onColorChange={setColorId}
           iconName={iconName}
           onIconChange={handleIconChange}
+          usedColors={usedColors}
           onBack={() => setStep('nome')}
           onClose={openDiscardConfirm}
           onContinue={() => setStep('membros')}
