@@ -46,6 +46,10 @@
   white-space: nowrap;
 }
 
+.bulk-action-bar__button:hover {
+  background: var(--color-overlay);
+}
+
 .bulk-action-bar__icon-button {
   display: flex;
   align-items: center;

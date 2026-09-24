@@ -116,6 +116,10 @@
   text-align: left;
 }
 
+.clt-cargo-time__chip:hover {
+  background: var(--color-overlay);
+}
+
 .clt-cargo-time__chip-badge {
   display: flex;
   align-items: center;

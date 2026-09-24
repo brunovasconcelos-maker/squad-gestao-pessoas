@@ -46,6 +46,10 @@
   text-align: left;
 }
 
+.beneficio-step__provider-card:hover {
+  background: var(--color-overlay);
+}
+
 .beneficio-step__provider-card--selected {
   border-color: var(--color-text);
 }
@@ -94,6 +98,10 @@
   padding: 12px;
   background: var(--color-bg);
   text-align: left;
+}
+
+.beneficio-step__beneficiario-card:hover {
+  background: var(--color-overlay);
 }
 
 .beneficio-step__beneficiario-card--selected {

@@ -53,6 +53,10 @@
   color: var(--color-bg);
 }
 
+.clt-info__pill:not(.clt-info__pill--selected):hover {
+  background: var(--color-overlay);
+}
+
 .clt-info__confirmed {
   display: flex;
   align-items: center;
