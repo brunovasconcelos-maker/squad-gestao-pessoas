@@ -157,6 +157,10 @@
   text-align: left;
 }
 
+.time-step__card:hover {
+  background: var(--color-overlay);
+}
+
 .time-step__card--selected {
   border-color: var(--color-text);
 }
