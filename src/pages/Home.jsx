@@ -19,7 +19,7 @@ import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
-import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
+import NovoBeneficioStepFlow from '../components/addBeneficio/novoBeneficio/NovoBeneficioStepFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import TimeDetail from '../components/time/TimeDetail.jsx'
 import BeneficioDetail from '../components/beneficio/BeneficioDetail.jsx'
@@ -374,7 +374,7 @@ function Home() {
 
   if (novoBeneficioFlowOpen) {
     return (
-      <NovoBeneficioFlow
+      <NovoBeneficioStepFlow
         onExit={() => {
           setBeneficios(getCollection(COLLECTIONS.BENEFICIOS))
           setNovoBeneficioFlowOpen(false)
