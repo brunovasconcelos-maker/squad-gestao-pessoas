@@ -5,6 +5,7 @@ import NovoTimePanel from './NovoTimePanel.jsx'
 import Checkbox from '../Checkbox.jsx'
 import { COLLECTIONS, getCollection } from '../../../utils/storage.js'
 import { getTeamColorTones, getTeamIconComponent } from '../../../utils/teamOptions.js'
+import { useDropdownPosition } from '../../../utils/useDropdownPosition.js'
 import '../buttons.css'
 import './CltShell.css'
 import './CltCargoTimeStep.css'
@@ -16,6 +17,7 @@ import './CltCargoTimeStep.css'
 function EntityField({ value, onChange, items, placeholder, onOpenCreate, renderItemIcon }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
+  const rect = useDropdownPosition(open, containerRef)
 
   useEffect(() => {
     if (!open) return
@@ -63,8 +65,11 @@ function EntityField({ value, onChange, items, placeholder, onOpenCreate, render
         {value && <Check size={24} weight="bold" className="clt-large-input-check" />}
       </div>
 
-      {open && (
-        <div className="clt-cargo-time__dropdown">
+      {open && rect && (
+        <div
+          className="clt-cargo-time__dropdown"
+          style={{ top: rect.top, left: rect.left, width: rect.width }}
+        >
           {filtered.map((item) => (
             <button
               type="button"
