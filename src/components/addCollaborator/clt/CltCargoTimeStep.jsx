@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Briefcase, Check, Plus } from '@phosphor-icons/react'
 import CltShell from './CltShell.jsx'
-import NovoCargoPanel from './NovoCargoPanel.jsx'
 import NovoTimePanel from './NovoTimePanel.jsx'
 import Checkbox from '../Checkbox.jsx'
 import { COLLECTIONS, getCollection } from '../../../utils/storage.js'
@@ -10,6 +9,10 @@ import '../buttons.css'
 import './CltShell.css'
 import './CltCargoTimeStep.css'
 
+// onOpenCreate is optional - when omitted (the Cargo field), there's no
+// "Add ..." row at all, since a cargo is plain free text with no separate
+// record to create; typing and picking a suggestion both just set the
+// value directly.
 function EntityField({ value, onChange, items, placeholder, onOpenCreate, renderItemIcon }) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
@@ -30,7 +33,7 @@ function EntityField({ value, onChange, items, placeholder, onOpenCreate, render
     ? items.filter((item) => item.name.toLowerCase().includes(trimmed.toLowerCase()))
     : items
   const exactMatch = items.some((item) => item.name.toLowerCase() === trimmed.toLowerCase())
-  const showCreate = trimmed.length > 0 && !exactMatch
+  const showCreate = Boolean(onOpenCreate) && trimmed.length > 0 && !exactMatch
 
   const select = (name) => {
     onChange(name)
@@ -98,15 +101,21 @@ function EntityField({ value, onChange, items, placeholder, onOpenCreate, render
 }
 
 function CltCargoTimeStep({ name, initialCargo, initialTeam, onBack, onClose, onSkip, onContinue }) {
-  const [cargos, setCargos] = useState(() => getCollection(COLLECTIONS.CARGOS))
   const [times, setTimes] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
 
   const [cargoName, setCargoName] = useState(initialCargo ?? '')
   const [teamName, setTeamName] = useState(initialTeam ?? '')
 
-  const [novoCargoName, setNovoCargoName] = useState(null)
   const [novoTimeName, setNovoTimeName] = useState(null)
+
+  // No dedicated cargo collection - suggestions are the distinct Cargo
+  // values already in use among colaboradores, shaped like the {id, name}
+  // items EntityField already expects (item.name doubles as a stable key).
+  const cargoOptions = useMemo(() => {
+    const names = new Set(collaborators.flatMap((collaborator) => collaborator.cargos))
+    return Array.from(names).map((cargoName) => ({ id: cargoName, name: cargoName }))
+  }, [collaborators])
 
   const teamsWithCounts = useMemo(() => {
     return times.map((team) => ({
@@ -163,9 +172,8 @@ function CltCargoTimeStep({ name, initialCargo, initialTeam, onBack, onClose, on
           <EntityField
             value={cargoName}
             onChange={setCargoName}
-            items={cargos}
+            items={cargoOptions}
             placeholder="Cargo"
-            onOpenCreate={setNovoCargoName}
           />
 
           <div className="clt-cargo-time__time-group">
@@ -208,18 +216,6 @@ function CltCargoTimeStep({ name, initialCargo, initialTeam, onBack, onClose, on
           )}
         </div>
       </CltShell>
-
-      {novoCargoName !== null && (
-        <NovoCargoPanel
-          name={novoCargoName}
-          onClose={() => setNovoCargoName(null)}
-          onCreated={(newName) => {
-            setCargos(getCollection(COLLECTIONS.CARGOS))
-            setCargoName(newName)
-            setNovoCargoName(null)
-          }}
-        />
-      )}
 
       {novoTimeName !== null && (
         <NovoTimePanel

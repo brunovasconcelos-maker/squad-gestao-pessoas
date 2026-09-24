@@ -8,8 +8,6 @@ import CollaboratorsTable from '../components/CollaboratorsTable.jsx'
 import CollaboratorsGrid from '../components/CollaboratorsGrid.jsx'
 import TimesToolbar from '../components/TimesToolbar.jsx'
 import TimesGrid from '../components/TimesGrid.jsx'
-import CargosToolbar from '../components/CargosToolbar.jsx'
-import CargosTable from '../components/CargosTable.jsx'
 import BeneficiosToolbar from '../components/BeneficiosToolbar.jsx'
 import BeneficiosGrid from '../components/BeneficiosGrid.jsx'
 import BulkActionBar from '../components/BulkActionBar.jsx'
@@ -21,11 +19,9 @@ import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
 import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
-import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
 import ColaboradorDetail from '../components/colaborador/ColaboradorDetail.jsx'
 import TimeDetail from '../components/time/TimeDetail.jsx'
-import CargoDetail from '../components/cargo/CargoDetail.jsx'
 import BeneficioDetail from '../components/beneficio/BeneficioDetail.jsx'
 import {
   getCollection,
@@ -42,7 +38,6 @@ import './Home.css'
 const TABS = [
   { id: 'colaboradores', label: 'Colaboradores' },
   { id: 'times', label: 'Times' },
-  { id: 'cargos', label: 'Cargos' },
   { id: 'beneficios', label: 'Benefícios' },
 ]
 
@@ -57,7 +52,6 @@ const ATIVIDADE_OPTIONS = ['Fixo', 'Consultor', 'Freelancer']
 const initialHashPath = window.location.hash.replace(/^#/, '')
 const loadedDirectlyOnColaboradorRoute = /^\/colaborador\/[^/]+/.test(initialHashPath)
 const loadedDirectlyOnTimeRoute = /^\/time\/[^/]+/.test(initialHashPath)
-const loadedDirectlyOnCargoRoute = /^\/cargo\/[^/]+/.test(initialHashPath)
 const loadedDirectlyOnBeneficioRoute = /^\/beneficio\/[^/]+/.test(initialHashPath)
 
 function createEmptyColumnFilters() {
@@ -81,7 +75,6 @@ function Home() {
   const navigate = useNavigate()
   const colaboradorMatch = useMatch('/colaborador/:id')
   const timeMatch = useMatch('/time/:id')
-  const cargoMatch = useMatch('/cargo/:id')
   const beneficioMatch = useMatch('/beneficio/:id')
   const [searchParams] = useSearchParams()
   // Captures whether the very first page load (hard navigation, refresh, or
@@ -120,22 +113,6 @@ function Home() {
   }
   const closeTime = () => navigate('/')
 
-  // Same convention as the colaborador/time routes above, applied to /cargo/:id.
-  const forceFullScreenCargoRef = useRef(loadedDirectlyOnCargoRoute)
-  const cargoId = cargoMatch?.params?.id ?? null
-  const cargoFullScreenRequested = searchParams.get('view') === 'full'
-  const cargoOverlayOpen = Boolean(cargoId)
-  const cargoFullScreen =
-    cargoOverlayOpen && (cargoFullScreenRequested || forceFullScreenCargoRef.current)
-
-  const openCargo = (id) => navigate(`/cargo/${id}`)
-  const expandCargo = () => navigate(`/cargo/${cargoId}?view=full`)
-  const collapseCargo = () => {
-    forceFullScreenCargoRef.current = false
-    navigate(`/cargo/${cargoId}`)
-  }
-  const closeCargo = () => navigate('/')
-
   // Same convention as the routes above, applied to /beneficio/:id.
   const forceFullScreenBeneficioRef = useRef(loadedDirectlyOnBeneficioRoute)
   const beneficioId = beneficioMatch?.params?.id ?? null
@@ -157,8 +134,6 @@ function Home() {
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
   const [novoTimeStepFlowOpen, setNovoTimeStepFlowOpen] = useState(false)
   const [novoTimeStepFlowTeamId, setNovoTimeStepFlowTeamId] = useState(null)
-  const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
-  const [novoCargoId, setNovoCargoId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
   const [view, setView] = useState('table')
   const [collaborators, setCollaborators] = useState(() =>
@@ -176,17 +151,15 @@ function Home() {
   // Read fresh on every render (not cached in state) so the Times tab always
   // reflects the current localStorage contents, including teams created via
   // the quick-create flow in a collaborator's Time modal after this page
-  // already mounted. Deleting a time/cargo elsewhere on this page always
-  // triggers a collaborators state update too (even a no-op cascade still
-  // produces a new array reference), which re-renders Home and so re-reads
-  // these fresh - so they don't need their own state for that to work.
+  // already mounted. Deleting a time elsewhere on this page always triggers
+  // a collaborators state update too (even a no-op cascade still produces a
+  // new array reference), which re-renders Home and so re-reads these
+  // fresh - so they don't need their own state for that to work.
   const times = getCollection(COLLECTIONS.TIMES)
-  const cargos = getCollection(COLLECTIONS.CARGOS)
   // Benefícios has no such natural collaborators-state side effect on
   // delete, so it needs real state of its own to react to the Beneficios
   // card menu's delete action.
   const [beneficios, setBeneficios] = useState(() => getCollection(COLLECTIONS.BENEFICIOS))
-  const [cargoSelectedIds, setCargoSelectedIds] = useState(() => new Set())
 
   // The detail panel persists its own edits (notes, times, membros, delete)
   // straight to storage with no callback into Home - re-sync state here the
@@ -340,116 +313,6 @@ function Home() {
 
   const clearTimesFilters = () => setTimesFilters(createEmptyTimesFilters())
 
-  // Every Cargos row is derived from real collaborators - group them by
-  // (cargo name, contract type). A cargo still marked pending (the only kind
-  // the quick-create flow produces today) collapses all its contract types
-  // into a single aggregated row; once a cargo has pending: false, each
-  // contract type in use for that cargo becomes its own row.
-  const cargoRows = useMemo(() => {
-    const cargoRecordByName = new Map(cargos.map((cargo) => [cargo.name, cargo]))
-    const membersByCargoName = new Map()
-    collaborators.forEach((collaborator) => {
-      collaborator.cargos.forEach((cargoName) => {
-        if (!membersByCargoName.has(cargoName)) {
-          membersByCargoName.set(cargoName, [])
-        }
-        membersByCargoName.get(cargoName).push(collaborator)
-      })
-    })
-
-    const rows = []
-    membersByCargoName.forEach((members, cargoName) => {
-      const cargoRecord = cargoRecordByName.get(cargoName)
-      const isPending = cargoRecord ? cargoRecord.pending !== false : true
-
-      if (isPending) {
-        rows.push({
-          id: `${cargoName}::pending`,
-          cargoName,
-          isPendingCargo: true,
-          contractType: null,
-          count: members.length,
-          teamNames: [],
-          salaryMin: null,
-          salaryMax: null,
-          cargoRecordId: cargoRecord?.id ?? null,
-        })
-        return
-      }
-
-      const membersByContractType = new Map()
-      members.forEach((member) => {
-        const contractType = member.contractType || 'Fixo'
-        if (!membersByContractType.has(contractType)) {
-          membersByContractType.set(contractType, [])
-        }
-        membersByContractType.get(contractType).push(member)
-      })
-
-      membersByContractType.forEach((groupMembers, contractType) => {
-        const teamNameSet = new Set()
-        groupMembers.forEach((member) =>
-          member.times.forEach((name) => teamNameSet.add(name)),
-        )
-        const fixoSalaries =
-          contractType === 'Fixo'
-            ? groupMembers.filter((member) => member.salario != null).map((member) => member.salario)
-            : []
-        rows.push({
-          id: `${cargoName}::${contractType}`,
-          cargoName,
-          isPendingCargo: false,
-          contractType,
-          count: groupMembers.length,
-          teamNames: Array.from(teamNameSet),
-          salaryMin: fixoSalaries.length ? Math.min(...fixoSalaries) : null,
-          salaryMax: fixoSalaries.length ? Math.max(...fixoSalaries) : null,
-          cargoRecordId: cargoRecord?.id ?? null,
-        })
-      })
-    })
-
-    return rows
-  }, [collaborators, cargos])
-
-  const filteredCargoRows = useMemo(() => {
-    const query = searchQuery.trim().toLowerCase()
-    return cargoRows.filter((row) => {
-      if (query && !row.cargoName.toLowerCase().includes(query)) {
-        return false
-      }
-      if (
-        columnFilters.atividade.size > 0 &&
-        !columnFilters.atividade.has(row.contractType)
-      ) {
-        return false
-      }
-      if (
-        columnFilters.time.size > 0 &&
-        !row.teamNames.some((name) => columnFilters.time.has(name))
-      ) {
-        return false
-      }
-      return true
-    })
-  }, [cargoRows, searchQuery, columnFilters])
-
-  const toggleCargoSelect = (id) => {
-    setCargoSelectedIds((prev) => {
-      const next = new Set(prev)
-      if (next.has(id)) {
-        next.delete(id)
-      } else {
-        next.add(id)
-      }
-      return next
-    })
-  }
-
-  const clearCargoSelection = () => setCargoSelectedIds(new Set())
-
-  const selectAllCargos = (ids) => setCargoSelectedIds(new Set(ids))
-
   const toggleSelect = (id) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
@@ -504,19 +367,6 @@ function Home() {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
           setNovoTimeStepFlowOpen(false)
           setNovoTimeStepFlowTeamId(null)
-        }}
-      />
-    )
-  }
-
-  if (novoCargoFlowOpen) {
-    return (
-      <NovoCargoFlow
-        cargoId={novoCargoId}
-        onExit={() => {
-          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-          setNovoCargoFlowOpen(false)
-          setNovoCargoId(null)
         }}
       />
     )
@@ -597,33 +447,6 @@ function Home() {
                 onDataChanged={setCollaborators}
               />
             </div>
-          ) : activeTab === 'cargos' ? (
-            <div className="home__panel">
-              <CargosToolbar
-                total={cargoRows.length}
-                onFiltrosClick={() => setFiltrosPanelOpen(true)}
-                filtersSummary={filtersSummary}
-                onClearAllFilters={clearAllFilters}
-              />
-              <CargosTable
-                rows={filteredCargoRows}
-                selectedIds={cargoSelectedIds}
-                onToggleSelect={toggleCargoSelect}
-                onSelectAll={selectAllCargos}
-                onDeselectAll={clearCargoSelection}
-                columnFilters={columnFilters}
-                onToggleFilterOption={toggleFilterOption}
-                onClearFilter={clearFilter}
-                timeOptions={timeOptions}
-                atividadeOptions={ATIVIDADE_OPTIONS}
-                onCriarCargo={(recordId) => {
-                  setNovoCargoId(recordId)
-                  setNovoCargoFlowOpen(true)
-                }}
-                onRowClick={openCargo}
-                onDataChanged={setCollaborators}
-              />
-            </div>
           ) : activeTab === 'beneficios' ? (
             <div className="home__panel">
               <BeneficiosToolbar
@@ -656,11 +479,6 @@ function Home() {
             setNovoModalOpen(false)
             setNovoTimeStepFlowTeamId(null)
             setNovoTimeStepFlowOpen(true)
-          }}
-          onSelectCargo={() => {
-            setNovoModalOpen(false)
-            setNovoCargoId(null)
-            setNovoCargoFlowOpen(true)
           }}
           onSelectBeneficio={() => {
             setNovoModalOpen(false)
@@ -718,20 +536,6 @@ function Home() {
             onClose={closeTime}
             onExpand={expandTime}
             onCollapse={collapseTime}
-            onDataChanged={setCollaborators}
-          />
-        </>
-      )}
-
-      {cargoOverlayOpen && (
-        <>
-          {!cargoFullScreen && <div className="cargo-detail-overlay" onClick={closeCargo} />}
-          <CargoDetail
-            id={cargoId}
-            mode={cargoFullScreen ? 'full' : 'panel'}
-            onClose={closeCargo}
-            onExpand={expandCargo}
-            onCollapse={collapseCargo}
             onDataChanged={setCollaborators}
           />
         </>

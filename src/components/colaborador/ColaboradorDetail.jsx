@@ -91,8 +91,13 @@ function useFitStatFontSize(text) {
 function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
-  const cargos = getCollection(COLLECTIONS.CARGOS)
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
+
+  // Cargo has no dedicated collection - suggestions are just the distinct
+  // Cargo values already in use among colaboradores.
+  const cargoOptions = Array.from(
+    new Set(collaborators.flatMap((collaborator) => collaborator.cargos)),
+  )
 
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const [desligarModalOpen, setDesligarModalOpen] = useState(false)
@@ -291,7 +296,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
         <span className="colaborador-detail__row-label">Cargo</span>
         <CargoField
           value={collaborator.cargos}
-          cargos={cargos}
+          cargoOptions={cargoOptions}
           disabled={desligado}
           onSave={(draft) => updateField('cargos', draft)}
         />

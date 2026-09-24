@@ -445,23 +445,16 @@ function CurrencyField({ value, onSave, formatDisplay }) {
 }
 
 // Best-effort pre-fill: the selected cargo's already-established "reporta
-// para" (the same union CargoDetail itself shows - names derived from its
-// current holders' own reportaPara plus any manually-added extras), only
-// for a completed (non-pending) cargo record. Takes the first name found
-// and looks up that person's own current cargo for the "Nome | Cargo"
-// display.
+// para", derived from its current holders' own reportaPara. Takes the
+// first name found and looks up that person's own current cargo for the
+// "Nome | Cargo" display.
 function computeReportaParaPrefill(cargoName, collaborators) {
   if (!cargoName) return { name: null, cargo: null }
-  const cargos = getCollection(COLLECTIONS.CARGOS)
-  const cargoRecord = cargos.find((item) => item.name === cargoName)
-  if (!cargoRecord || cargoRecord.pending !== false) return { name: null, cargo: null }
-
   const holders = collaborators.filter(
     (collaborator) => Array.isArray(collaborator.cargos) && collaborator.cargos.includes(cargoName),
   )
   const derived = holders.map((holder) => holder.reportaPara).filter(Boolean)
-  const extra = cargoRecord.reportaAExtra ?? []
-  const liderNome = Array.from(new Set([...derived, ...extra]))[0] ?? null
+  const liderNome = Array.from(new Set(derived))[0] ?? null
   if (!liderNome) return { name: null, cargo: null }
 
   const liderCollaborator = collaborators.find((collaborator) => collaborator.name === liderNome)
