@@ -7,27 +7,45 @@ import DiscardConfirmModal from '../../addCollaborator/DiscardConfirmModal.jsx'
 import { COLLECTIONS, getCollection, setCollection, generateId } from '../../../utils/storage.js'
 import { pickDefaultColorId, guessTeamIconName } from '../../../utils/teamOptions.js'
 
-// The new step-by-step full-screen flow for creating a team, triggered from
-// the "Time" card in the Criar Novo modal. Always creates a brand-new team
-// (pending: false right away) - completing an existing pending draft still
-// goes through the older NovoTimeFlow/Step1-2TeamInfo path from TimesGrid.
-function NovoTimeStepFlow({ onExit }) {
+// The step-by-step full-screen flow for creating a team, triggered from the
+// "Time" card in the Criar Novo modal (brand-new team, starts at Tela 1 -
+// Nome), and also from a pending team card's "Criar time" (teamId given -
+// the name already exists from the quick-create panel, so Tela 1 is
+// skipped and the flow opens straight at Cor e Ícone, pre-filled with the
+// team's already-selected members).
+function NovoTimeStepFlow({ teamId, onExit }) {
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
 
-  const usedColors = useMemo(
-    () => times.filter((team) => team.color).map((team) => team.color),
-    [times],
+  const existingTeam = useMemo(
+    () => (teamId ? times.find((team) => team.id === teamId) ?? null : null),
+    [teamId, times],
   )
 
-  const [step, setStep] = useState('nome')
-  const [name, setName] = useState('')
-  const [colorId, setColorId] = useState(() => pickDefaultColorId(usedColors))
-  const [iconTouched, setIconTouched] = useState(false)
-  const [iconName, setIconName] = useState(() => guessTeamIconName(''))
-  const [memberOrder, setMemberOrder] = useState([])
-  const [leaderId, setLeaderId] = useState(null)
-  const [descricao, setDescricao] = useState('')
+  const initialMemberIds = useMemo(() => {
+    if (!existingTeam) return []
+    return collaborators
+      .filter((collaborator) => collaborator.times.includes(existingTeam.name))
+      .map((collaborator) => collaborator.id)
+  }, [existingTeam, collaborators])
+
+  const usedColors = useMemo(
+    () => times.filter((team) => team.id !== teamId && team.color).map((team) => team.color),
+    [times, teamId],
+  )
+
+  const [step, setStep] = useState(existingTeam ? 'cor-icone' : 'nome')
+  const [name, setName] = useState(existingTeam?.name ?? '')
+  const [colorId, setColorId] = useState(
+    () => existingTeam?.color ?? pickDefaultColorId(usedColors),
+  )
+  const [iconTouched, setIconTouched] = useState(Boolean(existingTeam?.icon))
+  const [iconName, setIconName] = useState(
+    () => existingTeam?.icon ?? guessTeamIconName(existingTeam?.name ?? ''),
+  )
+  const [memberOrder, setMemberOrder] = useState(initialMemberIds)
+  const [leaderId, setLeaderId] = useState(existingTeam?.leaderId ?? null)
+  const [descricao, setDescricao] = useState(existingTeam?.descricao ?? '')
   const [discardConfirmOpen, setDiscardConfirmOpen] = useState(false)
 
   const openDiscardConfirm = () => setDiscardConfirmOpen(true)
@@ -44,24 +62,62 @@ function NovoTimeStepFlow({ onExit }) {
     setIconName(value)
   }
 
-  const handleCreate = () => {
-    const newTeam = {
-      id: generateId(),
-      name,
-      color: colorId,
-      icon: iconName,
-      leaderId,
-      membros: memberOrder,
-      descricao,
-      pending: false,
-    }
-    setCollection(COLLECTIONS.TIMES, [...times, newTeam])
+  const handleSave = () => {
+    const finalMemberIds = memberOrder
+    const previousName = existingTeam?.name ?? null
 
-    const memberIdSet = new Set(memberOrder)
+    const updatedTimes = existingTeam
+      ? times.map((team) =>
+          team.id === existingTeam.id
+            ? {
+                ...team,
+                name,
+                color: colorId,
+                icon: iconName,
+                leaderId,
+                membros: finalMemberIds,
+                descricao,
+                pending: false,
+              }
+            : team,
+        )
+      : [
+          ...times,
+          {
+            id: generateId(),
+            name,
+            color: colorId,
+            icon: iconName,
+            leaderId,
+            membros: finalMemberIds,
+            descricao,
+            pending: false,
+          },
+        ]
+    setCollection(COLLECTIONS.TIMES, updatedTimes)
+
+    const finalMemberIdSet = new Set(finalMemberIds)
+    const removedIdSet = new Set(
+      existingTeam ? initialMemberIds.filter((id) => !finalMemberIdSet.has(id)) : [],
+    )
+
     const updatedCollaborators = collaborators.map((collaborator) => {
-      if (!memberIdSet.has(collaborator.id)) return collaborator
-      if (collaborator.times.includes(name)) return collaborator
-      return { ...collaborator, times: [...collaborator.times, name] }
+      let teamNames = collaborator.times
+
+      if (removedIdSet.has(collaborator.id) && previousName) {
+        teamNames = teamNames.filter((teamName) => teamName !== previousName)
+      }
+
+      if (finalMemberIdSet.has(collaborator.id)) {
+        const withoutOldName =
+          previousName && previousName !== name
+            ? teamNames.filter((teamName) => teamName !== previousName)
+            : teamNames
+        teamNames = withoutOldName.includes(name) ? withoutOldName : [...withoutOldName, name]
+      }
+
+      if (teamNames === collaborator.times) return collaborator
+      return { ...collaborator, times: teamNames }
     })
     setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
 
@@ -88,7 +144,7 @@ function NovoTimeStepFlow({ onExit }) {
           iconName={iconName}
           onIconChange={handleIconChange}
           usedColors={usedColors}
-          onBack={() => setStep('nome')}
+          onBack={existingTeam ? onExit : () => setStep('nome')}
           onClose={openDiscardConfirm}
           onContinue={() => setStep('membros')}
         />
@@ -118,7 +174,7 @@ function NovoTimeStepFlow({ onExit }) {
           onDescricaoChange={setDescricao}
           onBack={() => setStep('membros')}
           onClose={openDiscardConfirm}
-          onCreate={handleCreate}
+          onCreate={handleSave}
         />
       )}
 

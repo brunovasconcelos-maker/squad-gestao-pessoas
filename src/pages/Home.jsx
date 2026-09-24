@@ -20,7 +20,6 @@ import TimesFiltrosPanel from '../components/TimesFiltrosPanel.jsx'
 import BeneficiosFiltrosPanel from '../components/BeneficiosFiltrosPanel.jsx'
 import NovoModal from '../components/addCollaborator/NovoModal.jsx'
 import AddCollaboratorFlow from '../components/addCollaborator/AddCollaboratorFlow.jsx'
-import NovoTimeFlow from '../components/addTeam/NovoTimeFlow.jsx'
 import NovoTimeStepFlow from '../components/addTeam/novoTime/NovoTimeStepFlow.jsx'
 import NovoCargoFlow from '../components/addCargo/NovoCargoFlow.jsx'
 import NovoBeneficioFlow from '../components/addBeneficio/NovoBeneficioFlow.jsx'
@@ -156,9 +155,8 @@ function Home() {
   const [activeTab, setActiveTab] = useState('colaboradores')
   const [novoModalOpen, setNovoModalOpen] = useState(false)
   const [addCollaboratorFlowOpen, setAddCollaboratorFlowOpen] = useState(false)
-  const [novoTimeFlowOpen, setNovoTimeFlowOpen] = useState(false)
-  const [novoTimeTeamId, setNovoTimeTeamId] = useState(null)
   const [novoTimeStepFlowOpen, setNovoTimeStepFlowOpen] = useState(false)
+  const [novoTimeStepFlowTeamId, setNovoTimeStepFlowTeamId] = useState(null)
   const [novoCargoFlowOpen, setNovoCargoFlowOpen] = useState(false)
   const [novoCargoId, setNovoCargoId] = useState(null)
   const [novoBeneficioFlowOpen, setNovoBeneficioFlowOpen] = useState(false)
@@ -498,25 +496,14 @@ function Home() {
     )
   }
 
-  if (novoTimeFlowOpen) {
-    return (
-      <NovoTimeFlow
-        teamId={novoTimeTeamId}
-        onExit={() => {
-          setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
-          setNovoTimeFlowOpen(false)
-          setNovoTimeTeamId(null)
-        }}
-      />
-    )
-  }
-
   if (novoTimeStepFlowOpen) {
     return (
       <NovoTimeStepFlow
+        teamId={novoTimeStepFlowTeamId}
         onExit={() => {
           setCollaborators(getCollection(COLLECTIONS.COLABORADORES))
           setNovoTimeStepFlowOpen(false)
+          setNovoTimeStepFlowTeamId(null)
         }}
       />
     )
@@ -603,8 +590,8 @@ function Home() {
               <TimesGrid
                 teams={filteredTeams}
                 onCriarTime={(teamId) => {
-                  setNovoTimeTeamId(teamId)
-                  setNovoTimeFlowOpen(true)
+                  setNovoTimeStepFlowTeamId(teamId)
+                  setNovoTimeStepFlowOpen(true)
                 }}
                 onCardClick={openTime}
                 onDataChanged={setCollaborators}
@@ -667,6 +654,7 @@ function Home() {
           }}
           onSelectTime={() => {
             setNovoModalOpen(false)
+            setNovoTimeStepFlowTeamId(null)
             setNovoTimeStepFlowOpen(true)
           }}
           onSelectCargo={() => {
