@@ -5,9 +5,11 @@ import trashIcon from '../../assets/icons/Trash.svg'
 import IconButton from '../IconButton.jsx'
 import DeleteTimeModal from './DeleteTimeModal.jsx'
 import { COLLECTIONS, getCollection, setCollection } from '../../utils/storage.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './TimeCardMenu.css'
 
 function TimeCardMenu({ team, onView, onDataChanged }) {
+  const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [deleteModalOpen, setDeleteModalOpen] = useState(false)
   const containerRef = useRef(null)
@@ -39,6 +41,7 @@ function TimeCardMenu({ team, onView, onDataChanged }) {
     )
     setCollection(COLLECTIONS.COLABORADORES, updatedCollaborators)
     onDataChanged?.(updatedCollaborators)
+    showToast('danger', 'Time excluído com sucesso')
     setDeleteModalOpen(false)
   }
 

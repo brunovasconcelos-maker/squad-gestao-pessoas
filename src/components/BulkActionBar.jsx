@@ -1,9 +1,10 @@
 import { FolderSimplePlus } from '@phosphor-icons/react'
+import copySimpleIcon from '../assets/icons/CopySimple.svg'
 import trashIcon from '../assets/icons/Trash.svg'
 import closeIcon from '../assets/icons/Close.svg'
 import './BulkActionBar.css'
 
-function BulkActionBar({ count, onAddEmTime, onDelete, onClose }) {
+function BulkActionBar({ count, onAddEmTime, onDuplicate, onDelete, onClose }) {
   if (count === 0) return null
 
   return (
@@ -18,6 +19,15 @@ function BulkActionBar({ count, onAddEmTime, onDelete, onClose }) {
         >
           Add em time
           <FolderSimplePlus size={24} />
+        </button>
+
+        <button
+          type="button"
+          className="bulk-action-bar__button"
+          onClick={onDuplicate}
+        >
+          Duplicar
+          <img src={copySimpleIcon} width={24} height={24} alt="" />
         </button>
 
         <button

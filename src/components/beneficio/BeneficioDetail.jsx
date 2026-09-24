@@ -29,6 +29,7 @@ import { computeBenefitMetrics } from '../../utils/beneficiarios.js'
 import { getBeneficioTypeIcon, getBenefitFilterTipo } from '../../utils/beneficioOptions.js'
 import { getTeamColorTones, getTeamIconComponent } from '../../utils/teamOptions.js'
 import { formatDateDMonthYear, formatCurrencyBRL } from '../../utils/formatters.js'
+import { useToast } from '../toast/ToastContext.jsx'
 import './BeneficioDetail.css'
 
 const IMAGE_BY_KEY = {
@@ -84,6 +85,7 @@ function getInitials(name) {
 }
 
 function BeneficioDetail({ id, mode, closing, onClose, onExpand, onCollapse }) {
+  const { showToast } = useToast()
   const [benefits, setBenefits] = useState(() => getCollection(COLLECTIONS.BENEFICIOS))
   const [collaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const [times] = useState(() => getCollection(COLLECTIONS.TIMES))
@@ -158,6 +160,7 @@ function BeneficioDetail({ id, mode, closing, onClose, onExpand, onCollapse }) {
   const handleDelete = () => {
     const updated = benefits.filter((item) => item.id !== id)
     setCollection(COLLECTIONS.BENEFICIOS, updated)
+    showToast('danger', 'Benefício excluído com sucesso')
     onClose()
   }
 

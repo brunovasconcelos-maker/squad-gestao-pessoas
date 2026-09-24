@@ -28,11 +28,13 @@ import {
   setCollection,
   getCollaboratorActiveSince,
   removeItems,
+  duplicateItems,
   COLLECTIONS,
 } from '../utils/storage.js'
 import { formatDateDMonthYear } from '../utils/formatters.js'
 import { getBenefitMemberCount } from '../utils/beneficiarios.js'
 import { getBenefitFilterTipo } from '../utils/beneficioOptions.js'
+import { useToast } from '../components/toast/ToastContext.jsx'
 import './Home.css'
 
 const TABS = [
@@ -78,6 +80,7 @@ function createEmptyBeneficiosFilters() {
 }
 
 function Home() {
+  const { showToast } = useToast()
   const navigate = useNavigate()
   const colaboradorMatch = useMatch('/colaborador/:id')
   const timeMatch = useMatch('/time/:id')
@@ -376,6 +379,14 @@ function Home() {
   const handleDelete = () => {
     const updated = removeItems(COLLECTIONS.COLABORADORES, [...selectedIds])
     setCollaborators(updated)
+    showToast('danger', 'Colaborador excluído com sucesso')
+    clearSelection()
+  }
+
+  const handleDuplicate = () => {
+    const updated = duplicateItems(COLLECTIONS.COLABORADORES, [...selectedIds])
+    setCollaborators(updated)
+    showToast('success', 'Colaborador duplicado com sucesso')
     clearSelection()
   }
 
@@ -636,6 +647,7 @@ function Home() {
         <BulkActionBar
           count={selectedIds.size}
           onAddEmTime={() => setAddEmTimeModalOpen(true)}
+          onDuplicate={handleDuplicate}
           onDelete={handleDelete}
           onClose={clearSelection}
         />
