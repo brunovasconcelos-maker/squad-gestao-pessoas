@@ -38,17 +38,16 @@
 
 .novo-modal__title {
   margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
   font-size: 32px;
   font-weight: var(--font-weight-semibold);
   line-height: 1.1;
+  letter-spacing: -1px;
   color: var(--color-text);
 }
 
 .novo-modal__title-gradient {
-  background: linear-gradient(90deg, #ffd668, #d39a00);
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  color: #e9a716;
 }
 
 .novo-modal__grid {

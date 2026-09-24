@@ -88,7 +88,7 @@ function useFitStatFontSize(text) {
   return ref
 }
 
-function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
+function ColaboradorDetail({ id, mode, closing, onClose, onExpand, onCollapse, onDataChanged }) {
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const times = getCollection(COLLECTIONS.TIMES)
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
@@ -503,7 +503,7 @@ function ColaboradorDetail({ id, mode, onClose, onExpand, onCollapse, onDataChan
       className={[
         'colaborador-detail',
         mode === 'full' ? 'colaborador-detail--full' : 'colaborador-detail--panel',
-        entered ? 'colaborador-detail--entered' : '',
+        entered && !closing ? 'colaborador-detail--entered' : '',
       ]
         .filter(Boolean)
         .join(' ')}
