@@ -1,5 +1,4 @@
 export const COLLECTIONS = {
-  CARGOS: 'cargos',
   TIMES: 'times',
   COLABORADORES: 'colaboradores',
   BENEFICIOS: 'beneficios',
@@ -71,17 +70,6 @@ function ensureSeeded(name, seedFactory) {
 }
 
 export function seedInitialData() {
-  ensureSeeded(COLLECTIONS.CARGOS, () =>
-    [
-      'Designer de Produto Senior',
-      'Designer de Produto Pleno',
-      'Designer de Produto Junior',
-      'Designer Gráfico',
-      'Head de Produto',
-      'Head de Marketing',
-    ].map((name) => ({ id: generateId(), name, pending: false })),
-  )
-
   ensureSeeded(COLLECTIONS.BENEFICIOS, () => [
     {
       id: generateId(),
