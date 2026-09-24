@@ -98,7 +98,7 @@ function computeMemberCusto(member, collaborators, beneficios) {
   return salarioValue + beneficiosValue
 }
 
-function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) {
+function TimeDetail({ id, mode, closing, onClose, onExpand, onCollapse, onDataChanged }) {
   const [times, setTimes] = useState(() => getCollection(COLLECTIONS.TIMES))
   const [collaborators, setCollaborators] = useState(() => getCollection(COLLECTIONS.COLABORADORES))
   const beneficios = getCollection(COLLECTIONS.BENEFICIOS)
@@ -525,7 +525,7 @@ function TimeDetail({ id, mode, onClose, onExpand, onCollapse, onDataChanged }) 
       className={[
         'time-detail',
         mode === 'full' ? 'time-detail--full' : 'time-detail--panel',
-        entered ? 'time-detail--entered' : '',
+        entered && !closing ? 'time-detail--entered' : '',
       ]
         .filter(Boolean)
         .join(' ')}
