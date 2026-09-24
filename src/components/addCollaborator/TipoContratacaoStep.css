@@ -1,9 +1,13 @@
-/* Vertically centers Tela 1's content within the space between the
-   64px header and where an 80px footer would sit (this step renders no
-   footer of its own, so the reserved space is virtual). */
+/* Vertically centers Tela 1's content within .clt-shell__body's actual
+   rendered height (100% of it, since this step renders no footer of its
+   own and .clt-shell__body already gets its real height - viewport minus
+   header - from the shell's own flex layout). A hardcoded calc(100vh -
+   144px) here assumed an 80px footer that never renders on this step,
+   leaving a real dead gap below the centered content instead of
+   splitting the space evenly. */
 .tipo-contratacao__center {
   box-sizing: border-box;
-  min-height: calc(100vh - 144px);
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
